@@ -11,6 +11,7 @@ Os agentes atualmente são:
 3. Vendas Capill
 4. Red Team Capill
 5. Engenheiro Capill
+6. SDR Capill
 
 O Engenheiro atua de forma transversal, como o Red Team — mas
 revisando a arquitetura do sistema (agentes, documentos, estrutura),

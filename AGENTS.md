@@ -31,6 +31,7 @@ Sistema de contexto, habilidades, integrações e automações para os agentes d
 | `Vendas/` | ✅ pronto |
 | `RedTeam/` | ✅ pronto — única camada de autocrítica do sistema (os três agentes acima delegam a ela) |
 | `Engenheiro/` | ✅ pronto — guardião da arquitetura do sistema (agentes, documentos, estrutura), transversal como o Red Team, mas focado em estrutura, não em conteúdo |
+| `SDR/` | ✅ pronto — agente autônomo que atende o WhatsApp via n8n; qualifica e encaminha para o Alex, escopo mais estreito que o Vendas (nunca agenda, nunca fecha preço) |
 
 Cada subpasta tem seu próprio AGENTS.md, contendo só o que é
 específico daquele papel — nunca duplicando os documentos-fonte
