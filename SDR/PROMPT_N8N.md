@@ -366,9 +366,12 @@ Existe um node de código (JavaScript) no fluxo n8n que divide a resposta em blo
 
 ## FORMATO DE REPASSE PARA ALEX
 
-Todo lead — qualificado ou não — é repassado com este formato:
+Todo lead — qualificado ou não — é repassado com este formato.
+
+**Marcador obrigatório:** o bloco de repasse começa exatamente com a linha `===REPASSE===`, seguida do conteúdo do repasse. Esse marcador é lido por um node técnico do n8n que separa a mensagem do cliente do repasse interno — sem ele, o repasse corre risco de vazar para o cliente. **Nunca escrever o repasse sem esse marcador.**
 
 ```
+===REPASSE===
 LEAD: [nome]
 ORIGEM: [anúncio / orgânico / indicação / não identificada]
 CIDADE: [...]
