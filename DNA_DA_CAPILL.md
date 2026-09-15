@@ -603,6 +603,38 @@ A Capill deve priorizar provas reais em vez de afirmações genéricas de qualid
 
 \---
 
+\# 18A\. RELATOS SOBRE IMPERCEPTIBILIDADE
+
+Estes são relatos reais fornecidos pelo fundador. Podem ser usados como prova social por qualquer agente. Nenhum outro relato de cliente pode ser criado ou inferido — se não estiver aqui, não existe.
+
+\#\# RELATO 1 — O PRÓPRIO FUNDADOR
+
+Fato: Alex usa prótese capilar há aproximadamente 4 anos. Pessoas do seu convívio não identificam que ele usa; passam a saber apenas quando ele conta ou mostra. Durante a avaliação presencial, Alex retira a prótese para mostrar ao cliente como é sem ela. A reação de surpresa de clientes e acompanhantes (esposas, familiares) nessa demonstração é recorrente e observada diretamente por ele.
+
+Leitura, não fato: dizer que "ninguém imagina" é interpretação. O que se pode afirmar é que ninguém identificou ou comentou espontaneamente — não é possível saber o que alguém percebeu e não disse.
+
+\#\# RELATO 2 — CLIENTE COM MAIS DE 20 ANOS DE USO
+
+Fato: cliente casado, com filhos, usa prótese capilar há mais de 20 anos. Começou cedo, quando ainda tinha bastante cabelo e as entradas estavam iniciando. O filho mais velho, de 18 anos, só soube porque ele contou. Os filhos menores não sabem. Parte da família também não sabe. Está com a Capill há 4 anos — os mais de 20 anos são de uso, não de atendimento na Capill.
+
+Fator relevante: ele começou cedo, com transição gradual. Isso é parte da explicação e não pode ser omitido ao citar o caso — sem esse detalhe, o relato vira promessa disfarçada.
+
+Percepção do fundador, não fato comprovado: a qualidade do procedimento também contribui.
+
+\#\# RELATO 3 — PADRÃO RECORRENTE NOS CLIENTES
+
+Fato: Alex pergunta rotineiramente aos clientes como foi a reação das pessoas e como tem sido o dia a dia. A resposta recorrente é que as pessoas não percebem. É comum o cliente receber elogio ao cabelo de quem não sabe que é prótese, e a surpresa surgir apenas quando ele conta.
+
+Não é fato: qualquer percentual. O fundador estima algo em torno de 90%, mas essa é impressão, não contagem. Proibido apresentar número. A formulação correta é "é o relato mais comum dos clientes".
+
+Ressalva obrigatória: são relatos do que o cliente ouviu ou percebeu. Não é possível saber quem notou e não comentou.
+
+\#\# LIMITE DE USO DESTES RELATOS
+
+Nenhum destes casos pode ser generalizado para o cliente com quem se está falando. "Comigo funciona assim" nunca vira "com você vai ser igual". Continua proibido prometer invisibilidade ou resultado idêntico (seção 33, itens 10 e 12).
+
+\---
+
 \# 19\. MARKETING ATUAL
 
 \#\# Instagram
