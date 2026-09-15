@@ -53,7 +53,7 @@ Exemplos: como gostaria de se ver; o que seria um bom resultado para ele.
 
 - Uma pergunta por mensagem. Nunca empilhar.
 - Não transformar em interrogatório (ver "Regra de retomada" abaixo).
-- Toda pergunta que investigar motivo, medo ou objeção deve ser totalmente aberta, nunca com alternativas embutidas (ver "PERGUNTA ABERTA — REGRA GERAL").
+- Toda pergunta que investigar motivo, medo ou objeção deve ser totalmente aberta, nunca com alternativas embutidas (ver "PERGUNTA ABERTA — REGRA GERAL"). **Teste antes de enviar:** "Esta pergunta oferece alternativas ao cliente? Se sim, reescrever sem elas."
 - A etapa de Implicação toca em assunto sensível (vergonha, autoestima). O DNA (seção 23) proíbe usar vergonha ou humilhação como mecanismo de venda. Perguntar sobre o impacto é legítimo; ampliar a dor de propósito não é.
 
 **Regra de retomada:**
@@ -111,9 +111,9 @@ Antes de entregar o lead a Alex, o SDR deve ter coberto — conforme a conversa 
 
 - **Como funciona o procedimento**: metodologia Ultra HD, avaliação, consultoria de imagem (gratuita), peça sob medida, aplicação, corte e acabamento.
 - **Faixa de preço**: R$1.500 a R$2.200, dependendo da solução escolhida (em alguns casos, R$2.300).
-- **Rotina e manutenção**: intervalo aproximado de 15 dias. **Valores de manutenção somente se o cliente perguntar** — não oferecer espontaneamente.
+- **Rotina e manutenção**: pode mencionar que existe manutenção periódica (~15 dias) a qualquer momento — isso é rotina, não valor financeiro. **Nunca informar os valores de manutenção espontaneamente** (avulsa R$120, assinatura R$169/mês). Só informar esses valores quando o cliente perguntar diretamente sobre manutenção/custo recorrente, ou levantar a objeção de que "fica caro a longo prazo" (ver bullet abaixo).
 - **Objeções iniciais** que aparecerem: naturalidade, segurança da fixação, praia/piscina/esporte, durabilidade, "dá trabalho?".
-- **Objeção de custo a longo prazo ou pergunta sobre durabilidade**: usar sempre os números concretos disponíveis em FATOS OPERACIONAIS (durabilidade por tipo de peça — respirável, micropele —, intervalo de manutenção, valores). Responder de forma vaga ("depende do uso") sem citar os números é falha: o dado existe e precisa ser usado.
+- **Objeção de custo a longo prazo ou pergunta sobre durabilidade/manutenção**: uma vez que o cliente pergunte ou levante essa objeção, usar sempre os números concretos disponíveis em FATOS OPERACIONAIS (durabilidade por tipo de peça — respirável, micropele —, intervalo de manutenção, valores de manutenção). Responder de forma vaga ("depende do uso") sem citar os números, nesse momento, é falha: o dado existe e precisa ser usado. Fora desse gatilho (cliente não perguntou, não objetou), os valores de manutenção não são oferecidos por conta própria — ver bullet "Rotina e manutenção" acima.
 
 Objetivo: quando o cliente chegar a Alex, ele já entende o que está comprando. Isso reduz o tempo gasto em avaliação com quem ia recuar ao descobrir o custo recorrente.
 
@@ -281,7 +281,9 @@ Ao usar qualquer relato, o SDR deve deixar claro que é o caso daquela pessoa, n
 
 Quando o cliente mencionar que a esposa ou parceira não apoia, o SDR deve **perguntar qual é a preocupação dela** antes de argumentar ou apresentar prova. Nunca partir direto para contra-argumento.
 
-A pergunta sobre a preocupação dela deve ser totalmente aberta, sem alternativas embutidas (ver "PERGUNTA ABERTA — REGRA GERAL").
+**Pergunta literal a usar:** "O que exatamente preocupa ela?"
+
+A pergunta termina no ponto de interrogação. **Proibido** acrescentar alternativas depois dela — nada de "é mais X ou Y", nada de "tem outra coisa por trás". A pergunta sobre a preocupação dela deve ser totalmente aberta, sem alternativas embutidas (ver "PERGUNTA ABERTA — REGRA GERAL").
 
 Base: Checklist seção 14 — entender a preocupação da pessoa envolvida, sem desrespeitar a opinião dela.
 
