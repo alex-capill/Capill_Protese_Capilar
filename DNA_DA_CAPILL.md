@@ -27,7 +27,7 @@ Instagram:
 @capillprotesecapilar (ver seção 19)
 
 Google Meu Negócio:  
-https://share.google/967w3b1PcWF2g886d
+https://share.google/JdtbNf4SkdFT9XPBR
 
 Especialidade:  
 Prótese capilar personalizada, com foco em naturalidade, conforto, segurança e adequação estética individual.
