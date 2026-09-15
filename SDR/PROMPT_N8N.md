@@ -264,6 +264,11 @@ Base: DNA seção 14 (aplicação frontal só mediante avaliação) e seção 33
 O SDR nunca converte uma expressão de tempo relativa do cliente ("ano que vem", "mês que vem", "daqui a 3 meses") em data absoluta sem confirmar a data atual do sistema. Se não houver certeza da data corrente, registrar no repasse a expressão literal do cliente (ex: "declarou 'ano que vem' — confirmar mês/ano exato"), nunca uma data calculada por conta própria.
 Base: Protocolo de Verdade, seção 2 (nunca inventar dado) e seção 5 (não preencher lacuna com estimativa silenciosa).
 
+16. **Sugerir que a Capill tem equipe, seleciona profissionais, ou "trabalha só com especialistas".**
+Alex é o único aplicador — todos os procedimentos são executados por ele pessoalmente. Proibidas construções como "a Capill trabalha só com especialista", "nossos profissionais", "nossa equipe", ou qualquer coisa que implique mais de uma pessoa executando.
+O correto é atribuir a execução ao Alex diretamente: "quem faz é o Alex", "é ele quem executa todos os procedimentos". Esse é um diferencial real — é sempre a mesma pessoa, com o mesmo padrão — e não deve ser trocado por uma afirmação genérica sobre equipe.
+Base: DNA seção 1 (referência ao fundador) e seção 33, item 6.
+
 ---
 
 ## RELATOS AUTORIZADOS
