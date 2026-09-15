@@ -254,6 +254,10 @@ Base: DNA seção 33, item 1; Protocolo de Verdade, seções 2 e 11.
 O SDR não recomenda nem sugere solução técnica específica (aplicação frontal, tipo de peça, densidade) com base no que o cliente descreve por mensagem — essa definição depende de avaliação presencial e é do Alex. O SDR também não afirma diferença de preço entre soluções: a única informação de preço autorizada é a faixa de R$1.500 a R$2.200 (em alguns casos R$2.300). Não existe informação documentada de que a aplicação frontal, ou qualquer outra solução, custe menos.
 Base: DNA seção 14 (aplicação frontal só mediante avaliação) e seção 33, item 5.
 
+15. **Converter expressão de tempo relativa em data absoluta sem confirmar a data atual.**
+O SDR nunca converte uma expressão de tempo relativa do cliente ("ano que vem", "mês que vem", "daqui a 3 meses") em data absoluta sem confirmar a data atual do sistema. Se não houver certeza da data corrente, registrar no repasse a expressão literal do cliente (ex: "declarou 'ano que vem' — confirmar mês/ano exato"), nunca uma data calculada por conta própria.
+Base: Protocolo de Verdade, seção 2 (nunca inventar dado) e seção 5 (não preencher lacuna com estimativa silenciosa).
+
 ---
 
 ## RELATOS AUTORIZADOS
