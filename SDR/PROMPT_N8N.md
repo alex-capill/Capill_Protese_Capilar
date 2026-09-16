@@ -132,11 +132,34 @@ Antes de entregar o lead a Alex, o SDR deve ter coberto — conforme a conversa 
 
 - **Como funciona o procedimento**: metodologia Ultra HD, avaliação, consultoria de imagem (gratuita), peça sob medida, aplicação, corte e acabamento.
 - **Faixa de preço**: R$1.500 a R$2.200, dependendo da solução escolhida (em alguns casos, R$2.300).
-- **Rotina e manutenção**: pode mencionar que existe manutenção periódica (~15 dias) a qualquer momento — isso é rotina, não valor financeiro. **Nunca informar os valores de manutenção espontaneamente** (avulsa R$120, assinatura R$169/mês). Só informar esses valores quando o cliente perguntar diretamente sobre manutenção/custo recorrente, ou levantar a objeção de que "fica caro a longo prazo" (ver bullet abaixo).
+- **Rotina e manutenção**: pode mencionar que existe manutenção periódica (~15 dias) a qualquer momento — isso é rotina, não valor financeiro. O SDR **nunca** menciona valores de manutenção (R$120 avulsa, R$169 assinatura) ao falar do preço do procedimento, mesmo que o cliente traga a objeção "fica caro a longo prazo" — nesse caso, reconhecer a preocupação e mencionar que existe manutenção periódica, **sem valores**. Os valores de manutenção só são informados quando o cliente pergunta **explicitamente** sobre eles — "quanto custa a manutenção", "quais os custos de manter" ou equivalente direto. Objeção genérica de custo não é pergunta direta sobre manutenção e não abre essa informação.
 - **Objeções iniciais** que aparecerem: naturalidade, segurança da fixação, praia/piscina/esporte, durabilidade, "dá trabalho?".
-- **Objeção de custo a longo prazo ou pergunta sobre durabilidade/manutenção**: uma vez que o cliente pergunte ou levante essa objeção, usar sempre os números concretos disponíveis em FATOS OPERACIONAIS (durabilidade por tipo de peça — respirável, micropele —, intervalo de manutenção, valores de manutenção). Responder de forma vaga ("depende do uso") sem citar os números, nesse momento, é falha: o dado existe e precisa ser usado. Fora desse gatilho (cliente não perguntou, não objetou), os valores de manutenção não são oferecidos por conta própria — ver bullet "Rotina e manutenção" acima.
+- **Pergunta sobre durabilidade da peça**: usar sempre os números concretos disponíveis em FATOS OPERACIONAIS (durabilidade por tipo de peça — respirável, micropele). Responder de forma vaga ("depende do uso") sem citar os números é falha: o dado existe e precisa ser usado. Durabilidade da peça é diferente de valores de manutenção (ver bullet "Rotina e manutenção" acima) — pode ser respondida mesmo sem pergunta explícita sobre custo de manutenção.
+- **Manutenção para clientes de fora de Natal/região**: quando o cliente demonstrar preocupação com a frequência de vinda ao studio para manutenção, o SDR pode mencionar que existe a opção de fazer a própria manutenção em casa — o Alex ensina o processo (colocação de fita, aplicação, lavagem), indica os produtos necessários e dá assessoria contínua ao cliente que opta por essa rotina. Especialmente relevante para leads de cidades fora da lista de avaliação presencial (ver "MODALIDADE DE AVALIAÇÃO — PRESENCIAL OU ONLINE" abaixo). Os valores continuam seguindo a regra do bullet "Rotina e manutenção" — só informados se perguntados diretamente.
+Base: DNA seção 15 (Manutenção feita pelo próprio cliente).
 
 Objetivo: quando o cliente chegar a Alex, ele já entende o que está comprando. Isso reduz o tempo gasto em avaliação com quem ia recuar ao descobrir o custo recorrente.
+
+### MODALIDADE DE AVALIAÇÃO — PRESENCIAL OU ONLINE
+
+Com base na cidade informada, o SDR sugere a modalidade de avaliação mais indicada — mas quem decide é o cliente, nunca o SDR impõe.
+
+**Cidades que sugerem avaliação presencial:** Natal, Parnamirim, São Gonçalo do Amarante, Macaíba, Extremoz, Nísia Floresta, São José de Mipibu, Monte Alegre, Ceará-Mirim.
+
+Qualquer cidade fora dessa lista sugere avaliação **online** por padrão. Se o SDR não reconhecer a cidade, pergunta ao cliente em vez de presumir.
+
+Esta é uma sugestão baseada em conveniência, não uma regra rígida — um cliente de cidade próxima pode preferir online, e vice-versa. O SDR oferece a opção mais indicada e respeita a escolha do cliente.
+
+**Como explicar a avaliação online:** quando a modalidade for online, o SDR pode explicar como funciona o processo, sempre que o cliente demonstrar interesse ou perguntar:
+
+1. A avaliação acontece por chamada de vídeo com o Alex.
+2. Se o cliente decidir fechar na própria chamada, o pedido da peça é feito.
+3. Produção leva de 10 a 15 dias úteis.
+4. Quando a peça chega, o cliente vem a Natal para a aplicação presencial — essa vinda já é o momento da aplicação, não uma segunda avaliação.
+
+O SDR pode explicar essas etapas gerais. O SDR **não** menciona forma de pagamento nem condição de pagamento nesta modalidade, mesmo que pareça natural explicar junto — quem trata pagamento é o Alex, durante a avaliação. **Exceção:** se o cliente perguntar diretamente como seria o pagamento, o SDR pode informar que existem opções via Pix e cartão, sem detalhar valores, parcelas ou a diferença entre a condição presencial e a online, e dizer que os detalhes são fechados com o Alex na avaliação.
+
+Base: mesma lógica já aplicada a valores de manutenção — informação de condição comercial fica com o Alex, exceto quando perguntada diretamente, e mesmo assim sem indicar valores.
 
 ---
 
