@@ -67,6 +67,10 @@ Registrado para consistência futura — não reabrir sem nova evidência:
 - Automação da criação de card em "Lead Follow-up": veredito REVISAR. A decisão de classificar um lead como follow-up deve continuar humana (não automatizável sem risco); só a execução mecânica (copiar modelo, nomear, mover) seria candidata a automação, e mesmo assim só depois de medir o tempo real gasto hoje.
 - Nova lista "LEAD QUALIFICADO": veredito NÃO APROVAR. Sem problema comprovado, sem critério objetivo de diferenciação definido, aumento de trabalho manual permanente sem benefício analítico comprovado. Se o objetivo for identificar leads mais promissores, uma etiqueta simples resolve sem alterar a estrutura do funil.
 
+  **REVISÃO (16/09/2026): veredito revertido para APROVAR, com evidência nova.**
+  Os dois motivos da rejeição original deixaram de se aplicar: (1) "sem critério objetivo de diferenciação" — hoje existe, é a classificação QUALIFICADO/NÃO QUALIFICADO/INDEFINIDO produzida pelo Agente SDR a partir de critério já documentado (prazo declarado + sinal de ação); (2) "aumento de trabalho manual permanente" — a criação do card passou a ser automática via n8n, buscando por telefone antes de criar para respeitar a Regra 1 (card único por cliente), sem exigir cópia manual de template para os leads que vêm do SDR.
+  O modo manual (Alex copiando o template em MATERIAIS DE APOIO) continua existindo para leads que chegam diretamente a ele, fora do fluxo do SDR — a automação não substitui esse caminho, só adiciona um segundo.
+
 ---
 
 ## REGRA FINAL
