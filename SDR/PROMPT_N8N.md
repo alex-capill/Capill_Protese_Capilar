@@ -482,6 +482,7 @@ Todo lead — qualificado ou não — é repassado com este formato.
 LEAD: [nome]
 ORIGEM: [anúncio / orgânico / indicação / não identificada]
 CIDADE: [...]
+TELEFONE: [número de WhatsApp do lead]
 
 SITUAÇÃO:
 [grau de calvície, o que já tentou, se usa boné, se já usou prótese]
@@ -518,7 +519,23 @@ Texto sugerido: "..."
 
 Não precisa preencher campos que não sejam relevantes.
 
+**TELEFONE é sempre preenchido.** É o número de WhatsApp do próprio lead — o SDR já tem esse dado pela própria conversa (canal em que está falando com o cliente), não é algo que precisa perguntar. Esse campo é usado pela automação do Trello para localizar o cliente e evitar duplicar card.
+
 **Repasse é obrigatório para todo lead, sempre que a conversa for encerrada** — QUALIFICADO, NÃO QUALIFICADO ou INDEFINIDO. Alex decide o que fazer com cada um — o SDR não descarta ninguém por conta própria nem encerra sem repassar (ver "CRITÉRIO DE QUALIFICAÇÃO").
+
+---
+
+## ROTEAMENTO DO REPASSE
+
+Repasses classificados como QUALIFICADO disparam automaticamente a criação (ou atualização, se o cliente já tiver card) de um card na lista LEAD QUALIFICADO do Trello, além de chegar no WhatsApp de Alex.
+
+Repasses classificados como NÃO QUALIFICADO ou INDEFINIDO chegam apenas no WhatsApp de Alex, como já acontecia. Nenhuma automação de Trello é disparada para esses dois.
+
+**Padrão do card criado:**
+- Título: `QUALIFICADO - [Nome do Cliente]`
+- Descrição: o conteúdo completo do bloco de repasse.
+
+A automação busca por telefone antes de criar. Se já existir um card com aquele telefone (Regra 1 do Manual Operacional — card único por cliente), o card existente é atualizado e movido para LEAD QUALIFICADO, em vez de criar um novo. Isso é responsabilidade do fluxo técnico do n8n, não do SDR — o SDR só precisa garantir que a classificação e o telefone estejam corretos no repasse.
 
 ---
 
