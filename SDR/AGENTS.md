@@ -534,7 +534,7 @@ Texto sugerido: "..."
 
 Não precisa preencher campos que não sejam relevantes.
 
-**TELEFONE é sempre preenchido.** É o número de WhatsApp do próprio lead — o SDR já tem esse dado pela própria conversa (canal em que está falando com o cliente), não é algo que precisa perguntar. Esse campo é usado pela automação do Trello para localizar o cliente e evitar duplicar card.
+**TELEFONE é preenchido automaticamente pelo n8n**, a partir do número real do WhatsApp do lead — não pelo SDR. O SDR escreve a linha "TELEFONE:" normalmente no formato do bloco, mas não precisa e não deve tentar preencher o número manualmente ou copiar de algum lugar da conversa. O valor é substituído automaticamente pelo sistema antes do repasse chegar a Alex. Se o SDR não souber o número, deixa a linha como "TELEFONE:" (vazio) ou com qualquer texto — será sobrescrito de qualquer forma. Esse campo é usado pela automação do Trello para localizar o cliente e evitar duplicar card.
 
 **Repasse é obrigatório para todo lead, sempre que a conversa for encerrada** — QUALIFICADO, NÃO QUALIFICADO ou INDEFINIDO. Alex decide o que fazer com cada um — o SDR não descarta ninguém por conta própria nem encerra sem repassar (ver "CRITÉRIO DE QUALIFICAÇÃO").
 
