@@ -12,6 +12,10 @@ Sistema de contexto, habilidades, integrações e automações para os agentes d
 - [CHECKLIST_AVALIACAO_E_FECHAMENTO_CAPILL_V1.md](CHECKLIST_AVALIACAO_E_FECHAMENTO_CAPILL_V1.md)
 - [PROTOCOLO_DE_TRABALHO_CAPILL_V1.md](PROTOCOLO_DE_TRABALHO_CAPILL_V1.md)
 
+Histórico do que já foi construído, em ordem cronológica:
+[DOCUMENTACAO.md](DOCUMENTACAO.md) — append-only, consultar antes de refazer
+decisão já tomada.
+
 ## Regras
 
 1. Todo agente deve seguir o `PROTOCOLO_DE_VERDADE_E_EXTREMA_SINCERIDADE___CAPILL_V2.md` em toda resposta (fato ≠ inferência ≠ hipótese ≠ opinião, sinalizar nível de confiança, nunca inventar dado).
@@ -36,3 +40,14 @@ Sistema de contexto, habilidades, integrações e automações para os agentes d
 Cada subpasta tem seu próprio AGENTS.md, contendo só o que é
 específico daquele papel — nunca duplicando os documentos-fonte
 da raiz.
+
+## Sistemas
+
+| Sistema | Status |
+|---|---|
+| `CSystem/` | ✅ em implantação — CRM operacional (funil, tarefas, agenda, métricas). Substitui o board `Clientes Capill` do Trello e recebe os leads do SDR via webhook do n8n. |
+
+O CSystem é onde as regras dos documentos-fonte viram software: a Regra 1
+(card único por cliente) é chave única de telefone, as 11 palavras-chave do
+`PADRAO_DE_COMENTARIOS` são uma lista fechada, e a métrica de funil é gravada
+automaticamente a cada movimento de card. Detalhes em `CSystem/README.md`.

@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+build/
+
+# Banco local — é o dado real da operação, nunca vai para o git
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+data/backups/
+
+.env
+.env.local
+.env*.local
+
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store

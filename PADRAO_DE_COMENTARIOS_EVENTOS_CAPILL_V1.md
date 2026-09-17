@@ -6,6 +6,14 @@ Esta é a primeira versão do padrão. Trata-se de uma **HIPÓTESE OPERACIONAL**
 
 Este documento **substitui** a ideia anterior de planilha manual semanal para registro de métricas de funil. Os dois métodos não devem ser usados ao mesmo tempo, para evitar duplicação de registro da mesma informação.
 
+**ATUALIZAÇÃO (17/09/2026) — o que mudou com o CSystem.** A contagem de funil deixou de depender do comentário. No CSystem, **mover o card de lista já grava o evento de métrica sozinho**; o comentário passa a ter outra função, mais estreita e mais honesta: registrar o **porquê** (motivo de uma objeção, data de um retorno, contexto da conversa), não o **quanto**.
+
+Na prática:
+
+- As 11 palavras-chave abaixo continuam valendo integralmente, e agora são escolhidas numa lista fechada em vez de digitadas — o que elimina de vez o risco de variação inventada ("AGENDADO" no lugar de "AGENDOU") que a seção 2 adverte.
+- Depois de arrastar um card, o sistema sugere a palavra-chave correspondente ao destino. Confirmar é opcional: **ignorar a sugestão não perde nenhum número.**
+- A observação da seção 7 — "se o comentário não for feito, o evento não existe para fins de contagem" — **deixa de valer para a contagem de etapas do funil**, que agora é automática. Continua valendo para motivo de perda e data de follow-up, que só existem se forem registrados.
+
 ---
 
 ## 1. OBJETIVO
