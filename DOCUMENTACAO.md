@@ -193,6 +193,32 @@ mostra 3 agendados, 3 compareceram, 3 fecharam e 3 aplicaram.
 A checagem de Node só aconteceu já no meio do planejamento, e por sorte não mudou a
 decisão — mas poderia ter mudado, e teria custado o replanejamento inteiro.
 
+### 2026-09-17 — Registro do planejamento do CSystem
+
+A entrada acima documentou as **decisões e o resultado**, mas não o **processo**. O
+plano aprovado vivia em `~/.claude/plans/`, uma pasta interna do Claude, fora do
+repositório e com nome gerado aleatoriamente — ou seja, não era contexto consultável.
+
+Trazido para dentro do repo em
+[`CSystem/docs/PLANEJAMENTO.md`](CSystem/docs/PLANEJAMENTO.md), com o que faltava:
+
+- **As alternativas descartadas e por quê** — espelho bidirecional com o Trello, app em
+  arquivo único sem Node, deploy direto na nuvem, copiar o board com o typo, descartar
+  a `AGUARDANDO CONTRATO`.
+- **O Teste do Engenheiro com as 9 perguntas respondidas** (antes só o veredito estava
+  registrado).
+- **Como o plano mudou** depois da primeira revisão do Alex, incluindo a inversão de
+  arquitetura: o desenho original era *o comentário move o card*; virou *mover o card
+  grava o comentário*. Foi essa inversão que tirou a métrica da dependência de
+  disciplina de registro.
+- A especificação visual, o mapa lista → palavra-chave → etapa, e o **checklist de
+  verificação com nenhum item executado**.
+
+**Lição aprendida:** documentar decisão não é documentar planejamento. A decisão
+responde "o que ficou"; o planejamento responde "o que mais foi considerado e por que
+perdeu". Sem a segunda parte, alguém — inclusive um agente lendo o repo — propõe de
+novo daqui a seis meses a alternativa que já foi analisada e descartada.
+
 ---
 
 ## Habilidades

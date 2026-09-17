@@ -138,6 +138,9 @@ Etapa sem base mostra "sem dados", nunca 0%. Amostra abaixo de 10 vem marcada co
 `POST /api/sdr/repasse`, autenticado pelo header `x-csystem-token`.
 
 A configuração exata do nó do n8n está em [`docs/INTEGRACAO_N8N.md`](docs/INTEGRACAO_N8N.md).
+O histórico de como o sistema foi decidido — alternativas descartadas, Teste do
+Engenheiro e checklist de verificação — está em
+[`docs/PLANEJAMENTO.md`](docs/PLANEJAMENTO.md).
 **Nada foi aplicado no n8n** — a mudança no fluxo que atende cliente real depende de
 autorização.
 
