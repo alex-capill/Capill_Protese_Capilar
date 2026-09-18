@@ -31,8 +31,8 @@ export default function WorkspacePage() {
   const metrics = headlineMetrics(monthPeriod());
 
   return (
-    <>
-      <div className="mb-6">
+    <div className="mx-auto w-full max-w-[1320px]">
+      <div className="mb-10">
         <ScheduleBar
           items={appointments.map((appointment) => ({
             id: appointment.id,
@@ -45,14 +45,18 @@ export default function WorkspacePage() {
         />
       </div>
 
-      <PageHeader
-        title="Workspace"
-        metrics={metrics}
-        action={<NewTaskButton columns={columns} labels={labels} clients={clients} />}
-      />
+      <div className="mb-10">
+        <PageHeader
+          title="Workspace"
+          metrics={metrics}
+          action={<NewTaskButton columns={columns} labels={labels} clients={clients} />}
+          controls={false}
+          metricExamples={{ Fechadas: 1, Perdidas: -1 }}
+        />
+      </div>
 
       <LeadsRow clients={clients} lists={lists} />
       <TodayTasksRow tasks={tasks} columns={columns} labels={labels} clients={clients} />
-    </>
+    </div>
   );
 }

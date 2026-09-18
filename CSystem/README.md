@@ -141,6 +141,16 @@ A configuração exata do nó do n8n está em [`docs/INTEGRACAO_N8N.md`](docs/IN
 O histórico de como o sistema foi decidido — alternativas descartadas, Teste do
 Engenheiro e checklist de verificação — está em
 [`docs/PLANEJAMENTO.md`](docs/PLANEJAMENTO.md).
+
+## Continuidade do projeto
+
+Antes de retomar desenvolvimento em outro chat ou agente, leia o
+[`docs/CONTEXTO_DE_CONTINUIDADE.md`](docs/CONTEXTO_DE_CONTINUIDADE.md). Ele registra o
+estado do Git, decisões de interface, comportamento validado, dados que não podem ser
+apagados, limitações do ambiente local e pendências. As regras de operação da Capill
+continuam em [`../AGENTS.md`](../AGENTS.md) e o histórico geral append-only está em
+[`../DOCUMENTACAO.md`](../DOCUMENTACAO.md).
+
 **Nada foi aplicado no n8n** — a mudança no fluxo que atende cliente real depende de
 autorização.
 

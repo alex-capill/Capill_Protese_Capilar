@@ -152,7 +152,7 @@ export function ClientDetails({
                       className={cx(
                         "rounded-full transition",
                         applied.includes(label.id)
-                          ? "ring-2 ring-[var(--text)]"
+                          ? "brightness-110 drop-shadow-sm"
                           : "opacity-45 hover:opacity-100",
                       )}
                     >

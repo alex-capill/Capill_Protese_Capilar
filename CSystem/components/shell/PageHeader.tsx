@@ -12,39 +12,48 @@ export function PageHeader({
   action,
   metrics,
   children,
+  controls = true,
+  metricExamples,
 }: {
   title: string;
   /** Botão principal ao lado do título — o "+ Nova Tarefa" da referência. */
   action?: React.ReactNode;
   metrics?: HeadlineMetric[];
   children?: React.ReactNode;
+  /** No Workspace os controles pertencem à barra de agenda, como na referência. */
+  controls?: boolean;
+  /** Exemplos visuais explicitamente solicitados; não alteram os dados de métrica. */
+  metricExamples?: Partial<Record<string, number>>;
 }) {
   return (
-    <header className="mb-6">
-      <div className="mb-5 flex items-center justify-end gap-2">
-        {children}
-        <ThemeToggle />
-        <button type="button" className="icon-btn size-11" aria-label="Notificações">
-          <IconBell size={18} />
-        </button>
-        <Avatar name="Alex" size={44} />
-      </div>
-
+    <header className="mb-10">
       <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-        <h1 className="display-title text-[44px] sm:text-[58px]">{title}</h1>
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-4">
+          <h1 className="display-title text-[42px] sm:text-[56px]">{title}</h1>
+          {action}
+          {metrics && metrics.length > 0 && (
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+              {metrics.map((metric) => (
+                <StatCounter
+                  key={metric.label}
+                  value={metric.value}
+                  label={metric.label}
+                  delta={metric.delta}
+                  previewDelta={metricExamples?.[metric.label]}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
-        {action}
-
-        {metrics && metrics.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-            {metrics.map((metric) => (
-              <StatCounter
-                key={metric.label}
-                value={metric.value}
-                label={metric.label}
-                delta={metric.delta}
-              />
-            ))}
+        {controls && (
+          <div className="ml-auto flex items-center gap-2">
+            {children}
+            <ThemeToggle />
+            <button type="button" className="icon-btn size-11" aria-label="Notificações">
+              <IconBell size={18} />
+            </button>
+            <Avatar name="Alex" size={44} />
           </div>
         )}
       </div>

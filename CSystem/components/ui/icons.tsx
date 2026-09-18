@@ -169,6 +169,12 @@ export const IconClock = (p: IconProps) => (
   </Svg>
 );
 
+export const IconFlame = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12.2 3.2c.9 3.3-1.6 4.7-1 7 .4 1.4 1.6 2.2 2.7 2.2 1.6 0 2.8-1.3 2.8-3.1 1.9 1.6 3.1 3.9 3.1 6.4A7.6 7.6 0 0 1 12 23a7.6 7.6 0 0 1-7.8-7.3c0-3.4 2-6.6 5-8.2.1 2.2 1.2 3.3 2.5 3.3 1.5 0 2.3-1.4.5-3.8Z" />
+  </Svg>
+);
+
 export const IconWhatsapp = (p: IconProps) => (
   <Svg {...p}>
     <path d="M3.6 20.4 5 16.4a7.9 7.9 0 1 1 3 3l-4.4 1Z" />

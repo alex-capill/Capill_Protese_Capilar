@@ -220,7 +220,10 @@ export function TaskDialog({
                   type="button"
                   disabled={!task}
                   onClick={() => toggleLabel(label.id)}
-                  className={cx("rounded-full transition disabled:opacity-40", on && "ring-2 ring-[var(--text)]")}
+                  className={cx(
+                    "rounded-full transition disabled:opacity-40",
+                    on && "brightness-110 drop-shadow-sm",
+                  )}
                 >
                   <LabelChip name={label.name} colorHex={label.colorHex} size="sm" />
                 </button>

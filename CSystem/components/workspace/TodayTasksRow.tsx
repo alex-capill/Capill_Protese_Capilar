@@ -51,7 +51,7 @@ export function TodayTasksRow({
   const openCount = tasks.filter((task) => !task.doneAt).length;
 
   return (
-    <section className="mb-4">
+    <section className="mb-8">
       <SectionHeader title="Minhas Tarefas" count={openCount} countLabel="abertas">
         <div className="scroll-row">
           {FILTERS.map((item) => (
@@ -79,7 +79,7 @@ export function TodayTasksRow({
       ) : (
         <div className="scroll-row">
           {filtered.slice(0, 20).map((task) => (
-            <div key={task.id} className="w-[300px] shrink-0 snap-start">
+            <div key={task.id} className="w-[320px] shrink-0 snap-start">
               <TaskCard task={task} onEdit={setEditing} />
             </div>
           ))}

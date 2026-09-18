@@ -56,7 +56,7 @@ export function LeadsRow({
   ];
 
   return (
-    <section className="mb-8">
+    <section className="mb-12">
       <SectionHeader title="Novos Leads" count={clients.length} countLabel="no funil">
         <div className="scroll-row">
           {FILTERS.map((item) => (

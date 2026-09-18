@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toggleTaskDoneAction } from "@/app/actions/tasks";
-import { IconCheck, IconClock, IconUser } from "@/components/ui/icons";
+import { IconArrowUpRight, IconCheck, IconClock, IconUser } from "@/components/ui/icons";
 import { LabelChip } from "@/components/ui/primitives";
 import { cx } from "@/lib/utils";
 import type { TaskView } from "@/lib/view-types";
@@ -50,8 +50,9 @@ export function TaskCard({
 
   return (
     <article
+      onDoubleClick={() => onEdit?.(task)}
       className={cx(
-        "group relative rounded-[var(--radius-inner)] p-3.5 shadow-[var(--shadow-card)] transition",
+        "group relative flex min-h-[200px] cursor-pointer flex-col rounded-[26px] rounded-tr-[8px] p-5 shadow-[var(--shadow-card)] transition",
         highlighted ? "bg-accent text-accent-ink" : "bg-surface",
         done && "opacity-55",
         dragging && "opacity-40",
@@ -62,6 +63,7 @@ export function TaskCard({
           type="button"
           disabled={pending}
           onClick={() => startTransition(() => void toggleTaskDoneAction(task.id))}
+          onDoubleClick={(event) => event.stopPropagation()}
           aria-label={done ? "Reabrir tarefa" : "Concluir tarefa"}
           className={cx(
             "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition",
@@ -75,11 +77,7 @@ export function TaskCard({
           {done && <IconCheck size={12} />}
         </button>
 
-        <button
-          type="button"
-          onClick={() => onEdit?.(task)}
-          className="min-w-0 flex-1 text-left"
-        >
+        <div className="min-w-0 flex-1 pr-7">
           <p className={cx("text-sm font-bold leading-snug", done && "line-through")}>
             {task.title}
           </p>
@@ -93,8 +91,24 @@ export function TaskCard({
               {task.notes}
             </p>
           )}
-        </button>
+        </div>
       </div>
+
+      {onEdit && (
+        <div className="absolute -right-2 -top-2 z-10 flex size-12 items-center justify-center rounded-full bg-bg">
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit(task);
+            }}
+            aria-label={`Abrir ${task.title}`}
+            className="flex size-9 items-center justify-center rounded-full bg-surface-2 text-text shadow-[var(--shadow-chip)] transition hover:bg-ink hover:text-ink-invert"
+          >
+            <IconArrowUpRight size={15} />
+          </button>
+        </div>
+      )}
 
       {task.labels.length > 0 && (
         <div className="mt-2.5 flex flex-wrap gap-1 pl-7">
@@ -106,7 +120,7 @@ export function TaskCard({
 
       <div
         className={cx(
-          "mt-3 flex flex-wrap items-center gap-2 border-t pt-2.5 text-[11px] font-semibold",
+          "mt-auto flex flex-wrap items-center gap-2 border-t pt-3 text-[11px] font-semibold",
           highlighted ? "border-accent-ink/15" : "border-[var(--border)]",
         )}
       >
@@ -138,6 +152,7 @@ export function TaskCard({
         {task.clientId && task.clientName && (
           <Link
             href={`/clientes/${task.clientId}`}
+            onDoubleClick={(event) => event.stopPropagation()}
             className={cx(
               "ml-auto inline-flex items-center gap-1 rounded-full px-2 py-0.5 transition",
               highlighted ? "bg-black/10 hover:bg-black/20" : "bg-surface-sunken hover:bg-surface-2",

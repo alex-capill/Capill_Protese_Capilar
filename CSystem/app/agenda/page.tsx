@@ -53,7 +53,7 @@ export default function AgendaPage() {
     <>
       <PageHeader title="Agenda" />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section>
           <h2 className="mb-3 text-lg font-bold tracking-tight">Próximos 30 dias</h2>
 
@@ -63,7 +63,7 @@ export default function AgendaPage() {
               description="Avaliações entram aqui sozinhas quando você move um card para AVALIAÇÃO AGENDADA e informa a data."
             />
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-7">
               {[...byDay.entries()].map(([day, items]) => (
                 <div key={day}>
                   <h3 className="mb-2 px-1 text-[13px] font-bold uppercase tracking-wide">

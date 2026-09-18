@@ -399,3 +399,46 @@ Corrigido em `CSystem/components/tarefas/TasksView.tsx`, incluindo os IDs das et
 na assinatura; `TaskDialog` também chama `router.refresh()` após a action. O fluxo foi
 retestado: o chip aparece no quadro imediatamente depois de fechar a edição, nos temas
 claro e escuro.
+
+### 2026-09-18 — Refinamento visual, eventos e handoff do CSystem
+
+**Estado do commit:** os refinamentos desta entrada continuam sem commit porque Alex
+determinou que as mudanças sejam mostradas antes. A nota antiga de 17/09 dizendo
+"Nada commitado" descreve aquele momento: depois dela existem `0786b8b`, `dc69877` e
+`5f41335`. O retrato completo de arquivos pendentes e decisões está em
+[`CSystem/docs/CONTEXTO_DE_CONTINUIDADE.md`](CSystem/docs/CONTEXTO_DE_CONTINUIDADE.md).
+
+**Design e interações:** Urbanist e a paleta fornecida por Alex (`#000000`, `#B9FF66`,
+`#D2D2D2`, `#66FFED`, `#FFFFFF`, `#F04949`) foram aplicados como interpretação visual
+consistente, não cópia pixel a pixel, da referência do Dribbble. Workspace, agenda,
+funil, tarefas, métricas e configurações ganharam espaçamento e superfícies coerentes;
+modo, notificações e perfil foram para a barra de agenda do Workspace. Cards de
+clientes/tarefas abrem por duplo clique, etiquetas selecionadas usam brilho em vez de
+delineado preto, a rolagem de etiquetas do Funil tem fade lateral, e confiança usa
+graduação vermelho → verde com chama somente no nível alto. O `C` no rail é provisório
+até que exista uma marca oficial.
+
+**Eventos:** a prévia de comentário saiu dos cards sem apagar o histórico. No detalhe
+do cliente, comentários humanos são **Eventos** e movimentos, SDR e automações são
+**Registros do sistema**; ambos os blocos são retráteis.
+
+**Bug corrigido — tema:** o primeiro clique podia não alternar porque o estado React
+inicial divergia do atributo aplicado antes da hidratação. `ThemeToggle` passou a ler
+`document.documentElement[data-theme]` no clique, calcular o próximo tema e persistir
+`csystem-theme`. A alternância foi conferida depois de reiniciar o dev server.
+
+**Verdade da métrica:** badges positivos são verde-limão e negativos vermelhos, ambos
+com número preto. Fechadas e Perdidas mostram temporariamente `+1` e `-1` apenas como
+exemplo visual pedido por Alex quando não há delta real; possuem tooltip/acessibilidade
+de exemplo e devem ser removidos ou calculados de verdade após aprovação visual.
+
+**Validação e ambiente:** CRUD de listas/etiquetas, snapshot histórico, bloqueio de
+arquivamento com cards, dois temas, duplo clique, tema e timeline foram exercitados no
+navegador local. `npx tsc --noEmit` passou após a última alteração; `npm test` passou
+com 38 testes. Não rodar `next build` junto de `next dev`: ambos disputaram `.next`,
+causaram `vendor-chunks` ausente e falha de hidratação; parar e reiniciar o dev server
+limpo resolveu. O banco `CSystem/data/csystem.db` continua ignorado e não deve ser
+limpo sem autorização explícita.
+
+**Retomada:** foi criado `CSystem/AGENTS.md`, que direciona todo novo agente ao README,
+ao handoff, ao planejamento e a este arquivo append-only.

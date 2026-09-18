@@ -4,9 +4,11 @@ Registro do **processo de decisão** que levou ao CSystem: as perguntas feitas, 
 alternativas descartadas e por quê, o Teste do Engenheiro completo, e o que ainda
 falta verificar.
 
-Este documento é histórico. Ele não é atualizado conforme o sistema evolui — para o
-estado atual, ver [`../README.md`](../README.md); para o histórico geral do projeto,
-ver [`../../DOCUMENTACAO.md`](../../DOCUMENTACAO.md).
+Este documento preserva o histórico de decisão. A seção 10 recebe somente adendos de
+verificação; para o estado técnico e visual atual, ver
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md) e
+[`../README.md`](../README.md); para o histórico geral do projeto, ver
+[`../../DOCUMENTACAO.md`](../../DOCUMENTACAO.md).
 
 **Por que existe:** as decisões estão documentadas em outros lugares, mas as
 alternativas rejeitadas não estavam em lugar nenhum. Sem elas, daqui a seis meses
@@ -196,12 +198,13 @@ segunda fonte de verdade e quebra a Regra 1.
 Extraída da imagem de referência enviada pelo Alex.
 
 ```css
---accent:      #C9F24D;   /* verde-limão: barra de agenda, card de tarefa ativa */
---accent-ink:  #14200A;   /* texto sobre o verde */
---ink:         #111111;   /* pills pretas, botões redondos, "Nova Tarefa" */
+--accent:      #B9FF66;   /* verde-limão: agenda e destaques */
+--accent-ink:  #000000;   /* texto sobre o verde */
+--ink:         #000000;   /* pills, ações e texto forte */
 --surface:     #FFFFFF;   /* cards */
---bg:          #E8E9E8;   /* fundo cinza levemente esverdeado */
---muted:       #8A8F8A;
+--bg:          #D2D2D2;   /* fundo claro */
+--positive:    #66FFED;   /* variação positiva */
+--negative:    #F04949;   /* variação negativa */
 --radius-card: 26px;  --radius-pill: 999px;
 ```
 
@@ -215,7 +218,7 @@ contadores grandes com delta (`↑3` / `↓2`); chips de filtro (ativo = pill br
 sombra); card de tarefa em destaque totalmente verde-limão; linhas com rolagem
 horizontal.
 
-Tipografia: Inter, peso 800 nos títulos gigantes.
+Tipografia: Urbanist, peso forte nos títulos gigantes.
 
 ---
 
@@ -339,6 +342,32 @@ Os poucos itens não marcados estão anotados com o motivo.
 - [x] Card de tarefa de hoje fica verde-limão inteiro, como na referência
 - [x] Comparar `/` com a imagem de referência — barra preta, título gigante, botão
       preto, contadores com delta e chips de filtro conferem
+
+### Adendo de continuidade — 18/09/2026
+
+Refinamento posterior à rodada original. O registro técnico completo, inclusive
+arquivos não commitados, está em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] Atualizar a base visual para Urbanist e a paleta fornecida: `#000000`,
+      `#B9FF66`, `#D2D2D2`, `#66FFED`, `#FFFFFF` e `#F04949`.
+- [x] Alinhar título, ação e métricas; mover modo, notificações e perfil para a barra
+      de agenda do Workspace; aplicar o mesmo ritmo de espaçamento nas outras telas.
+- [x] Corrigir o alternador de tema cujo primeiro clique podia não refletir o tema
+      pré-hidratação; alternância conferida no navegador após reiniciar o dev server.
+- [x] Abrir clientes e tarefas com duplo clique e manter botão circular de abertura.
+- [x] Remover delineado preto de etiqueta selecionada e usar brilho/sombra, em cliente
+      e tarefa.
+- [x] Aplicar fade lateral sem emenda visível à rolagem de filtros de etiquetas no
+      Funil; ajustar confiança com graduação vermelho → verde e chama apenas no nível
+      alto.
+- [x] Retirar prévia de comentário do card; separar **Eventos** humanos de
+      **Registros do sistema** no detalhe do cliente e tornar ambos retráteis.
+- [x] `npx tsc --noEmit` passou após a alteração final; `npm test` passou com 38
+      testes imediatamente antes da alteração textual final do título “Eventos”.
+- [ ] Reexecutar `npm run build` só com o dev server parado. Fazer build concorrente a
+      `next dev` pode inutilizar temporariamente `.next`; a recuperação comprovada é
+      iniciar o dev server limpo novamente.
 
 ---
 

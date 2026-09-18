@@ -44,7 +44,7 @@ export function LabelChip({
   return (
     <span
       className={cx(
-        "inline-flex items-center rounded-full border font-semibold",
+        "inline-flex items-center rounded-full font-semibold",
         size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-[11px]",
       )}
       style={labelChipStyle(colorHex)}
@@ -71,27 +71,42 @@ export function StatCounter({
   value,
   label,
   delta,
+  previewDelta,
 }: {
   value: number;
   label: string;
   delta: number | null;
+  /** Prévia visual temporária; não altera a métrica nem seus dados. */
+  previewDelta?: number;
 }) {
+  const displayedDelta = delta ?? previewDelta ?? null;
+  const isPreview = delta == null && previewDelta != null;
+
   return (
     <div className="flex items-start gap-2">
       <span className="display-title text-[42px] leading-none sm:text-[52px]">{value}</span>
       <div className="flex flex-col gap-1 pt-1">
-        {delta != null && delta !== 0 && (
+        {displayedDelta != null && displayedDelta !== 0 && (
           <span
             className={cx(
-              "inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-bold",
-              delta > 0
-                ? "bg-[color-mix(in_srgb,var(--positive)_18%,transparent)] text-positive"
-                : "bg-[color-mix(in_srgb,var(--negative)_18%,transparent)] text-negative",
+              "inline-flex w-fit self-start items-center gap-px rounded-full px-1.5 py-0.5 text-[10px] font-extrabold leading-none text-black",
+              displayedDelta > 0
+                ? "bg-accent"
+                : "bg-negative",
             )}
-            title={`${delta > 0 ? "Acima" : "Abaixo"} do mês anterior`}
+            title={
+              isPreview
+                ? "Exemplo visual — não representa uma métrica real"
+                : `${displayedDelta > 0 ? "Acima" : "Abaixo"} do mês anterior`
+            }
+            aria-label={
+              isPreview
+                ? `Exemplo visual de variação ${displayedDelta > 0 ? "positiva" : "negativa"}`
+                : undefined
+            }
           >
-            {delta > 0 ? "↑" : "↓"}
-            {Math.abs(delta)}
+            {displayedDelta > 0 ? "↑" : "↓"}
+            {Math.abs(displayedDelta)}
           </span>
         )}
         <span className="text-xs font-medium text-muted">{label}</span>

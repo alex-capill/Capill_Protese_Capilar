@@ -19,7 +19,7 @@ export default function ConfiguracoesPage() {
     <>
       <PageHeader title="Configurações" />
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <ListsManager lists={lists} />
         <LabelsManager labels={labels} />
 

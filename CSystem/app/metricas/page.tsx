@@ -42,13 +42,13 @@ export default async function MetricasPage({
     <>
       <PageHeader title="Métricas" metrics={metrics} />
 
-      <p className="mb-5 text-sm text-muted">
+      <p className="mb-8 text-sm text-muted">
         Período: <strong className="text-text">{period.label}</strong>. Os deltas comparam
         com o mês anterior. Onde não há base para calcular, aparece &quot;sem dados&quot; —
         e não 0%.
       </p>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <div className="lg:col-span-2">
           <FunnelChart steps={steps} />
         </div>

@@ -34,40 +34,49 @@ export function Rail() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="sticky top-0 z-30 flex h-dvh shrink-0 flex-col items-center gap-2 px-3 py-6 max-lg:hidden"
+      className="sticky top-0 z-30 flex h-dvh w-[76px] shrink-0 flex-col items-center px-3 py-6 max-md:hidden"
     >
-      {ITEMS.map(({ href, label, Icon }) => {
-        const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
-        return (
-          <Link
-            key={href}
-            href={href}
-            title={label}
-            aria-label={label}
-            aria-current={active ? "page" : undefined}
-            className={cx(
-              "flex size-11 items-center justify-center rounded-full transition",
-              active
-                ? "bg-ink text-ink-invert shadow-[var(--shadow-raised)]"
-                : "text-muted hover:bg-surface hover:text-text",
-            )}
-          >
-            <Icon size={19} />
-          </Link>
-        );
-      })}
+      <Link
+        href="/"
+        aria-label="Capill Workspace"
+        className="flex size-11 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-ink-invert shadow-[var(--shadow-raised)]"
+      >
+        C
+      </Link>
+      <div className="mt-16 flex flex-col items-center gap-2">
+        {ITEMS.map(({ href, label, Icon }) => {
+          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              title={label}
+              aria-label={label}
+              aria-current={active ? "page" : undefined}
+              className={cx(
+                "flex size-11 items-center justify-center rounded-full transition",
+                active
+                  ? "bg-ink text-ink-invert shadow-[var(--shadow-raised)]"
+                  : "text-muted hover:bg-surface hover:text-text",
+              )}
+            >
+              <Icon size={19} />
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }
 
-/** Barra inferior no celular — o rail some abaixo de lg. */
+/** Barra inferior no celular — o rail permanece nas telas a partir de md. */
 export function MobileNav() {
   const pathname = usePathname();
 
   return (
     <nav
       aria-label="Navegação principal"
-      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-[var(--border)] bg-surface/95 px-2 py-2 backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-[var(--border)] bg-surface/95 px-2 py-2 backdrop-blur md:hidden"
     >
       {ITEMS.map(({ href, label, Icon }) => {
         const active = href === "/" ? pathname === "/" : pathname.startsWith(href);

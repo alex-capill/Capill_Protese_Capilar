@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { IconArrowUpRight, IconCalendar } from "@/components/ui/icons";
+import { IconArrowUpRight, IconBell, IconCalendar } from "@/components/ui/icons";
+import { Avatar } from "@/components/ui/primitives";
 import { initials } from "@/lib/utils";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * A barra preta do topo da referência: a agenda do dia em uma linha, com os
@@ -66,21 +68,19 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
   });
 
   return (
-    <div className="flex items-center gap-2 rounded-full bg-ink p-2 text-ink-invert">
+    <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-1.5 text-white shadow-[var(--shadow-card)]">
       <div className="flex shrink-0 items-center gap-3 pl-3 pr-1">
         <span className="text-sm font-semibold max-sm:hidden">Sua agenda</span>
-        {/* Tudo aqui dentro se pinta com ink-invert, e não com branco fixo: a
-            barra usa bg-ink, que inverte entre os temas. Branco fixo sumiria
-            no modo escuro, onde a barra fica clara. */}
-        <span className="flex items-center gap-1.5 rounded-full bg-ink-invert/10 px-3 py-1.5 text-xs font-semibold">
+        <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
           <IconCalendar size={14} />
           {today}
         </span>
       </div>
 
-      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-ink-invert/[0.07]">
+      <div className="relative h-10 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
         {items.length === 0 ? (
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-ink-invert/55">
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/55">
             Nenhum compromisso hoje
           </span>
         ) : (
@@ -98,7 +98,7 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
                 key={item.id}
                 href="/agenda"
                 title={`${formatTime(item.startsAt)} — ${item.title}`}
-                className="absolute top-1 flex h-9 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
+                className="absolute top-1 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
                 style={{ left: `${left}%`, width: `${width}%` }}
               >
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-black/15 text-[10px] font-bold">
@@ -114,11 +114,11 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
 
         {nowPercent != null && (
           <div
-            className="pointer-events-none absolute inset-y-0 w-px bg-ink-invert/70"
+            className="pointer-events-none absolute inset-y-0 w-px bg-white/70"
             style={{ left: `${nowPercent}%` }}
             aria-hidden="true"
           >
-            <span className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-ink-invert" />
+            <span className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-white" />
           </div>
         )}
       </div>
@@ -126,10 +126,23 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
       <Link
         href="/agenda"
         aria-label="Abrir agenda"
-        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink-invert/10 transition hover:bg-ink-invert/20"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
       >
         <IconArrowUpRight size={18} />
       </Link>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <ThemeToggle />
+        <button
+          type="button"
+          className="icon-btn size-11 bg-surface shadow-[var(--shadow-chip)]"
+          aria-label="Notificações"
+        >
+          <IconBell size={18} />
+        </button>
+        <Avatar name="Alex" size={44} />
+      </div>
     </div>
   );
 }

@@ -19,7 +19,11 @@ export function ThemeToggle() {
   }, []);
 
   function toggle() {
-    const next: Theme = theme === "dark" ? "light" : "dark";
+    // A fonte de verdade é o atributo do documento. Assim o primeiro clique
+    // funciona mesmo se ele acontecer antes do useEffect sincronizar o estado
+    // React com o tema que o script do layout aplicou antes da hidratação.
+    const current = document.documentElement.getAttribute("data-theme");
+    const next: Theme = current === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     try {
@@ -36,6 +40,7 @@ export function ThemeToggle() {
       className="icon-btn size-11"
       aria-label={theme === "dark" ? "Mudar para modo claro" : "Mudar para modo escuro"}
       title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+      aria-pressed={theme === "dark"}
     >
       {/* Antes de montar, renderiza o sol: evita divergência de hidratação. */}
       {mounted && theme === "dark" ? <MoonIcon /> : <SunIcon />}

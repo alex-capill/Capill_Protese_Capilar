@@ -14,7 +14,7 @@ import type { ListView } from "@/lib/view-types";
  */
 export function ListsManager({ lists }: { lists: ListView[] }) {
   return (
-    <section className="card p-6">
+    <section className="card p-7">
       <h2 className="mb-1 text-lg font-bold tracking-tight">Listas do funil</h2>
       <p className="mb-5 text-sm text-muted">
         <strong className="text-text">Conta como</strong> é o que o dashboard soma. Duas

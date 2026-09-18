@@ -88,8 +88,8 @@ export function TasksView({
   ] as const;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="scroll-row flex-1 items-center">
           {FILTERS.map((item) => (
             <button

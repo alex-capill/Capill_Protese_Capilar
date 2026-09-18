@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { IconSearch } from "@/components/ui/icons";
 import { Avatar, LabelChip } from "@/components/ui/primitives";
@@ -43,8 +43,8 @@ export function FunilView({
   const filtering = term.trim().length > 0 || labelFilter != null;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
           <IconSearch
             size={16}
@@ -59,29 +59,11 @@ export function FunilView({
           />
         </div>
 
-        <div className="scroll-row flex-1 items-center">
-          <button
-            type="button"
-            onClick={() => setLabelFilter(null)}
-            className={cx("chip", labelFilter === null ? "chip-on" : "chip-off")}
-          >
-            Todas
-          </button>
-          {labels.map((label) => (
-            <button
-              key={label.id}
-              type="button"
-              onClick={() => setLabelFilter(labelFilter === label.id ? null : label.id)}
-              className={cx("chip", labelFilter === label.id ? "chip-on" : "chip-off")}
-            >
-              <span
-                className="size-2 rounded-full"
-                style={{ backgroundColor: label.colorHex }}
-              />
-              {label.name}
-            </button>
-          ))}
-        </div>
+        <LabelFilterScroller
+          labels={labels}
+          selectedId={labelFilter}
+          onSelect={setLabelFilter}
+        />
 
         <ViewToggle mode={mode} onChange={setMode} />
       </div>
@@ -98,6 +80,86 @@ export function FunilView({
       ) : (
         <FunilList lists={lists} clients={filtered} />
       )}
+    </div>
+  );
+}
+
+/**
+ * As etiquetas continuam roláveis, mas as bordas indicam discretamente que
+ * há mais opções fora da área visível — como no carrossel da referência.
+ */
+function LabelFilterScroller({
+  labels,
+  selectedId,
+  onSelect,
+}: {
+  labels: LabelView[];
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hasLeft, setHasLeft] = useState(false);
+  const [hasRight, setHasRight] = useState(false);
+
+  function updateEdges() {
+    const node = ref.current;
+    if (!node) return;
+    const tolerance = 2;
+    setHasLeft(node.scrollLeft > tolerance);
+    setHasRight(node.scrollLeft + node.clientWidth < node.scrollWidth - tolerance);
+  }
+
+  useEffect(() => {
+    updateEdges();
+    const node = ref.current;
+    if (!node) return;
+    const observer = new ResizeObserver(updateEdges);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [labels]);
+
+  // A máscara apaga o próprio conteúdo — não é uma faixa aplicada por cima,
+  // portanto não deixa uma linha de transição sobre os chips.
+  const fadeWidth = "88px";
+  const maskImage = hasLeft
+    ? hasRight
+      ? `linear-gradient(to right, transparent, black ${fadeWidth}, black calc(100% - ${fadeWidth}), transparent)`
+      : `linear-gradient(to right, transparent, black ${fadeWidth})`
+    : hasRight
+      ? `linear-gradient(to right, black calc(100% - ${fadeWidth}), transparent)`
+      : undefined;
+  const fadeStyle: CSSProperties | undefined = maskImage
+    ? { maskImage, WebkitMaskImage: maskImage }
+    : undefined;
+
+  return (
+    <div className="relative min-w-0 flex-1">
+      <div
+        ref={ref}
+        onScroll={updateEdges}
+        className="scroll-row items-center"
+        style={fadeStyle}
+      >
+        <button
+          type="button"
+          onClick={() => onSelect(null)}
+          className={cx("chip", selectedId === null ? "chip-on" : "chip-off")}
+        >
+          Todas
+        </button>
+        {labels.map((label) => (
+          <button
+            key={label.id}
+            type="button"
+            onClick={() => onSelect(selectedId === label.id ? null : label.id)}
+            className={cx("chip", selectedId === label.id ? "chip-on" : "chip-off")}
+          >
+            <span className="size-2 rounded-full" style={{ backgroundColor: label.colorHex }} />
+            {label.name}
+          </button>
+        ))}
+      </div>
+
     </div>
   );
 }

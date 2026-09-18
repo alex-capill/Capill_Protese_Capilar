@@ -77,13 +77,12 @@ export function rgba(hex: string, alpha: number): string {
 
 /**
  * Estilo do chip da etiqueta: fundo translúcido da própria cor, texto na cor
- * cheia e borda sutil. Funciona nos dois temas sem precisar de duas paletas.
+ * cheia. Funciona nos dois temas sem precisar de borda ou de duas paletas.
  */
 export function labelChipStyle(hex: string): CSSProperties {
   return {
-    backgroundColor: rgba(hex, 0.16),
+    backgroundColor: rgba(hex, 0.2),
     color: hex,
-    borderColor: rgba(hex, 0.35),
   };
 }
 

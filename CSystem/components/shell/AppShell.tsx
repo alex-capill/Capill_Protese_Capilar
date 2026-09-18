@@ -10,8 +10,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh">
       <Rail />
-      <main className="min-w-0 flex-1 px-4 pb-24 pt-5 sm:px-6 lg:pb-8 lg:pl-0 lg:pr-8">
-        <div className="mx-auto w-full max-w-[1600px]">{children}</div>
+      <main className="min-w-0 flex-1 px-4 pb-24 pt-7 sm:px-6 md:pb-10 md:pl-0 md:pr-8">
+        <div className="mx-auto w-full max-w-[1320px]">{children}</div>
       </main>
       <MobileNav />
     </div>

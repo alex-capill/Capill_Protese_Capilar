@@ -29,7 +29,7 @@ export function LabelsManager({ labels }: { labels: LabelView[] }) {
   const groups = [...new Set([...labels.map((l) => l.group), "ORIGEM", "MODALIDADE", "PAGAMENTO", "SITUACAO_ESPECIAL"])];
 
   return (
-    <section className="card p-6">
+    <section className="card p-7">
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <div>
           <h2 className="text-lg font-bold tracking-tight">Etiquetas</h2>
@@ -47,7 +47,7 @@ export function LabelsManager({ labels }: { labels: LabelView[] }) {
         </button>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {groups
           .filter((group) => labels.some((label) => label.group === group))
           .map((group) => (
