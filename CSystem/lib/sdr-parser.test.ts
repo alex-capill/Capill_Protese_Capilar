@@ -142,13 +142,18 @@ describe("parseRepasse — variações e defeitos", () => {
 describe("repasseToDescription", () => {
   it("monta a descrição só com o que existe", () => {
     const description = repasseToDescription(parseRepasse(REPASSE_COMPLETO));
-    expect(description).toContain("**Situação**");
-    expect(description).toContain("**Classificação do SDR**");
+    expect(description).toContain("SITUAÇÃO");
+    expect(description).toContain("CLASSIFICAÇÃO DO SDR");
     expect(description).toContain("confiança ALTA");
   });
 
   it("não inventa seção para campo ausente", () => {
     const description = repasseToDescription(parseRepasse("LEAD: Carlos"));
-    expect(description).not.toContain("**Situação**");
+    expect(description).not.toContain("SITUAÇÃO");
+  });
+
+  it("não usa markdown: o campo é exibido como texto puro", () => {
+    const description = repasseToDescription(parseRepasse(REPASSE_COMPLETO));
+    expect(description).not.toContain("**");
   });
 });

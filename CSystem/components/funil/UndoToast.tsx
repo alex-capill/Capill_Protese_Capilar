@@ -49,7 +49,7 @@ export function UndoToast({
               }
             })
           }
-          className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold transition hover:bg-white/25 disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded-full bg-ink-invert/15 px-3 py-1 text-xs font-semibold transition hover:bg-ink-invert/25 disabled:opacity-50"
         >
           <IconUndo size={13} />
           {pending ? "Desfazendo…" : "Desfazer"}

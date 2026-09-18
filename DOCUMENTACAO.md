@@ -12,6 +12,36 @@ Seções: [Contexto](#contexto) · [Sistemas](#sistemas) · [Habilidades](#habil
 
 ---
 
+## Onde consultar o quê
+
+Para quem (pessoa ou agente) chega sem contexto:
+
+| Pergunta | Onde está |
+|---|---|
+| Como a Capill funciona, preços, tom de voz | `DNA_DA_CAPILL.md` |
+| Regras do card e das etiquetas | `MANUAL_OPERACIONAL_CAPILL_V1.md` |
+| As 11 palavras-chave de evento | `PADRAO_DE_COMENTARIOS_EVENTOS_CAPILL_V1.md` |
+| Antes de propor automação, lista ou campo novo | `CRITERIOS_DE_SUCESSO_OPERACIONAL_CAPILL_V1.md` |
+| Como os agentes se dividem | `PROTOCOLO_DE_TRABALHO_CAPILL_V1.md` |
+| Como o Agente SDR atende e repassa | `SDR/AGENTS.md` |
+| **O que já foi construído e por quê** | **este arquivo** |
+| Como rodar o CSystem, o que cada tela faz | `CSystem/README.md` |
+| Por que o CSystem é assim, o que foi descartado | `CSystem/docs/PLANEJAMENTO.md` |
+| Como ligar o n8n no CSystem | `CSystem/docs/INTEGRACAO_N8N.md` |
+
+**Três coisas que economizam tempo de quem for mexer no CSystem:**
+
+1. **Arrastar o card é o que gera a métrica.** `lib/transitions.ts` grava em
+   `list_transitions` a cada movimento. O comentário é opcional e serve para o
+   *porquê*, nunca para o *quanto*.
+2. **O mapa lista → palavra-chave → etapa vive no banco**, não no código
+   (`lists.default_keyword`, `lists.counts_as_stage`), porque o Alex pode criar e
+   renomear listas.
+3. **O erro `Unexpected end of JSON input` no dev server não é bug nosso** — é interno
+   do Next, some sozinho. Detalhe na entrada de 17/09.
+
+---
+
 ## Contexto
 
 ### 2026-09-17 — Auditoria do board real do Trello
@@ -218,6 +248,73 @@ Trazido para dentro do repo em
 responde "o que ficou"; o planejamento responde "o que mais foi considerado e por que
 perdeu". Sem a segunda parte, alguém — inclusive um agente lendo o repo — propõe de
 novo daqui a seis meses a alternativa que já foi analisada e descartada.
+
+### 2026-09-17 — CSystem verificado rodando: 8 bugs encontrados e corrigidos
+
+Node.js v24.19.0 instalado. O app foi **compilado e executado pela primeira vez**, e
+todo o checklist de verificação foi percorrido no navegador. Estado final:
+**typecheck 0 erros, 38 testes passando, `next build` gerando as 12 rotas**.
+
+#### O teste principal passou
+
+Criar cliente → arrastar para AVALIAÇÃO AGENDADA → clicar em **"Só mover"** (ou seja,
+**sem escrever nenhum comentário**) → `/metricas` mostra "Avaliações agendadas: 1" com
+delta +1.
+
+**A tese central do sistema está comprovada na prática: a métrica não depende de
+disciplina de registro.**
+
+Também verificados: desfazer (card volta e o contador **não** infla — de 2 não foi para
+3), webhook com Regra 1 (dois disparos do mesmo telefone → `created: false` e o mesmo
+`clientId`), `NÃO QUALIFICADO` não entra no funil, `AGENDOU` do SDR convertido para
+`OUTRO`, webhook sem token retorna 401, modalidade Online derivada de "Mossoró",
+alternador Lista ⇄ Kanban nas tarefas, e o card de tarefa de hoje ficando verde-limão
+inteiro como na referência.
+
+#### Bugs encontrados ao rodar
+
+1. **`better-sqlite3@11` não instalava** — sem binário pré-compilado para o Node 24,
+   caía no `node-gyp`, que exige Python (ausente). Resolvido subindo para a **v13**,
+   que tem binário pronto: instalou em 37s sem compilar nada.
+2. **Placeholder do template virava dado.** `LEAD: [nome]` era desembrulhado e criava
+   um cliente chamado "nome". Agora valor inteiramente entre colchetes é tratado como
+   ausente. *Foi um teste que pegou isso, não a execução.*
+3. **Barra de agenda ilegível no escuro.** Ela usa `bg-ink`, que inverte entre os
+   temas, mas o texto interno estava fixo em branco — sumia quando a barra ficava
+   clara. Trocado por `ink-invert`. Mesmo problema no toast de desfazer.
+4. **"amostra de 0" nas métricas.** O aviso de amostra pequena usava o numerador. A
+   amostra de uma taxa de conversão é o **denominador** — 0 de 1 é amostra de 1.
+5. **Desfazer inalcançável.** Com o balão de confirmação aberto, o toast de desfazer
+   ficava atrás do modal e expirava em 9s — justamente quando se percebe ter arrastado
+   o card errado. Adicionado **"Desfazer movimento" dentro do próprio balão**.
+6. **Transição de entrada saía como "LEAD QUALIFICADO → LEAD QUALIFICADO"**, porque o
+   cliente novo já nascia na lista de destino. Agora lead novo registra "Entrou em".
+7. **Markdown cru na tela.** A descrição vinda do repasse era gerada com `**negrito**`
+   mas renderizada como texto puro. Trocado por títulos em caixa alta.
+8. **Erro de hidratação do `@dnd-kit`** — sem `id` fixo no `DndContext`, o
+   `aria-describedby` dos cards diverge entre servidor e cliente. Ids fixados.
+
+Melhoria de leitura aplicada junto: movimento e comentário viraram **uma entrada só**
+na linha do tempo, pareados por `transitionId` em vez de proximidade de horário.
+
+#### Um erro que NÃO é bug do CSystem
+
+`SyntaxError: Unexpected end of JSON input` com HTTP 500 aparece esporadicamente no
+dev server. É interno do Next: só ocorre imediatamente após um recompile do Fast
+Refresh, a requisição seguinte à mesma página volta 200, e o stack não tem nenhum frame
+do nosso código. Os dois únicos `JSON.parse` do projeto estão dentro de `try/catch`. O
+build de produção não é afetado. **Não perder tempo investigando isso de novo.**
+
+#### Lições aprendidas
+
+- **Node LTS recente quebra módulo nativo.** Ao escolher dependência com binário
+  compilado, conferir se há prebuild para a versão do Node em uso — senão o
+  `npm install` exige toolchain de compilação que quase nunca está instalada.
+- **A tecla é `Enter`, não `Return`.** Perdi várias rodadas de teste achando que era
+  bug do app. Não era.
+- **Escrever ~80 arquivos sem executar saiu melhor do que o esperado** — o typecheck
+  passou de primeira. Mas os 8 bugs acima só apareceram rodando, e metade deles é de
+  interação (tema, foco, ordem de camadas) que nenhum teste unitário pegaria.
 
 ---
 

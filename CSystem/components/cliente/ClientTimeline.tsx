@@ -4,13 +4,20 @@ import type { EventView, TransitionView } from "@/lib/view-types";
 /**
  * Linha do tempo do card: comentários e movimentos de lista no mesmo fio.
  *
- * Os dois aparecem juntos de propósito — é assim que se lê a história do
- * cliente. O movimento mostra o QUE aconteceu no funil; o comentário, o PORQUÊ.
+ * Quando um comentário nasceu de um arrasto, os dois viram UMA entrada — o
+ * movimento mostra o QUE aconteceu no funil, o comentário mostra o PORQUÊ, e
+ * separá-los faria a leitura pular entre duas linhas que contam a mesma coisa.
+ *
+ * O pareamento é por `transitionId`, e não por proximidade de horário: dois
+ * eventos no mesmo minuto são perfeitamente possíveis num dia corrido.
  */
 
-type Entry =
-  | { kind: "event"; at: string; data: EventView }
-  | { kind: "transition"; at: string; data: TransitionView };
+type Entry = {
+  id: string;
+  at: string;
+  transition: TransitionView | null;
+  event: EventView | null;
+};
 
 export function ClientTimeline({
   events,
@@ -19,12 +26,20 @@ export function ClientTimeline({
   events: EventView[];
   transitions: TransitionView[];
 }) {
+  const eventByTransition = new Map(
+    events.filter((event) => event.transitionId).map((event) => [event.transitionId!, event]),
+  );
+
   const entries: Entry[] = [
-    ...events.map((data) => ({ kind: "event" as const, at: data.createdAt, data })),
-    // A transição que gerou um comentário já aparece como comentário: evita eco duplo.
-    ...transitions
-      .filter((transition) => !events.some((event) => event.body && event.keyword === transition.keyword && sameMinute(event.createdAt, transition.movedAt)))
-      .map((data) => ({ kind: "transition" as const, at: data.movedAt, data })),
+    ...transitions.map((transition) => ({
+      id: `t-${transition.id}`,
+      at: transition.movedAt,
+      transition,
+      event: eventByTransition.get(transition.id) ?? null,
+    })),
+    ...events
+      .filter((event) => !event.transitionId)
+      .map((event) => ({ id: `e-${event.id}`, at: event.createdAt, transition: null, event })),
   ].sort((a, b) => b.at.localeCompare(a.at));
 
   if (entries.length === 0) {
@@ -41,42 +56,42 @@ export function ClientTimeline({
   return (
     <ol className="card divide-y divide-[var(--border)] overflow-hidden">
       {entries.map((entry) => (
-        <li key={`${entry.kind}-${entry.data.id}`} className="flex gap-3 px-5 py-3.5">
+        <li key={entry.id} className="flex gap-3 px-5 py-3.5">
           <span className="mt-0.5 shrink-0 text-muted">
-            {entry.kind === "transition" ? (
-              <IconArrowUpRight size={15} />
-            ) : (
-              <IconClock size={15} />
-            )}
+            {entry.transition ? <IconArrowUpRight size={15} /> : <IconClock size={15} />}
           </span>
 
           <div className="min-w-0 flex-1">
-            {entry.kind === "transition" ? (
+            {entry.transition && (
               <p className="text-sm">
                 <span className="text-muted">
-                  {entry.data.fromListName ? `${entry.data.fromListName} → ` : "Entrou em "}
+                  {entry.transition.fromListName
+                    ? `${entry.transition.fromListName} → `
+                    : "Entrou em "}
                 </span>
-                <strong className="font-semibold">{entry.data.toListName}</strong>
-                {entry.data.source === "sdr" && (
+                <strong className="font-semibold">{entry.transition.toListName}</strong>
+                {entry.transition.source === "sdr" && (
                   <span className="ml-2 rounded-full bg-surface-sunken px-2 py-0.5 text-[10px] font-bold">
                     SDR
                   </span>
                 )}
               </p>
-            ) : (
-              <div>
+            )}
+
+            {entry.event && (
+              <div className={entry.transition ? "mt-1.5" : undefined}>
                 <p className="text-sm">
-                  {entry.data.keyword && (
+                  {entry.event.keyword && (
                     <span className="mr-2 rounded-full bg-surface-sunken px-2 py-0.5 text-[10px] font-bold tracking-wide">
-                      {entry.data.keyword}
+                      {entry.event.keyword}
                     </span>
                   )}
-                  <span className="whitespace-pre-wrap">{entry.data.body}</span>
+                  <span className="whitespace-pre-wrap">{entry.event.body}</span>
                 </p>
-                {entry.data.reason && (
-                  <p className="mt-1 text-xs text-muted">Motivo: {entry.data.reason}</p>
+                {entry.event.reason && (
+                  <p className="mt-1 text-xs text-muted">Motivo: {entry.event.reason}</p>
                 )}
-                {entry.data.author === "sdr" && (
+                {entry.event.author === "sdr" && (
                   <p className="mt-1 text-[11px] font-semibold text-muted">
                     registrado pelo Agente SDR
                   </p>
@@ -96,10 +111,6 @@ export function ClientTimeline({
       ))}
     </ol>
   );
-}
-
-function sameMinute(a: string, b: string): boolean {
-  return Math.abs(new Date(a).getTime() - new Date(b).getTime()) < 60_000;
 }
 
 function formatWhen(iso: string): string {

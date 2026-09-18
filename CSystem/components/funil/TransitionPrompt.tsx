@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { undoMoveAction } from "@/app/actions/clients";
 import { confirmTransitionEventAction } from "@/app/actions/events";
 import { Dialog } from "@/components/ui/Dialog";
+import { IconUndo } from "@/components/ui/icons";
 import {
   KEYWORD_INFO,
   MOTIVO_NAO_IDENTIFICADO,
@@ -68,6 +70,19 @@ export function TransitionPrompt({
     });
   }
 
+  /**
+   * Desfazer daqui, e não só pelo toast: enquanto este diálogo está aberto ele
+   * cobre o toast, que expira em segundos. E é justamente aqui, lendo "Fulano →
+   * LISTA", que se percebe ter arrastado o card errado.
+   */
+  function undo() {
+    startTransition(async () => {
+      const result = await undoMoveAction(state.transitionId);
+      if (result.ok) onClose();
+      else setError(result.error);
+    });
+  }
+
   return (
     <Dialog
       open
@@ -77,6 +92,15 @@ export function TransitionPrompt({
       width={480}
       footer={
         <>
+          <button
+            type="button"
+            onClick={undo}
+            disabled={pending}
+            className="mr-auto flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-negative transition hover:bg-negative/10 disabled:opacity-50"
+          >
+            <IconUndo size={15} />
+            Desfazer movimento
+          </button>
           <button type="button" onClick={onClose} className="chip chip-off">
             Só mover
           </button>

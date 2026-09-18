@@ -67,9 +67,10 @@ export function FunnelChart({ steps }: { steps: FunnelStep[] }) {
                 />
               </div>
 
-              {step.smallSample && step.rate != null && (
+              {step.smallSample && step.rate != null && step.base != null && (
                 <p className="mt-1">
-                  <SmallSampleNote sample={step.count} />
+                  {/* A amostra é a BASE da conversão, não a contagem desta etapa. */}
+                  <SmallSampleNote sample={step.base} />
                 </p>
               )}
             </li>

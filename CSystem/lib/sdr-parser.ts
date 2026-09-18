@@ -90,11 +90,15 @@ function deaccent(value: string): string {
 
 /** Um valor que sobrou como template ("[nome]", "...", "-") não é um valor. */
 function cleanValue(raw: string): string | null {
-  let value = raw.trim();
+  const value = raw.trim();
   if (!value) return null;
-  // Remove colchetes de template que envolvam a linha inteira
-  if (/^\[.*\]$/s.test(value)) value = value.slice(1, -1).trim();
-  if (!value) return null;
+
+  // Valor inteiro entre colchetes é o placeholder do template que o SDR não
+  // preencheu — o formato em SDR/AGENTS.md usa exatamente "[nome]", "[...]".
+  // Desembrulhar criaria um cliente chamado "nome"; tratamos como ausente.
+  // O bloco bruto fica guardado em sdr_inbox de qualquer forma, então nada se perde.
+  if (/^\[.*\]$/s.test(value)) return null;
+
   if (/^[.\-—–_…]+$/.test(value)) return null;
   const placeholder = deaccent(value).toLowerCase();
   if (
@@ -284,11 +288,17 @@ export function parseRepasse(input: string): ParsedRepasse {
   return parsed;
 }
 
-/** Monta a descrição do cliente a partir do repasse, no formato de leitura do Alex. */
+/**
+ * Monta a descrição do cliente a partir do repasse.
+ *
+ * Texto puro, sem markdown: o campo é exibido como texto na página do cliente,
+ * então `**negrito**` apareceria literalmente na tela. Os títulos em caixa alta
+ * fazem o papel de separador visual.
+ */
 export function repasseToDescription(parsed: ParsedRepasse): string {
   const blocks: string[] = [];
   const add = (title: string, value: string | null) => {
-    if (value) blocks.push(`**${title}**\n${value}`);
+    if (value) blocks.push(`${title.toUpperCase()}\n${value}`);
   };
 
   add("Situação", parsed.situacao);
@@ -303,7 +313,7 @@ export function repasseToDescription(parsed: ParsedRepasse): string {
     const confidence = parsed.confidence
       ? ` · confiança ${parsed.confidence}${parsed.confidenceNote ? ` (${parsed.confidenceNote})` : ""}`
       : "";
-    blocks.push(`**Classificação do SDR**\n${parsed.classification}${confidence}`);
+    blocks.push(`CLASSIFICAÇÃO DO SDR\n${parsed.classification}${confidence}`);
   }
 
   return blocks.join("\n\n");

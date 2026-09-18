@@ -69,15 +69,18 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
     <div className="flex items-center gap-2 rounded-full bg-ink p-2 text-ink-invert">
       <div className="flex shrink-0 items-center gap-3 pl-3 pr-1">
         <span className="text-sm font-semibold max-sm:hidden">Sua agenda</span>
-        <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
+        {/* Tudo aqui dentro se pinta com ink-invert, e não com branco fixo: a
+            barra usa bg-ink, que inverte entre os temas. Branco fixo sumiria
+            no modo escuro, onde a barra fica clara. */}
+        <span className="flex items-center gap-1.5 rounded-full bg-ink-invert/10 px-3 py-1.5 text-xs font-semibold">
           <IconCalendar size={14} />
           {today}
         </span>
       </div>
 
-      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-ink-invert/[0.07]">
         {items.length === 0 ? (
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/45">
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-ink-invert/55">
             Nenhum compromisso hoje
           </span>
         ) : (
@@ -111,11 +114,11 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
 
         {nowPercent != null && (
           <div
-            className="pointer-events-none absolute inset-y-0 w-px bg-white/70"
+            className="pointer-events-none absolute inset-y-0 w-px bg-ink-invert/70"
             style={{ left: `${nowPercent}%` }}
             aria-hidden="true"
           >
-            <span className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-white" />
+            <span className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-ink-invert" />
           </div>
         )}
       </div>
@@ -123,7 +126,7 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
       <Link
         href="/agenda"
         aria-label="Abrir agenda"
-        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink-invert/10 transition hover:bg-ink-invert/20"
       >
         <IconArrowUpRight size={18} />
       </Link>

@@ -224,6 +224,7 @@ export function getClientTimeline(clientId: string): {
   return {
     events: eventRows.map((row) => ({
       id: row.id,
+      transitionId: row.transitionId,
       keyword: row.keyword,
       body: row.body,
       reason: row.reason,

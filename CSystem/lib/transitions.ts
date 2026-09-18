@@ -58,8 +58,21 @@ export function moveClient(params: {
   source?: MoveSource;
   keyword?: Keyword | null;
   at?: Date;
+  /**
+   * Primeira entrada do cliente no funil (ex: lead novo vindo do SDR).
+   * Sem isto, o cliente recém-criado já nasce na lista de destino e a transição
+   * sairia como "LEAD QUALIFICADO → LEAD QUALIFICADO" em vez de "Entrou em".
+   */
+  entry?: boolean;
 }): MoveResult {
-  const { clientId, toListId, source = "drag", keyword = null, at = new Date() } = params;
+  const {
+    clientId,
+    toListId,
+    source = "drag",
+    keyword = null,
+    at = new Date(),
+    entry = false,
+  } = params;
 
   return db.transaction((tx) => {
     const client = tx.select().from(clients).where(eq(clients.id, clientId)).get();
@@ -68,8 +81,9 @@ export function moveClient(params: {
     const toList = tx.select().from(lists).where(eq(lists.id, toListId)).get();
     if (!toList) throw new Error(`Lista não encontrada: ${toListId}`);
 
-    const fromList =
-      client.listId === toListId
+    const fromList = entry
+      ? null
+      : client.listId === toListId
         ? toList
         : tx.select().from(lists).where(eq(lists.id, client.listId)).get() ?? null;
 

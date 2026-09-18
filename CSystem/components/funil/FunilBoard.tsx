@@ -180,6 +180,9 @@ export function FunilBoard({ lists, clients }: Props) {
   return (
     <>
       <DndContext
+        // Id fixo: sem ele o dnd-kit gera um contador próprio no servidor e outro
+        // no cliente, e o aria-describedby dos cards diverge na hidratação.
+        id="funil-board"
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}

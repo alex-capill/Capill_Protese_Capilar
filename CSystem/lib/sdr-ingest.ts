@@ -201,6 +201,7 @@ export function ingestRepasse(input: {
       toListId: target.id,
       source: "sdr",
       at: now,
+      entry: true,
     });
   } else {
     db.update(clients)
@@ -211,7 +212,7 @@ export function ingestRepasse(input: {
         // A descrição anterior é preservada: o repasse novo entra depois dela,
         // porque jogar fora contexto de um atendimento anterior seria perda de dado.
         description: existing.description
-          ? `${existing.description}\n\n---\n\n**Novo repasse do SDR**\n\n${description}`
+          ? `${existing.description}\n\n———\n\nNOVO REPASSE DO SDR\n\n${description}`
           : description,
         sdrClassification: parsed.classification,
         sdrConfidence: parsed.confidence,

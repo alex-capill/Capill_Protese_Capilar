@@ -1,0 +1,6 @@
+Esta pasta guarda o banco SQLite (csystem.db), que é ignorado pelo git.
+
+O arquivo .gitkeep existe para a pasta ser versionada mesmo vazia: o
+drizzle-kit conecta direto no banco, sem passar por db/index.ts, e falha
+com "Cannot open database because the directory does not exist" se a
+pasta não existir num clone novo.

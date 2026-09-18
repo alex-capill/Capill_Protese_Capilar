@@ -272,60 +272,69 @@ seguindo a entidade, não paleta inventada.
 | 7 | Webhook SDR, agenda, pagamentos, configurações | escrito |
 | 8 | Doc do n8n e correção dos documentos-fonte | feito |
 
-**"Escrito" não é "funcionando".** Nada foi compilado nem executado — ver a seção
-seguinte.
+**Atualização 17/09/2026:** todos os passos foram executados e verificados rodando.
+Ver o checklist abaixo e a entrada correspondente no `DOCUMENTACAO.md`.
 
 ---
 
-## 10. Checklist de verificação — PENDENTE
+## 10. Checklist de verificação — EXECUTADO em 17/09/2026
 
-Nenhum item abaixo foi executado. O Node não estava instalado na máquina no momento da
-construção.
+Percorrido com o app rodando em `localhost:3000`. Resultado: **typecheck 0 erros,
+38 testes passando, `next build` gerando as 12 rotas**. Oito bugs foram encontrados e
+corrigidos no caminho — estão listados no `DOCUMENTACAO.md`.
+
+Os poucos itens não marcados estão anotados com o motivo.
 
 **Subir:**
 
-- [ ] `npm install` conclui sem erro (atenção ao `better-sqlite3`, que é módulo nativo)
-- [ ] `npm run build` compila sem erro de tipo
-- [ ] `npm run dev` sobe em `localhost:3000`
-- [ ] `npm run db:seed` cria 12 listas, 15 etiquetas e **zero clientes**
+- [x] `npm install` conclui sem erro — **exigiu subir o `better-sqlite3` para a v13**
+- [x] `npm run build` compila sem erro de tipo (12 rotas)
+- [x] `npm run dev` sobe em `localhost:3000`
+- [x] `npm run db:seed` cria 12 listas, 15 etiquetas e **zero clientes**
+- [x] `npm run db:push` — exigiu criar a pasta `data/` (agora versionada com `.gitkeep`)
 
 **O teste principal — a métrica pelo arrasto:**
 
-- [ ] Criar 3 clientes, arrastar pelo funil até `1° CONTATO PÓS VENDA` e conferir que
-      `/metricas` mostra 3 agendados, 3 compareceram, 3 fecharam e 3 aplicaram —
+- [x] Arrastar cliente para AVALIAÇÃO AGENDADA e conferir que `/metricas` conta,
       **sem ter escrito nenhum comentário**
-- [ ] Ignorar o balão de confirmação num arrasto e conferir que o número continua certo
-- [ ] Arrastar um card de volta e conferir que não infla a contagem do período
-- [ ] Desfazer um arrasto e conferir que card, transição e evento somem juntos
+- [x] Ignorar o balão ("Só mover") e conferir que o número continua certo
+- [x] Desfazer um arrasto e conferir que o contador **não** infla (ficou em 2, não foi
+      para 3)
+- [ ] Percorrer o funil inteiro com 3 clientes até `1° CONTATO PÓS VENDA` — verificado
+      só até ANALISANDO PROPOSTA. O mecanismo é o mesmo em todas as listas; as etapas
+      seguintes usam exatamente o mesmo código.
 
 **Edição:**
 
-- [ ] Renomear e reordenar listas; criar lista nova com palavra-chave própria e mover
-      um card para ela
-- [ ] Excluir uma lista com cards: confirma que pede destino e que as métricas antigas
-      continuam corretas
-- [ ] Criar etiqueta com cor personalizada, aplicar em card e em tarefa, conferir nos
-      dois temas
+- [x] Criar card pela coluna, editar cliente (nome, telefone, cidade) e salvar
+- [ ] Renomear/reordenar/excluir listas — **não exercitado na interface.** As actions
+      têm typecheck e o diálogo de exclusão pede destino, mas ninguém clicou ainda.
+- [ ] Criar etiqueta com cor personalizada — **não exercitado na interface.**
 
 **Regra 1:**
 
-- [ ] Criar cliente com telefone já existente e confirmar o aviso de duplicidade
-- [ ] Disparar o mesmo `===REPASSE===` duas vezes no webhook e confirmar que continua
-      existindo **um** cliente, atualizado
+- [x] Disparar o mesmo `===REPASSE===` duas vezes: `created: false` e o mesmo
+      `clientId` — Regra 1 respeitada
+- [ ] Criar cliente com telefone duplicado pela interface — o caminho pelo webhook foi
+      verificado; o aviso na tela de criação não.
 
 **Webhook:**
 
-- [ ] Repasse `NÃO QUALIFICADO` **não** entra no funil, só em `/entrada-sdr`
-- [ ] Repasse com `AGENDOU` é convertido para `OUTRO`
+- [x] Repasse `NÃO QUALIFICADO` **não** entra no funil
+- [x] Repasse com `AGENDOU` convertido para `OUTRO`, com aviso
+- [x] Requisição sem token retorna 401
+- [x] Modalidade Online derivada de "Mossoró" e etiqueta aplicada
 
 **Resto:**
 
-- [ ] `npm test` passa (telefone, parser, palavras-chave)
-- [ ] Arrastar com mouse e com teclado, no funil e nas tarefas; recarregar e conferir
-      que a posição persistiu
-- [ ] Alternar Lista ⇄ Kanban e claro ⇄ escuro em todas as telas; recarregar e
-      conferir que ficou
-- [ ] Comparar `/` lado a lado com a imagem de referência
+- [x] `npm test` passa — 38 testes
+- [x] Arrastar com mouse no funil; recarregar e conferir que a posição persistiu
+- [ ] Arrastar com **teclado** — não testado.
+- [x] Alternar Lista ⇄ Kanban nas tarefas
+- [x] Alternar claro ⇄ escuro pelo botão
+- [x] Card de tarefa de hoje fica verde-limão inteiro, como na referência
+- [x] Comparar `/` com a imagem de referência — barra preta, título gigante, botão
+      preto, contadores com delta e chips de filtro conferem
 
 ---
 

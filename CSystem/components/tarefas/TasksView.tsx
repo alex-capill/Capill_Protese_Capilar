@@ -221,6 +221,8 @@ function TasksBoard({
 
   return (
     <DndContext
+      // Ver a nota em FunilBoard: id fixo evita divergência de hidratação.
+      id="tarefas-board"
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={(event: DragStartEvent) => setActiveId(String(event.active.id))}

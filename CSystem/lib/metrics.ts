@@ -128,6 +128,12 @@ export type FunnelStep = {
   count: number;
   /** Conversão a partir da etapa anterior. null = não há base para calcular. */
   rate: number | null;
+  /**
+   * Denominador da taxa — a etapa anterior que tinha gente.
+   * É ESTE o tamanho da amostra, não `count`: uma conversão de 0 sobre 1 é uma
+   * amostra de 1, não de 0.
+   */
+  base: number | null;
   smallSample: boolean;
 };
 
@@ -159,6 +165,7 @@ export function funnelSteps(period: Period): FunnelStep[] {
       label: STAGE_LABEL[stage],
       count,
       rate,
+      base: previousCount,
       smallSample: (previousCount ?? 0) > 0 && (previousCount as number) < SMALL_SAMPLE,
     });
 

@@ -47,6 +47,8 @@ export type ClientView = {
 
 export type EventView = {
   id: string;
+  /** Preenchido quando o comentário nasceu de um arrasto. Pareia os dois na linha do tempo. */
+  transitionId: string | null;
   keyword: string | null;
   body: string;
   reason: string | null;
