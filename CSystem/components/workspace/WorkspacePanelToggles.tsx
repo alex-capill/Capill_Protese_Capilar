@@ -10,16 +10,12 @@ const PANEL_ICONS: Record<WorkspacePanelId, typeof IconChart> = {
 };
 
 /**
- * Botões redondos, só ícone, ao lado esquerdo da bandeja de "Onde os cards
- * estão"/"Fila de follow-up" — mostram e ocultam cada um. Ficam soltos
- * (`fixed`) em vez de dentro do rail, porque o rail é de navegação e aparece
- * em toda tela; isto é específico do Workspace.
- *
- * Posicionados ao lado da bandeja (não embaixo dela) de propósito: a bandeja
- * agora fica com `bottom-0` (zero respiro, igual à referência), então não há
- * mais espaço abaixo dela para os ícones — ficar ao lado evita que um cubra o
- * outro em qualquer altura que a bandeja tenha, sem depender de medir a altura
- * dela.
+ * Botões redondos, só ícone — mostram e ocultam "Onde os cards estão" e
+ * "Fila de follow-up". Não tem posição própria: quem posiciona é o pai
+ * (`app/page.tsx`), que os empilha por cima da bandeja de painéis
+ * (`WorkspacePanels`) na mesma coluna fixa no canto inferior direito da tela.
+ * Assim os dois sempre ficam na mesma extremidade, e os ícones sobem
+ * automaticamente conforme a bandeja cresce, sem precisar medir a altura dela.
  *
  * ~33% menor que o botão de navegação do rail (32px contra 48px) — o Alex
  * pediu "pelo menos 30% menor". Mesmo padrão visual dos itens do rail: sem
@@ -29,7 +25,7 @@ export function WorkspacePanelToggles() {
   const { open, toggle } = useWorkspacePanels();
 
   return (
-    <div className="fixed bottom-3 right-[340px] z-30 hidden flex-col gap-2 xl:flex">
+    <div className="hidden flex-col gap-2 xl:flex">
       {WORKSPACE_PANELS.map(({ id, label }) => {
         const Icon = PANEL_ICONS[id];
         const isOpen = open[id];

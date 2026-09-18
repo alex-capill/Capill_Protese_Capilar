@@ -10,14 +10,18 @@ export const WORKSPACE_PANELS: { id: WorkspacePanelId; label: string }[] = [
 ];
 
 const STORAGE_KEY = "csystem-workspace-panels";
+const ORDER_STORAGE_KEY = "csystem-workspace-panels-order";
 const DEFAULTS: Record<WorkspacePanelId, boolean> = {
   "onde-os-cards": true,
   "fila-follow-up": true,
 };
+const DEFAULT_ORDER: WorkspacePanelId[] = ["onde-os-cards", "fila-follow-up"];
 
 const WorkspacePanelsCtx = createContext<{
   open: Record<WorkspacePanelId, boolean>;
   toggle: (id: WorkspacePanelId) => void;
+  order: WorkspacePanelId[];
+  swapOrder: () => void;
 } | null>(null);
 
 /**
@@ -32,6 +36,7 @@ const WorkspacePanelsCtx = createContext<{
  */
 export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState<Record<WorkspacePanelId, boolean>>(DEFAULTS);
+  const [order, setOrder] = useState<WorkspacePanelId[]>(DEFAULT_ORDER);
 
   useEffect(() => {
     try {
@@ -39,6 +44,15 @@ export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
       if (raw) setOpen((current) => ({ ...current, ...JSON.parse(raw) }));
     } catch {
       // localStorage pode falhar (aba anônima, storage bloqueado) — fica no padrão (os dois abertos).
+    }
+    try {
+      const raw = localStorage.getItem(ORDER_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === DEFAULT_ORDER.length) setOrder(parsed);
+      }
+    } catch {
+      // ver comentário acima.
     }
   }, []);
 
@@ -54,7 +68,20 @@ export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  return <WorkspacePanelsCtx.Provider value={{ open, toggle }}>{children}</WorkspacePanelsCtx.Provider>;
+  /** Só existem 2 painéis hoje, então "reorganizar" é sempre trocar os dois de lugar. */
+  function swapOrder() {
+    setOrder((current) => {
+      const next = [...current].reverse();
+      try {
+        localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ver comentário acima.
+      }
+      return next;
+    });
+  }
+
+  return <WorkspacePanelsCtx.Provider value={{ open, toggle, order, swapOrder }}>{children}</WorkspacePanelsCtx.Provider>;
 }
 
 export function useWorkspacePanels() {

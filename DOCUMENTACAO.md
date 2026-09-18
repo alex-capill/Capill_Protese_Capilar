@@ -793,3 +793,50 @@ card para essa lista significa uma data de retorno específica.
 comportamento existente, não uma correção. Se o Alex quiser que a lista
 "Follow-up" e o campo de data fiquem ligados de alguma forma, isso é uma
 decisão de produto nova que precisa ser conversada antes de qualquer mudança.
+
+### 2026-09-18 — Ícones de volta ao canto direito (acima da bandeja) e reorganizar por arrasto
+
+Alex pediu os dois ícones de mostrar/ocultar de volta à extremidade direita da
+tela (estavam ao lado esquerdo da bandeja desde a rodada do `bottom-0`) e a
+possibilidade de reorganizar os painéis arrastando. Ícones e bandeja passaram a
+dividir um único contêiner `fixed` (`app/page.tsx`) em vez de serem dois
+elementos posicionados independentemente — os ícones ficam automaticamente
+colados acima da bandeja, subindo junto conforme ela cresce, sem medir nada.
+Cada painel ganhou uma alcinha de grip: como só existem 2, qualquer clique ou
+arrasto nela troca os dois de posição (`swapOrder` no
+`WorkspacePanelsContext`), persistido em `localStorage`. Alex reportou de novo
+a "Fila de follow-up" vazia — reconfirmado que não é bug (ver entrada
+anterior); "Onde os cards estão" já reflete a lista "Follow-up" do Kanban
+corretamente. `npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da
+mudança.
+
+### 2026-09-18 — Correção de ambiente: cache do webpack corrompendo em sessões longas
+
+Durante os testes desta rodada, `/clientes/[id]` parou de compilar duas vezes
+com `TypeError: __webpack_modules__[moduleId] is not a function`, sempre
+precedido por `Caching failed for pack: Error: EPERM: operation not
+permitted, rename ...\.next\cache\webpack\...pack.gz_`. A pasta do projeto
+fica dentro de `Desktop`, provavelmente sincronizada pelo OneDrive — a causa
+mais provável do arquivo de cache ficar bloqueado no meio da escrita. Mitigado
+em `next.config.ts` desligando o cache em disco do webpack só em modo
+desenvolvimento (`config.cache = false` quando `dev`); build de produção não é
+afetado. Se o sintoma voltar a aparecer, a recuperação continua sendo `rm -rf
+.next` + reiniciar o `next dev`.
+
+### 2026-09-18 — Três follow-ups de teste criados pelo fluxo real, para conferência visual
+
+A pedido do Alex, registrados três follow-ups de teste (João Nicodemos 20/09,
+Carlos Mendes 15/09 — passado, para testar o destaque de atraso —, Rafael
+Duarte 25/09) usando a aba "Agendar follow-up" de cada cliente, não um
+`UPDATE` direto no banco, para o dado nascer com o evento de auditoria
+correto. Confirmado que os três aparecem em "Fila de follow-up" ordenados por
+data, com o círculo vermelho de atraso no card do Carlos Mendes. **Dado de
+teste, deixado visível de propósito** para o Alex conferir; a decisão de
+quando remover é dele.
+
+Achado à parte, não corrigido: os dias exibidos no card de "Fila de
+follow-up" aparecem um dia a menos do que a data registrada (provável
+deslocamento de fuso horário na leitura `new Date(...).getDate()` em
+`WorkspacePanels.tsx`). Não corrigido nesta rodada porque não foi pedido —
+vale confirmar com o Alex antes, já que a mesma lógica pode existir em outras
+telas de data.

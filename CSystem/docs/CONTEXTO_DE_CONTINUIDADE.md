@@ -1018,8 +1018,111 @@ posição no Kanban. Nenhum código alterado; se o Alex quiser ligar os dois,
 
 `npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da correção.
 
-**Pendência para a próxima rodada:** o botão "+" (agora ao lado esquerdo da
-bandeja, não mais no rail), que abre um pop-up para
+### Ícones voltaram pro canto direito (acima da bandeja) e reorganizar por arrasto — 18/09/2026
+
+Alex pediu para os dois ícones de mostrar/ocultar voltarem "para a extremidade
+do canto direito da página" (na rodada anterior eu tinha colocado ao lado
+esquerdo da bandeja, para não colidir com o `bottom-0`) e para poder
+reorganizar os painéis arrastando.
+
+**Ícones de volta ao canto direito:** em vez de posicionar os ícones e a
+bandeja como dois elementos `fixed` independentes (que é o que forçou colocá-
+los ao lado na rodada passada), os dois agora dividem UM único contêiner
+`fixed bottom-0 right-8 flex-col items-end` em `app/page.tsx` — `WorkspacePanelToggles`
+primeiro, `WorkspacePanels` depois. Como é uma coluna flexível normal (não mais
+posicionamento independente), os ícones automaticamente ficam colados acima da
+bandeja e sobem junto conforme ela cresce — sem precisar medir nada. Os dois
+componentes deixaram de ter suas próprias classes `fixed`; quem posiciona agora
+é só o pai. Confirmado via `getBoundingClientRect`: a borda direita dos ícones
+bate exatamente com a borda direita da bandeja (mesma extremidade), com 8px de
+vão entre o fundo dos ícones e o topo da bandeja.
+
+**Reorganizar por arrasto:** como só existem 2 painéis, "arrastar pra cima ou
+pra baixo" só pode ter um resultado possível — trocar os dois de lugar. Cada
+cartão ganhou uma alcinha de grip (`IconGrip`) ao lado do título; qualquer
+clique ou arrasto nela chama `swapOrder()` do contexto, que inverte a ordem e
+grava em `localStorage` (`csystem-workspace-panels-order`). A ordem de
+renderização em `WorkspacePanels.tsx` passou a vir de `order.map(...)` em vez
+de uma sequência fixa. **Isto é uma solução deliberadamente simples para 2
+itens** — quando o botão "+" (ver pendência abaixo) adicionar um terceiro tipo
+de painel, isto precisa virar uma lista arrastável de verdade com
+`@dnd-kit/sortable` (já usado no Funil e em Tarefas), porque "trocar os dois"
+deixa de fazer sentido com 3+ itens.
+
+Verificado: arrastar/clicar na alça troca a ordem de renderização (confirmado
+via `dispatchEvent` de `PointerEvent`); a ordem persiste depois de recarregar a
+página; o handle de recolher/expandir continua funcionando sem interferência.
+Testado nos dois temas. `npx tsc --noEmit` (0 erros) e `npm test` (41 testes)
+depois da mudança.
+
+### Esclarecimento repetido: "Fila de follow-up" continua vazia de propósito
+
+Alex insistiu que "ainda não aparece a informação da lista de follow-up no
+popup". Confirmando de novo com uma captura desta sessão: o card que ele moveu
+para a lista "Follow-up" do Kanban **aparece corretamente em "Onde os cards
+estão"** (a barra "FOLLOW-UP" com contagem 1) — é o outro painel, "Fila de
+follow-up" (o cartão preto), que continua vazio, porque ele lê exclusivamente
+`clients.nextFollowupAt`, e mover um card de lista nunca grava essa data. Isso
+não mudou desde a explicação anterior porque nenhum código foi alterado aqui —
+seria uma decisão de produto nova (ligar posição no Kanban a uma data de
+retorno) que precisa ser confirmada explicitamente com o Alex antes de
+implementar, dado o princípio já registrado de não inferir data/motivo.
+
+### Dado de teste: 3 follow-ups reais, criados pelo fluxo de verdade — 18/09/2026
+
+Alex confirmou o esclarecimento sobre "Fila de follow-up" e pediu para ver com
+os próprios olhos: "crie um teste de três retornos". Em vez de escrever direto
+no banco, usei a aba **Agendar follow-up** de três clientes (João Nicodemos,
+Carlos Mendes, Rafael Duarte), preenchendo Motivo/O que precisa
+acontecer/Data que o cliente falou/Data para a fila — o mesmo fluxo que o Alex
+usaria — para o dado nascer com o evento de auditoria correto em vez de um
+`UPDATE` cru.
+
+- João Nicodemos: data para a fila 20/09 (futuro).
+- Carlos Mendes: data para a fila 15/09 (passado — para conferir o destaque
+  vermelho de atraso).
+- Rafael Duarte: data para a fila 25/09 (futuro, mais distante).
+
+Confirmado visualmente: os três aparecem em "Fila de follow-up", ordenados por
+data; o card do Carlos Mendes (data passada) mostra o círculo vermelho de
+atraso; os outros dois, o círculo neutro. **Isto é dado de teste, visível
+propositalmente para o Alex conferir** — ele sabe que está lá; não removi
+sozinho, porque a decisão de quando limpar é dele.
+
+**Achado à parte, não corrigido ainda:** os dias exibidos no card aparecem um
+dia a menos do que a data registrada (15/09 grava, mas mostra "14"; 20/09
+grava, mostra "19"; 25/09 grava, mostra "24") — um deslocamento de fuso
+horário na conversão `new Date(nextFollowupAt).getDate()` em
+`WorkspacePanels.tsx`, provavelmente porque a data do `<input type="date">`
+chega como meia-noite UTC e `getDate()` lê no fuso local, que fica atrás de
+UTC. Não mexi nisso agora porque não foi pedido nesta rodada — vale confirmar
+com o Alex antes de corrigir, já que a mesma lógica de exibição de data pode
+existir em outros lugares (Agenda, por exemplo) e merece uma correção
+consistente, não um remendo isolado aqui.
+
+### Problema de ambiente descoberto e mitigado: cache do webpack corrompendo em sessões longas
+
+Durante esta rodada, `/clientes/[id]` parou de compilar duas vezes com
+`TypeError: __webpack_modules__[moduleId] is not a function`, sempre depois de
+`<w> Caching failed for pack: Error: EPERM: operation not permitted, rename
+...\.next\cache\webpack\...\0.pack.gz_ -> ...0.pack.gz`. A pasta do projeto
+fica dentro de `Desktop`, que costuma ser sincronizada pelo OneDrive no
+Windows — é a causa mais provável de o arquivo de cache ficar bloqueado no meio
+da escrita, corrompendo o build a ponto de a única recuperação ser apagar
+`.next` inteiro e reiniciar o `next dev`.
+
+Mitigação aplicada em `next.config.ts`: `config.cache = false` no dev
+(dentro do hook `webpack`), desligando o cache em disco do webpack só em modo
+desenvolvimento — build de produção (`npm run build`) não é afetado. Rebuilds
+ficam um pouco mais lentos a cada reinício do dev server, mas o cache parar de
+existir em disco elimina a corrupção. **Se isto voltar a acontecer**, o
+sintoma é sempre o mesmo (página para de compilar,
+`__webpack_modules__[moduleId] is not a function`) e a recuperação continua
+sendo `rm -rf .next` + reiniciar — só que agora não deveria mais ser
+necessário.
+
+**Pendência para a próxima rodada:** o botão "+" (no mesmo canto inferior
+direito, junto dos ícones de mostrar/ocultar), que abre um pop-up para
 criar uma janela personalizada. Alex já indicou três tipos de conteúdo que quer
 poder criar (agenda estilo Google, resumo de dados de um cliente, gráfico de uma
 métrica específica) — cada um é essencialmente uma feature própria, então a

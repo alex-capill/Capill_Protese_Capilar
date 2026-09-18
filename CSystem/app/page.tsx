@@ -48,8 +48,10 @@ export default function WorkspacePage() {
 
   return (
     <div className="w-full">
-      <WorkspacePanelToggles />
-      <WorkspacePanels counts={counts} max={max} followups={followups} />
+      <div className="fixed bottom-0 right-8 z-30 hidden flex-col items-end gap-2 xl:flex">
+        <WorkspacePanelToggles />
+        <WorkspacePanels counts={counts} max={max} followups={followups} />
+      </div>
 
       <div className="mx-auto w-full max-w-[1320px]">
         <div className="mb-8">
