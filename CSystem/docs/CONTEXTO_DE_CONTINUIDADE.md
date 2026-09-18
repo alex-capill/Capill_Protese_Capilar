@@ -1,8 +1,9 @@
 # CSystem — contexto de continuidade
 
-> Atualizado em 18/09/2026. Este é o ponto de partida para outro chat, Claude ou
-> agente técnico retomar o projeto. Ele descreve fatos observados nesta sessão; não
-> substitui os documentos-fonte da Capill.
+> Atualizado em 18/09/2026 (duas rodadas no mesmo dia — ver "Rodada de refino
+> visual" abaixo para a mais recente). Este é o ponto de partida para outro chat,
+> Claude ou agente técnico retomar o projeto. Ele descreve fatos observados nesta
+> sessão; não substitui os documentos-fonte da Capill.
 
 ## Leitura obrigatória e ordem de confiança
 
@@ -30,14 +31,17 @@
   ```text
   app/agenda/page.tsx                   components/funil/ClientMiniCard.tsx
   app/configuracoes/page.tsx            components/funil/FunilView.tsx
-  app/globals.css                       components/shell/AppShell.tsx
-  app/layout.tsx                        components/shell/PageHeader.tsx
-  app/metricas/page.tsx                 components/shell/Rail.tsx
-  app/page.tsx                          components/shell/ScheduleBar.tsx
-  components/cliente/ClientDetails.tsx  components/shell/ThemeToggle.tsx
-  components/cliente/ClientTimeline.tsx components/tarefas/TaskCard.tsx
-  components/config/LabelsManager.tsx   components/tarefas/TaskDialog.tsx
-  components/config/ListsManager.tsx    components/tarefas/TasksView.tsx
+  app/entrada-sdr/page.tsx              components/metricas/FunnelChart.tsx
+  app/globals.css                       components/metricas/MetricPanels.tsx
+  app/layout.tsx                        components/sdr/RepassePaste.tsx
+  app/metricas/page.tsx                 components/shell/AppShell.tsx
+  app/page.tsx                          components/shell/PageHeader.tsx
+  components/cliente/ClientDetails.tsx  components/shell/Rail.tsx
+  components/cliente/ClientTimeline.tsx components/shell/ScheduleBar.tsx
+  components/cliente/PaymentsPanel.tsx  components/shell/ThemeToggle.tsx
+  components/config/LabelsManager.tsx   components/tarefas/TaskCard.tsx
+  components/config/ListsManager.tsx    components/tarefas/TaskDialog.tsx
+  components/ui/FadeScroller.tsx (novo) components/tarefas/TasksView.tsx
   components/ui/icons.tsx               components/ui/primitives.tsx
   components/workspace/LeadsRow.tsx     components/workspace/TodayTasksRow.tsx
   lib/colors.ts
@@ -107,6 +111,105 @@ correspondência pixel a pixel. As decisões atuais são:
   Alex ficam em um bloco retrátil; movimentos de lista, entrada do SDR e registros
   não humanos ficam em **Registros do sistema**, também retrátil. Isso separa texto
   humano de auditoria sem apagar entradas existentes.
+
+### Rodada de refino visual — 18/09/2026 (auditoria contra a referência Dribbble)
+
+Pedido do Alex: aproximar ainda mais o Workspace, Funil, Tarefas, Agenda, Métricas
+e Configurações da referência (Dribbble "HubSpot CRM — Sales Management
+Dashboard", Jack R./RonDesignLab), sem alterar regra de negócio, métrica, banco,
+webhook, palavra-chave, lista, transição ou dado. Nenhuma dessas restrições foi
+tocada. Mudanças aplicadas, todas em CSS/marcação:
+
+- **Fade nas rolagens horizontais.** O mascaramento de borda que já existia só no
+  filtro de etiquetas do Funil foi extraído para `components/ui/FadeScroller.tsx`
+  (mesma lógica de `ResizeObserver`, mesmo cálculo de máscara) e passou a ser usado
+  também nas fileiras "Novos Leads" e "Minhas Tarefas" do Workspace e no filtro de
+  Tarefas — os cards agora recebem o mesmo corte suave na borda que a referência
+  mostra em suas fileiras roláveis, em vez de cortar bruscamente.
+- **Hierarquia tipográfica.** Os títulos de cartão/seção que usavam `text-lg`
+  (Cadastro, Etiquetas, Situação, Pagamentos, Eventos, Registros do sistema,
+  Comparecimento, Tempo médio, Motivos, Origem, Distribuição, Funil do período,
+  Listas do funil, Próximos 30 dias, Fila de follow-up etc.) subiram para
+  `text-xl`, e os títulos de fileira do Workspace ("Novos Leads", "Minhas
+  Tarefas", via `SectionHeader`) subiram de `text-xl` para `text-2xl`. Os títulos
+  de diálogo (`components/ui/Dialog.tsx`) ficaram de propósito em `text-lg`, para
+  não competir com o conteúdo da página por trás. Objetivo: uma escala mais clara
+  entre título da página (42–56px) → título de fileira (24px) → título de cartão
+  (20px) → corpo (14px).
+- **Rail.** Botões do rail (logo e ícones de navegação) de 44px para 48px
+  (`size-11` → `size-12`), com um pouco mais de espaço entre eles; a coluna do
+  rail cresceu de 76px para 84px para caber a folga sem apertar.
+- **Barra de agenda.** Preenchimento interno de `p-1.5` para `p-2` e altura da
+  trilha de compromissos de `h-10` para `h-11`, para ficar mais próxima da barra
+  preta "encorpada" da referência; os blocos de compromisso foram recentralizados
+  nessa trilha mais alta.
+
+**O que este refino NÃO fez:** não mudou nenhuma regra de negócio, cálculo de
+métrica, schema de banco, payload de webhook, palavra-chave, nome ou
+comportamento de lista, nem os deltas de exemplo de Fechadas/Perdidas (que
+continuam exemplo visual documentado, não dado real). Também não tocou
+`data/csystem.db`, não rodou `db:reset` nem mexeu no n8n.
+
+**Como foi validado — e o limite disso.** Esta sessão rodou num ambiente de nuvem
+sem acesso a um terminal na máquina do Alex: os arquivos foram lidos e escritos
+pela ponte de arquivos, mas `npm run dev`, `npm run build` e a inspeção visual no
+navegador local **não puderam ser exercitados nesta rodada**. A validação foi:
+
+- Cópia integral do código-fonte relevante para um ambiente Node separado, nesta
+  sessão de nuvem.
+- `npm install --ignore-scripts` (o binário nativo do `better-sqlite3` não pôde
+  ser compilado ali por falta de acesso à rede de download de headers do Node;
+  isso não afeta `tsc` nem os testes, que não tocam o banco).
+- `npx tsc --noEmit`: **0 erros**.
+- `npx vitest run`: **3 arquivos, 38 testes, todos passando** — os mesmos three
+  arquivos e contagem de antes desta rodada (`lib/keywords.test.ts`,
+  `lib/phone.test.ts`, `lib/sdr-parser.test.ts`); nenhum teste novo foi necessário
+  porque a mudança é só visual.
+- Revisão manual de cada arquivo alterado, comparando com screenshots da
+  referência do Dribbble (capturados nesta sessão).
+
+Isto confirma que o código compila e os testes de domínio continuam passando —
+**não confirma a aparência real na tela**, porque a alteração não foi vista
+rodando. Antes de aprovar ou commitar, o ideal é o Alex rodar
+`npm run dev` localmente (com o dev server parado antes de qualquer `build`,
+como já registrado abaixo) e olhar as seis telas.
+
+### Rótulo de temperatura no card — decisão do Alex, 18/09/2026
+
+O card do funil passa a rotular os cinco pontos com **Frio / Morno / Quente** em
+vez de "Confiança alta/moderada/baixa", em caixa normal (sem maiúsculas). O
+mapeamento é direto e não introduz cálculo:
+
+| `sdr_confidence` (do bloco `===REPASSE===`) | Pontos | Rótulo exibido |
+|---|---|---|
+| `BAIXA` | 1 | Frio |
+| `MODERADA` | 3 | Morno |
+| `ALTA` | 5 | Quente |
+
+**O dado não mudou — só o rótulo.** O valor continua sendo a confiança que o SDR
+declarou no repasse. O sistema **não** calcula temperatura, não infere intenção,
+não pontua probabilidade de venda e não cria campo novo: nenhuma coluna foi
+adicionada e nenhuma métrica lê esse rótulo.
+
+Isto ressalva, sem revogar, duas passagens existentes:
+
+- `AGENTS.md`: "Não inferir motivo de perda, interesse, preço ou decisão
+  comercial. A confiança exibida no card é a que o SDR declarou; não é um score
+  calculado." — continua valendo na íntegra. A frase descreve a origem do dado,
+  e a origem segue sendo o SDR.
+- `docs/PLANEJAMENTO.md` §4, ajuste 4 do Teste do Engenheiro: "Sem campo novo sem
+  uso comprovado — nada de score ou temperatura de lead." — continua valendo
+  quanto a **campo** e a **cálculo**. O que mudou é vocabulário de interface, não
+  modelo de dados.
+
+**Risco assumido, declarado:** "quente" soa como leitura do sistema sobre o
+cliente, enquanto "confiança alta" atribuía a leitura ao SDR. Se alguém passar a
+tratar o rótulo como previsão de fechamento, a ressalva acima é a resposta — e o
+`title`/`aria-label` do grupo de pontos deve continuar dizendo de onde o valor
+vem ("Nível de confiança declarado pelo SDR: ALTA").
+
+Alteração restrita a `components/funil/ClientMiniCard.tsx` (texto e estilo do
+rótulo). Sem efeito em `lib/keywords.ts`, `lib/metrics.ts`, schema ou webhook.
 
 ## Métricas do workspace: dado real versus demonstração visual
 
@@ -214,9 +317,13 @@ integração de chamada selecionada no produto.
 ## Preparação para o próximo commit
 
 Proposta de escopo, ainda **não executada**: refinamento visual do workspace e das
-demais telas, interações de card, tema, etiquetas, timeline e a documentação deste
-handoff. Sugestão de mensagem: `feat(csystem): refina workspace, cards e histórico de eventos`.
+demais telas, interações de card, tema, etiquetas, timeline, a rodada de fade/
+hierarquia/rail/barra de agenda descrita acima, e a documentação deste handoff.
+Sugestão de mensagem: `feat(csystem): refina workspace, cards, histórico de eventos e auditoria visual`.
 
 Antes de commitar, mostrar ao Alex o `git diff --stat` e o diff dos arquivos alterados,
-confirmar que `data/csystem.db` não entrou no staging, e informar os comandos de
-validação acima. O commit continua dependendo da autorização explícita dele.
+confirmar que `data/csystem.db` não entrou no staging, rodar `npm run dev` localmente
+para conferir visualmente as seis telas (a rodada de fade/hierarquia/rail/barra de
+agenda só foi validada por `tsc`/`vitest` e revisão de código, não visualmente — ver
+seção acima), e informar os comandos de validação. O commit continua dependendo da
+autorização explícita dele.

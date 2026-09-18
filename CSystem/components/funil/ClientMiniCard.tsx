@@ -21,6 +21,9 @@ import type { ClientView } from "@/lib/view-types";
 
 const CONFIDENCE_DOTS: Record<string, number> = { ALTA: 5, MODERADA: 3, BAIXA: 1 };
 const CONFIDENCE_COLORS = ["#F04949", "#F47D49", "#F0A849", "#D8F55A", "#B9FF66"];
+// Rótulo de interface (decisão do Alex, 18/09/2026): mapeamento 1:1 com
+// sdr_confidence, sem cálculo novo. Detalhe em docs/CONTEXTO_DE_CONTINUIDADE.md.
+const CONFIDENCE_LABEL: Record<string, string> = { ALTA: "Quente", MODERADA: "Morno", BAIXA: "Frio" };
 
 export function ClientMiniCard({
   client,
@@ -84,7 +87,7 @@ export function ClientMiniCard({
           {dots > 0 && (
             <div className="shrink-0 text-right">
               <p className="mb-1 text-[10px] font-semibold text-muted">
-                Confiança {client.sdrConfidence?.toLowerCase()}
+                {client.sdrConfidence ? (CONFIDENCE_LABEL[client.sdrConfidence] ?? client.sdrConfidence) : ""}
               </p>
               <div
                 className="flex items-center justify-end gap-0.5"

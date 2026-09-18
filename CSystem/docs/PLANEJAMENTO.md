@@ -369,6 +369,47 @@ arquivos não commitados, está em
       `next dev` pode inutilizar temporariamente `.next`; a recuperação comprovada é
       iniciar o dev server limpo novamente.
 
+### Adendo de continuidade — 18/09/2026 (auditoria visual contra a referência)
+
+Segunda rodada do mesmo dia, a pedido do Alex: auditoria visual comparando
+Workspace, Funil, Tarefas, Agenda, Métricas e Configurações à referência do
+Dribbble, mantendo Urbanist, a paleta e as regras de negócio intactas. Detalhe
+completo em [`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] Extrair o fade de borda do filtro de etiquetas do Funil para um componente
+      reutilizável (`components/ui/FadeScroller.tsx`) e aplicá-lo também às
+      fileiras roláveis do Workspace (Novos Leads, Minhas Tarefas) e ao filtro de
+      Tarefas.
+- [x] Subir a hierarquia tipográfica dos títulos de cartão/seção (`text-lg` →
+      `text-xl`) e das fileiras do Workspace (`text-xl` → `text-2xl`), mantendo os
+      títulos de diálogo menores de propósito.
+- [x] Aumentar levemente os botões do rail (44px → 48px) e a barra de agenda
+      (altura da trilha e preenchimento), para mais presença visual.
+- [x] `npx tsc --noEmit` e `npm test` (38 testes) confirmados numa cópia do
+      código rodada num ambiente separado, sem acesso a terminal na máquina do
+      Alex nesta rodada.
+- [ ] **Não verificado nesta rodada:** aparência real no navegador (`npm run
+      dev`), porque a sessão não teve acesso a um terminal local desta vez. Alex
+      precisa abrir o app localmente para confirmar visualmente antes do commit.
+
+### Adendo de continuidade — 18/09/2026 (rótulo de temperatura no card)
+
+Decisão do Alex nesta rodada de refino visual. Detalhe e as ressalvas em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] Trocar o rótulo dos pontos de confiança no card do funil de "Confiança
+      alta/moderada/baixa" para **Frio / Morno / Quente**, em caixa normal.
+- [x] Registrar que o ajuste 4 do Teste do Engenheiro ("nada de score ou
+      temperatura de lead") continua valendo quanto a campo e a cálculo: o
+      mapeamento é 1:1 com `sdr_confidence`, não há coluna nova, não há
+      inferência e nenhuma métrica lê o rótulo.
+- [x] Conferir no navegador que o `title` do grupo de pontos continua atribuindo
+      o valor ao SDR, para o rótulo novo não ser lido como previsão do sistema —
+      confirmado em `localhost:3010/funil` (porta alternativa; 3000 estava
+      ocupada por um processo de outra ferramenta nesta máquina, não tocado):
+      card "Marcos Vinicius" mostra "Quente" com
+      `title="Nível de confiança do SDR: ALTA"`.
+
 ---
 
 ## 11. Pendências abertas
