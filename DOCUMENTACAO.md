@@ -891,3 +891,15 @@ mascarar o bug de novo): fileira de leads, ícones flutuantes e controles da
 agenda terminam todos na mesma borda (1552.8px); Funil e Tarefas continuam
 com 1320px de largura, inalterados. Testado nos dois temas. `npx tsc
 --noEmit` (0 erros) e `npm test` (41 testes) depois da correção.
+
+### 2026-09-18 — Padronização: todas as páginas widescreen, igual ao Workspace
+
+Em vez de manter Funil, Tarefas, Agenda, Métricas, Configurações, Entrada SDR
+e o card do cliente com a largura de leitura de 1320px (preservada na
+correção acima), Alex pediu para padronizar todas no mesmo padrão do
+Workspace — largura cheia, mesma margem. Removido o `mx-auto
+max-w-[1320px]` de cada uma; como o `AppShell` também não tem mais limite,
+não existe mais nenhum `max-w` no app inteiro. Verificado num viewport de
+1600px que todas as páginas usam a mesma margem e largura disponível, sem
+quebrar nenhum layout (Kanban, colunas de tarefas, grades, tabelas). `npx tsc
+--noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.

@@ -4,12 +4,13 @@ import { WorkspacePanelsProvider } from "@/components/workspace/WorkspacePanelsC
 /**
  * Moldura de todas as telas: rail à esquerda, conteúdo à direita.
  *
- * Sem limite de largura próprio: cada página decide (a maioria envolve o
- * próprio conteúdo num `mx-auto max-w-[1320px]`; o Workspace não, porque
- * pediu tela cheia). Um limite aqui no `AppShell` capava a largura de TODAS
- * as páginas, inclusive o Workspace, escondendo o efeito "widescreen" — só
- * não aparecia porque os testes desta sessão usaram uma janela do tamanho
- * exato do limite (1320px), onde o limite nunca chega a apertar.
+ * Sem limite de largura nenhum, de propósito: toda página ocupa a largura
+ * inteira que sobra do rail, com a mesma margem — o Workspace pediu isso
+ * primeiro ("widescreen"), e depois o Alex pediu para padronizar as outras
+ * páginas no mesmo padrão em vez de cada uma ter seu próprio `max-w`. Um
+ * limite aqui (ou em cada página) capava a largura escondendo esse efeito —
+ * só não aparecia numa rodada anterior porque os testes usaram uma janela do
+ * tamanho exato do limite antigo (1320px), onde ele nunca chegava a apertar.
  *
  * O padding horizontal é assimétrico a partir de `md` (quando o rail aparece)
  * de propósito: a alça do rail já tem 12px de respiro próprio até a borda

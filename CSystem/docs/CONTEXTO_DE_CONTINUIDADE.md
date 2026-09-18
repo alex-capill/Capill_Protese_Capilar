@@ -1237,6 +1237,34 @@ continuam com sua largura de leitura de 1320px inalterada (conferido
 visualmente nos dois). Testado nos dois temas. `npx tsc --noEmit` (0 erros) e
 `npm test` (41 testes) depois da mudança.
 
+### Padronização: todas as páginas agora widescreen, igual ao Workspace — 18/09/2026
+
+Depois do bug do `max-w-[1320px]` global corrigido (rodada anterior — cada
+página tinha ganhado seu próprio `mx-auto max-w-[1320px]` para preservar a
+largura de leitura que tinham antes), Alex pediu para não fazer isso — em vez
+de manter as outras páginas mais estreitas, quis que TODAS ficassem no mesmo
+padrão do Workspace (largura cheia, mesma margem).
+
+Removido o wrapper `<div className="mx-auto w-full max-w-[1320px]">` de:
+Funil, Tarefas, Agenda, Métricas, Configurações, Entrada SDR e do card do
+cliente (`app/clientes/[id]/page.tsx`) — cada uma voltou a um fragment `<>`
+simples, sem nenhum limite de largura próprio. Como o `AppShell` também não
+tem mais limite (removido na rodada anterior), toda página agora usa
+exatamente a mesma margem (`pl-5`/`pr-8` do `AppShell`) e a mesma largura
+disponível — não existe mais NENHUM `max-w` no app inteiro.
+
+**Verificado** num viewport de 1600px (largura maior que o antigo limite de
+1320px, para confirmar de verdade): a caixa de conteúdo (`main`, descontado o
+padding) começa em 104px e termina em ~1553–1568px em Funil, Tarefas, Agenda,
+Métricas, Configurações, Entrada SDR, card do cliente e Workspace — a pequena
+variação de alguns pixels entre elas é só presença/ausência de barra de
+rolagem vertical em cada página (mais conteúdo = barra de rolagem = menos
+alguns pixels de largura útil), não uma inconsistência de CSS. Nenhum layout
+quebrou nas telas mais largas (Kanban do Funil, colunas de Tarefas, grade da
+Agenda, tabelas de Configurações, grade do card do cliente) — todos só
+ganharam mais espaço horizontal. Testado nos dois temas. `npx tsc --noEmit`
+(0 erros) e `npm test` (41 testes) depois da mudança.
+
 **Pendência para a próxima rodada:** o botão "+" (no mesmo canto inferior
 direito, junto dos ícones de mostrar/ocultar), que abre um pop-up para
 criar uma janela personalizada. Alex já indicou três tipos de conteúdo que quer

@@ -13,9 +13,9 @@ export default function FunilPage() {
   const metrics = headlineMetrics(monthPeriod());
 
   return (
-    <div className="mx-auto w-full max-w-[1320px]">
+    <>
       <PageHeader title="Funil" metrics={metrics} />
       <FunilView lists={lists} clients={clients} labels={labels} />
-    </div>
+    </>
   );
 }

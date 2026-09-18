@@ -24,12 +24,9 @@ export const dynamic = "force-dynamic";
  * Ordem de leitura pensada para o começo do dia: a agenda de hoje primeiro,
  * depois os números do mês, depois quem chegou, depois o que fazer.
  *
- * A tela inteira ocupa a largura disponível (pedido "widescreen" do Alex) —
- * inclusive a agenda e o cabeçalho, para os controles de tema/notificações/
- * perfil baterem na mesma margem direita dos ícones de mostrar/ocultar dos
- * painéis flutuantes. As outras páginas continuam com `max-w-[1320px]`
- * (cada uma define isso internamente agora — ver `AppShell.tsx`); só o
- * Workspace abre mão disso. "Onde os cards estão" e "Fila de follow-up"
+ * A tela inteira ocupa a largura disponível (pedido "widescreen" do Alex,
+ * depois padronizado para todas as páginas — nenhuma tem mais `max-w` próprio;
+ * a margem vem só do `AppShell`). "Onde os cards estão" e "Fila de follow-up"
  * flutuam por cima (`WorkspacePanels`), não ocupam coluna própria na grade.
  */
 export default function WorkspacePage() {

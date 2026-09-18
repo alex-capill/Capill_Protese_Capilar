@@ -21,7 +21,7 @@ export default function EntradaSdrPage() {
   const inbox = getSdrInbox();
 
   return (
-    <div className="mx-auto w-full max-w-[1320px]">
+    <>
       <PageHeader title="Entrada SDR" />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
@@ -49,7 +49,7 @@ export default function EntradaSdrPage() {
           )}
         </section>
       </div>
-    </div>
+    </>
   );
 }
 
