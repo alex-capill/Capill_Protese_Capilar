@@ -387,3 +387,15 @@ A construção do CSystem e as correções nos documentos-fonte estão na árvor
 
 `CSystem/.gitignore` já exclui `node_modules/`, `.next/` e — importante — o banco
 `data/*.db`, que contém dado real de cliente e nunca deve ir para o repositório.
+
+### 2026-09-17 — Correção: etiqueta de tarefa não atualizava o quadro
+
+Durante a validação manual do CRUD, aplicar uma etiqueta em uma tarefa a gravava no
+banco, mas o chip não aparecia no quadro até recarregar a página. A causa era o cache
+local usado pelo drag-and-drop em `TasksBoard`: a assinatura de sincronização não
+incluía `task.labels`.
+
+Corrigido em `CSystem/components/tarefas/TasksView.tsx`, incluindo os IDs das etiquetas
+na assinatura; `TaskDialog` também chama `router.refresh()` após a action. O fluxo foi
+retestado: o chip aparece no quadro imediatamente depois de fechar a edição, nos temas
+claro e escuro.

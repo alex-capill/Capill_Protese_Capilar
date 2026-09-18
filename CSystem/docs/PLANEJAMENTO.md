@@ -307,9 +307,13 @@ Os poucos itens não marcados estão anotados com o motivo.
 **Edição:**
 
 - [x] Criar card pela coluna, editar cliente (nome, telefone, cidade) e salvar
-- [ ] Renomear/reordenar/excluir listas — **não exercitado na interface.** As actions
-      têm typecheck e o diálogo de exclusão pede destino, mas ninguém clicou ainda.
-- [ ] Criar etiqueta com cor personalizada — **não exercitado na interface.**
+- [x] Criar lista com cor hex livre, configurar `AGENDOU` e `Avaliações agendadas`,
+      arrastar card e conferir o balão e a métrica
+- [x] Renomear e excluir lista com card — a exclusão exigiu destino, moveu o card e
+      manteve a métrica histórica (3 avaliações agendadas) pelo snapshot da transição
+- [ ] Reordenar listas — não exercitado nesta rodada
+- [x] Criar etiqueta com cor hex livre e aplicar em card e tarefa nos temas claro e escuro
+- [x] Tentar arquivar lista com card — bloqueado na interface (`Arquivar (esvazie antes)`)
 
 **Regra 1:**
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   createTaskAction,
   deleteTaskAction,
@@ -29,6 +30,7 @@ export function TaskDialog({
   clients: ClientView[];
   onClose: () => void;
 }) {
+  const router = useRouter();
   const [title, setTitle] = useState(task?.title ?? "");
   const [notes, setNotes] = useState(task?.notes ?? "");
   const [dueAt, setDueAt] = useState(task?.dueAt ? toLocalInput(task.dueAt) : "");
@@ -78,6 +80,9 @@ export function TaskDialog({
             ? [...current, labelId]
             : current.filter((id) => id !== labelId),
         );
+        // A etiqueta é gravada numa action separada da edição da tarefa. Sem
+        // renovar os props do quadro, o chip só aparecia após recarregar a página.
+        router.refresh();
       }
     });
   }

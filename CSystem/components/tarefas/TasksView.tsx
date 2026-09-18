@@ -153,7 +153,12 @@ function TasksBoard({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
-  const signature = tasks.map((t) => `${t.id}:${t.columnId}:${t.position}:${t.doneAt}`).join("|");
+  // Inclui etiquetas: o quadro mantém um cache local para o drag-and-drop e
+  // antes ignorava mudanças de `task.labels`, deixando o chip desatualizado
+  // até um reload completo.
+  const signature = tasks
+    .map((t) => `${t.id}:${t.columnId}:${t.position}:${t.doneAt}:${t.labels.map((l) => l.id).join(",")}`)
+    .join("|");
   const [synced, setSynced] = useState(signature);
   if (synced !== signature) {
     setSynced(signature);
