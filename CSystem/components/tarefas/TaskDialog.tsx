@@ -1,42 +1,39 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
   createTaskAction,
   deleteTaskAction,
-  toggleTaskLabelAction,
   updateTaskAction,
 } from "@/app/actions/tasks";
 import { Dialog } from "@/components/ui/Dialog";
-import { LabelChip } from "@/components/ui/primitives";
 import { IconTrash } from "@/components/ui/icons";
+import { LabelChip } from "@/components/ui/primitives";
 import { cx } from "@/lib/utils";
 import type { ClientView, LabelView, TaskColumnView, TaskView } from "@/lib/view-types";
 
-/** Criação e edição de tarefa, incluindo etiquetas e vínculo com cliente. */
+/** Criação e edição de tarefa, com prioridade e vínculo opcional com cliente. */
 export function TaskDialog({
   task,
   columnId,
   columns,
-  labels,
+  specialLabels,
   clients,
   onClose,
 }: {
   task: TaskView | null;
   columnId: string;
   columns: TaskColumnView[];
-  labels: LabelView[];
+  specialLabels: LabelView[];
   clients: ClientView[];
   onClose: () => void;
 }) {
-  const router = useRouter();
   const [title, setTitle] = useState(task?.title ?? "");
   const [notes, setNotes] = useState(task?.notes ?? "");
   const [dueAt, setDueAt] = useState(task?.dueAt ? toLocalInput(task.dueAt) : "");
   const [priority, setPriority] = useState(task?.priority ?? "media");
   const [clientId, setClientId] = useState(task?.clientId ?? "");
-  const [applied, setApplied] = useState<string[]>(task?.labels.map((l) => l.id) ?? []);
+  const [specialLabelIds, setSpecialLabelIds] = useState(task?.labels.map((label) => label.id) ?? []);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -48,6 +45,7 @@ export function TaskDialog({
         dueAt: dueAt ? new Date(dueAt).toISOString() : null,
         priority: priority as "baixa" | "media" | "alta",
         clientId: clientId || null,
+        specialLabelIds,
       };
 
       const result = task
@@ -59,31 +57,6 @@ export function TaskDialog({
         return;
       }
       onClose();
-    });
-  }
-
-  function toggleLabel(labelId: string) {
-    // Etiqueta só pode ser aplicada em tarefa que já existe: precisa de um id.
-    if (!task) {
-      setApplied((current) =>
-        current.includes(labelId)
-          ? current.filter((id) => id !== labelId)
-          : [...current, labelId],
-      );
-      return;
-    }
-    startTransition(async () => {
-      const result = await toggleTaskLabelAction(task.id, labelId);
-      if (result.ok) {
-        setApplied((current) =>
-          result.data.applied
-            ? [...current, labelId]
-            : current.filter((id) => id !== labelId),
-        );
-        // A etiqueta é gravada numa action separada da edição da tarefa. Sem
-        // renovar os props do quadro, o chip só aparecia após recarregar a página.
-        router.refresh();
-      }
     });
   }
 
@@ -159,18 +132,7 @@ export function TaskDialog({
             />
           </label>
 
-          <label className="block text-sm">
-            <span className="mb-1.5 block font-medium">Prioridade</span>
-            <select
-              value={priority}
-              onChange={(event) => setPriority(event.target.value)}
-              className="field"
-            >
-              <option value="baixa">Baixa</option>
-              <option value="media">Média</option>
-              <option value="alta">Alta</option>
-            </select>
-          </label>
+          <PriorityPicker value={priority} onChange={setPriority} />
         </div>
 
         {!task && (
@@ -204,25 +166,20 @@ export function TaskDialog({
           </select>
         </label>
 
-        <div>
-          <span className="mb-2 block text-sm font-medium">Etiquetas</span>
-          {!task && (
-            <p className="mb-2 text-xs text-muted">
-              Salve a tarefa primeiro para poder aplicar etiquetas.
-            </p>
-          )}
-          <div className="flex flex-wrap gap-1.5">
-            {labels.map((label) => {
-              const on = applied.includes(label.id);
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium">Situação especial</legend>
+          <div className="flex flex-wrap gap-2 rounded-[var(--radius-inner)] border border-[var(--border)] bg-surface-2 p-2">
+            {specialLabels.map((label) => {
+              const active = specialLabelIds.includes(label.id);
               return (
                 <button
                   key={label.id}
                   type="button"
-                  disabled={!task}
-                  onClick={() => toggleLabel(label.id)}
+                  aria-pressed={active}
+                  onClick={() => setSpecialLabelIds((current) => active ? current.filter((id) => id !== label.id) : [...current, label.id])}
                   className={cx(
-                    "rounded-full transition disabled:opacity-40",
-                    on && "brightness-110 drop-shadow-sm",
+                    "rounded-full transition",
+                    active ? "brightness-110 drop-shadow-sm" : "opacity-50 hover:opacity-100",
                   )}
                 >
                   <LabelChip name={label.name} colorHex={label.colorHex} size="sm" />
@@ -230,11 +187,50 @@ export function TaskDialog({
               );
             })}
           </div>
-        </div>
+          <p className="mt-1.5 text-xs text-muted">Use apenas para sinalizar uma questão fora do fluxo normal.</p>
+        </fieldset>
 
         {error && <p className="text-sm text-negative">{error}</p>}
       </div>
     </Dialog>
+  );
+}
+
+function PriorityPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: "baixa" | "media" | "alta") => void;
+}) {
+  const options = [
+    { value: "baixa", label: "Baixa", active: "bg-surface text-text" },
+    { value: "media", label: "Média", active: "bg-warning/25 text-text" },
+    { value: "alta", label: "Alta", active: "bg-negative text-white" },
+  ] as const;
+
+  return (
+    <fieldset>
+      <legend className="mb-1.5 text-sm font-medium">Nível de prioridade</legend>
+      <div className="grid grid-cols-3 gap-1 rounded-[var(--radius-inner)] border border-[var(--border)] bg-surface-2 p-1">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={value === option.value}
+            onClick={() => onChange(option.value)}
+            className={cx(
+              "choice-control rounded-[14px] px-2 py-2 text-sm font-medium transition",
+              value === option.value
+                ? option.active
+                : "text-text-soft hover:bg-surface hover:text-text",
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 

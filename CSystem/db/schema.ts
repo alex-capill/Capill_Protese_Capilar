@@ -87,6 +87,8 @@ export const clients = sqliteTable(
     /** Campos vindos do bloco ===REPASSE=== do SDR. */
     sdrClassification: text("sdr_classification"),
     sdrConfidence: text("sdr_confidence"),
+    /** Classificação inicial do SDR, ajustável manualmente pelo Alex: frio | morno | quente. */
+    temperature: text("temperature"),
     lostReason: text("lost_reason"),
     lostAt: integer("lost_at", { mode: "timestamp" }),
     ...timestamps,

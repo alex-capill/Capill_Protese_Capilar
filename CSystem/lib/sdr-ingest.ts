@@ -7,6 +7,7 @@ import { clientLabels, clients, events, labels, lists, sdrInbox } from "@/db/sch
 import { CIDADES_PRESENCIAIS } from "@/db/seed-data";
 import { moveClient } from "./transitions";
 import { parseRepasse, repasseToDescription, type ParsedRepasse } from "./sdr-parser";
+import { temperatureFromSdrConfidence } from "./temperature";
 
 /**
  * Recepção de um repasse do Agente SDR.
@@ -168,6 +169,7 @@ export function ingestRepasse(input: {
   const clientId = existing ? existing.id : randomUUID();
   const created = !existing;
   const modality = modalityFromCity(parsed.city);
+  const sdrTemperature = temperatureFromSdrConfidence(parsed.confidence);
   const description = repasseToDescription(parsed);
   const now = new Date();
 
@@ -192,6 +194,7 @@ export function ingestRepasse(input: {
         modality,
         sdrClassification: parsed.classification,
         sdrConfidence: parsed.confidence,
+        temperature: sdrTemperature,
       })
       .run();
 
@@ -209,6 +212,9 @@ export function ingestRepasse(input: {
         name: parsed.name ?? existing.name,
         city: parsed.city ?? existing.city,
         modality: modality ?? existing.modality,
+        // A primeira classificação do SDR preenche o campo apenas enquanto o Alex
+        // ainda não fez uma classificação manual.
+        temperature: existing.temperature ?? sdrTemperature,
         // A descrição anterior é preservada: o repasse novo entra depois dela,
         // porque jogar fora contexto de um atendimento anterior seria perda de dado.
         description: existing.description

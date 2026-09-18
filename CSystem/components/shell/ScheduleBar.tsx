@@ -69,16 +69,16 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-2 text-white shadow-[var(--shadow-card)]">
+      <div className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-1 text-white shadow-[var(--shadow-card)]">
       <div className="flex shrink-0 items-center gap-3 pl-3 pr-1">
         <span className="text-sm font-semibold max-sm:hidden">Sua agenda</span>
-        <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
-          <IconCalendar size={14} />
+        <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
+          <IconCalendar size={13} />
           {today}
         </span>
       </div>
 
-      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
+      <div className="relative h-9 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
         {items.length === 0 ? (
           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/55">
             Nenhum compromisso hoje
@@ -98,10 +98,10 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
                 key={item.id}
                 href="/agenda"
                 title={`${formatTime(item.startsAt)} — ${item.title}`}
-                className="absolute top-1.5 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
+                className="absolute top-1 flex h-7 items-center gap-1.5 overflow-hidden rounded-full bg-accent px-2.5 text-accent-ink transition hover:brightness-105"
                 style={{ left: `${left}%`, width: `${width}%` }}
               >
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-black/15 text-[10px] font-bold">
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-black/15 text-[9px] font-bold">
                   {item.clientName ? initials(item.clientName) : "•"}
                 </span>
                 <span className="truncate text-xs font-semibold">
@@ -126,22 +126,18 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
       <Link
         href="/agenda"
         aria-label="Abrir agenda"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
       >
-        <IconArrowUpRight size={18} />
+        <IconArrowUpRight size={17} />
       </Link>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
-        <ThemeToggle />
-        <button
-          type="button"
-          className="icon-btn size-11 bg-surface shadow-[var(--shadow-chip)]"
-          aria-label="Notificações"
-        >
-          <IconBell size={18} />
+      <div className="flex h-11 shrink-0 items-center gap-1 rounded-full bg-surface p-1 shadow-[var(--shadow-card)]">
+        <ThemeToggle compact />
+        <button type="button" className="icon-btn size-8" aria-label="Notificações">
+          <span className="relative"><IconBell size={15} /><span className="absolute -right-1 -top-1 size-1.5 rounded-full bg-negative ring-2 ring-surface" /></span>
         </button>
-        <Avatar name="Alex" size={44} />
+        <Avatar name="Alex" size={34} />
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ export default function AgendaPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section>
-          <h2 className="mb-3 text-xl font-bold tracking-tight">Próximos 30 dias</h2>
+          <h2 className="mb-4 text-[28px] font-medium tracking-tight">Próximos 30 dias</h2>
 
           {appointments.length === 0 ? (
             <EmptyState
@@ -71,7 +71,7 @@ export default function AgendaPage() {
                   </h3>
                   <div className="card divide-y divide-[var(--border)] overflow-hidden">
                     {items.map((appointment) => (
-                      <div key={appointment.id} className="flex items-center gap-3 px-4 py-3">
+                      <div key={appointment.id} className="flex items-center gap-3 px-5 py-4">
                         <span className="w-14 shrink-0 text-sm font-bold tabular-nums">
                           {new Date(appointment.startsAt).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
@@ -82,7 +82,7 @@ export default function AgendaPage() {
                           <Avatar name={appointment.clientName} size={32} />
                         )}
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold">
+                          <p className="truncate text-[15px] font-normal">
                             {appointment.clientName ?? appointment.title}
                           </p>
                           <p className="truncate text-xs text-muted">
@@ -121,7 +121,7 @@ export default function AgendaPage() {
         </section>
 
         <section>
-          <h2 className="mb-1 text-xl font-bold tracking-tight">Fila de follow-up</h2>
+          <h2 className="mb-3 text-[28px] font-medium tracking-tight">Fila de follow-up</h2>
           <p className="mb-3 text-xs text-muted">
             Quem tem data de retorno registrada.
             {overdue.length > 0 && (
@@ -135,18 +135,18 @@ export default function AgendaPage() {
               description="Registre um follow-up na página do cliente para ele aparecer aqui."
             />
           ) : (
-            <ul className="card divide-y divide-[var(--border)] overflow-hidden">
+            <ul className="rounded-[var(--radius-card)] bg-[#111111] text-white divide-y divide-white/10 overflow-hidden p-2 shadow-[var(--shadow-card)]">
               {followups.map((item) => {
                 const date = item.nextFollowupAt ? new Date(item.nextFollowupAt) : null;
                 const late = date != null && date < now;
                 const wa = whatsappUrl(item.phoneNormalized);
 
                 return (
-                  <li key={item.id} className="flex items-center gap-3 px-4 py-3">
+                  <li key={item.id} className="flex items-center gap-3 rounded-xl px-3 py-3">
                     <span
                       className={cx(
                         "flex size-9 shrink-0 flex-col items-center justify-center rounded-full text-[10px] font-bold leading-none",
-                        late ? "bg-negative text-white" : "bg-surface-sunken text-text-soft",
+                        late ? "bg-negative text-white" : "bg-white/10 text-white",
                       )}
                       title={date?.toLocaleDateString("pt-BR")}
                     >
@@ -163,8 +163,8 @@ export default function AgendaPage() {
                     </span>
 
                     <Link href={`/clientes/${item.id}`} className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{item.name}</p>
-                      <p className="truncate text-xs text-muted">
+                      <p className="truncate text-[14px] font-normal">{item.name}</p>
+                      <p className="truncate text-xs text-white/55">
                         {item.listName}
                         {item.phoneNormalized && ` · ${formatPhone(item.phoneNormalized)}`}
                       </p>
@@ -175,7 +175,7 @@ export default function AgendaPage() {
                         href={wa}
                         target="_blank"
                         rel="noreferrer"
-                        className="icon-btn size-8 shrink-0"
+                        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
                         aria-label={`Abrir WhatsApp de ${item.name}`}
                       >
                         <IconWhatsapp size={14} />

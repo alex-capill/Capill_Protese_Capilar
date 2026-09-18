@@ -250,6 +250,15 @@ body {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+/* Campos e escolhas preservam o mesmo arredondamento quando recebem foco. */
+.field:focus-visible,
+.choice-control:focus-visible,
+.temperature-control:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-radius: var(--radius-inner);
+}
+
 .scroll-row::-webkit-scrollbar {
   display: none;
 }

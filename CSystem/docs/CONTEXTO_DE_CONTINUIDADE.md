@@ -327,3 +327,152 @@ para conferir visualmente as seis telas (a rodada de fade/hierarquia/rail/barra 
 agenda só foi validada por `tsc`/`vitest` e revisão de código, não visualmente — ver
 seção acima), e informar os comandos de validação. O commit continua dependendo da
 autorização explícita dele.
+
+## V1.01 — aplicação da auditoria visual escolhida
+
+Em 18/09/2026, Alex autorizou a aplicação dos mockups da auditoria visual:
+Workspace **1C**, Funil **2A**, Tarefas **2B**, Agenda **3A**, Métricas **3B** e
+Configurações **3C**. O ajuste foi restrito à apresentação e à composição das telas.
+
+O Workspace passou a usar grade assimétrica com lateral de distribuição e fila de
+follow-up; busca e filtros ficam antes das fileiras de cards; cards de cliente e
+tarefa usam a medida visual de 288px; métricas alinham número, rótulo e delta na
+mesma linha; os controles de tema, notificações e perfil ficam agrupados em uma
+cápsula; Agenda, Métricas e Configurações receberam os espaçamentos, títulos e
+superfícies dos mockups. O contraste de etiquetas claras foi corrigido usando texto
+escurecido quando necessário. Nenhuma regra de negócio, métrica, banco, webhook,
+lista, palavra-chave ou transição foi alterada.
+
+Validação realizada: `npx tsc --noEmit` sem erros; `npm test -- --run` com 3 arquivos
+e 38 testes passando; inspeção visual do Workspace em `localhost:3002`. O build não
+foi executado porque havia um `next dev` ativo na porta 3000 e a regra local exige
+parar o servidor antes de disputar `.next`.
+
+## Temperatura manual — decisão posterior do Alex
+
+Alex pediu que a temperatura apareça no rodapé do card, junto dos pontos e do valor,
+e que possa ser classificada conforme a interação com o lead. Foi adicionada a coluna
+nullable `clients.temperature`, com seleção rápida no card e seleção no diálogo de
+edição: `Frio`, `Morno`, `Quente` ou `Classificar`.
+
+No ingresso do SDR, o `NÍVEL DE CONFIANÇA` declarado no repasse preenche a temperatura
+inicial em mapeamento direto: `ALTA` → `Quente`, `MODERADA` → `Morno`, `BAIXA` →
+`Frio`. Se o Alex já tiver definido uma temperatura, um repasse posterior preserva a
+classificação manual. A temperatura não é inferida de mensagens, tempo ou estágio e
+não participa das métricas; `sdr_confidence` continua preservado como dado original.
+
+## V1.01 — segunda rodada de acabamento visual
+
+Em 18/09/2026, foram aplicados o fade lateral do Workspace aos quadros horizontais do
+Funil, Tarefas e tabela de listas. A lateral interna agora mantém o mesmo respiro dos
+dois lados por meio de padding simétrico do shell.
+
+No detalhe do cliente, Cadastro recebeu maior hierarquia, espaçamento entre campos e
+um chip de temperatura. Para cards legados cuja coluna `temperature` ainda está vazia,
+a tela mostra a conversão direta do `sdr_confidence` com o marcador `SDR`; isso torna
+visível o mesmo dado já declarado pelo SDR sem criar pontuação ou alterar registros.
+Novos repasses continuam gravando a temperatura na coluna própria.
+
+O diálogo Editar cliente trocou os selects nativos de Temperatura e Modalidade por
+escolhas arredondadas com cores de estado. Campos e escolhas agora preservam o raio
+do próprio controle quando recebem foco.
+
+### Ajuste posterior: temperatura por clique e modalidade por etiqueta
+
+Alex definiu que Modalidade da Avaliação é controlada exclusivamente pelas etiquetas,
+portanto foi removida do diálogo Editar cliente. A temperatura passou a usar o mesmo
+controle de pontos no card e na edição: cada clique percorre `Classificar → Frio →
+Morno → Quente → Classificar`. No card, a mudança é salva imediatamente; no diálogo,
+ela é incluída ao salvar as demais edições.
+
+### Ajuste posterior: tarefas sem etiquetas
+
+Alex definiu que tarefas não usam etiquetas. A interface de criação, edição, cartões,
+lista, queries e props de tarefas foi simplificada para não exibir ou atribuir
+etiquetas. As tabelas históricas de `task_labels` não foram apagadas, preservando dados
+operacionais já existentes sem expô-los na interface. A prioridade passou a ser um
+controle arredondado de três opções, mantido em estado local até o botão Salvar.
+
+No diálogo Editar cliente, o mesmo controle de temperatura recebeu pontos levemente
+maiores apenas na edição; ele continua local até Salvar.
+
+### Correção de escopo: etiquetas de Situação especial nas tarefas
+
+Alex corrigiu a decisão: tarefas dispensam as demais etiquetas, mas mantêm somente
+`Prioridade`, `Retorno Necessário` e `Problema`, do grupo `SITUACAO_ESPECIAL`. Essas
+três voltaram à criação, edição, cartão e lista de tarefas. A action valida o grupo no
+servidor e só persiste a seleção ao clicar em Salvar; etiquetas de Origem, Modalidade
+e Pagamento continuam indisponíveis para tarefas.
+
+### Ajuste visual: rodapé dos cards de tarefa
+
+O rodapé do card de tarefa foi separado em duas linhas. Prazo e nível de prioridade
+ficam juntos na primeira, com cores próprias (`atrasada` em vermelho, `hoje` em preto,
+prioridade alta em vermelho suave e média em amarelo suave). O cliente relacionado
+fica em uma faixa inteira na linha abaixo, eliminando a quebra irregular dos chips.
+
+### Ajuste visual: cor do cartão pelo prazo
+
+Alex definiu o cartão de tarefa como sinal visual de tempo. Toda tarefa ativa começa
+verde-claro; quando restam até 60 minutos, fica laranja-claro; ao entrar em atraso,
+fica vermelho-claro. As três cores são literais e permanecem iguais no modo escuro.
+O rótulo de prazo acompanha o estado, e tarefas a menos de uma hora entram no filtro
+de Hoje.
+
+### Ajuste visual: colunas de tarefa e títulos H1
+
+Alex pediu a remoção da faixa cinza atrás dos cartões de tarefa, pois ela não consta
+no mockup definido. As colunas agora mostram somente cabeçalho, cartões e ação de nova
+tarefa, sem painel de fundo. Os títulos H1 fornecidos por `PageHeader` foram reduzidos
+em aproximadamente 20% (48/62px para 38/50px), afetando Workspace, Funil e as demais
+páginas que usam o mesmo componente.
+
+### Correção visual: faixa de tarefa e fundo do quadro
+
+A "faixa" da coluna de tarefas foi restaurada: ela volta a reunir o título do dia, a
+quantidade de tarefas e a ação de criar uma nova tarefa. A remoção solicitada refere-se
+somente ao fundo cinza amplo atrás das colunas; essa área agora usa a superfície branca
+neutra, preservando o contraste dos cartões coloridos.
+
+### Correção visual: faixa da coluna
+
+A faixa interna da coluna de tarefas foi devolvida ao visual anterior, sem painel cinza
+ou preenchimento próprio. Mantém-se apenas a superfície neutra do quadro ao redor das
+colunas, que é o fundo atrás dos cartões solicitado para remoção.
+
+### Correção visual final: Kanban de tarefas
+
+A referência visual do Kanban foi confirmada pelo anexo: o fundo geral permanece cinza,
+e cada coluna é um painel cinza-claro arredondado com cabeçalho, contador e ação Nova
+tarefa. Os cartões permanecem o ponto de destaque dentro desses painéis.
+
+### Ajuste visual: altura da agenda no Workspace
+
+A barra de agenda do topo foi reduzida para 40px de altura, igual aos ícones da rail
+lateral. Seus blocos internos, compromissos, atalho de agenda e o conjunto de tema,
+notificações e perfil acompanham a mesma medida, sem alterar a largura da agenda.
+
+### Refinamento: agenda ainda mais compacta
+
+Após revisão visual, a agenda superior passou de 40px para 36px. O controle de tema
+recebeu uma variante compacta própria (28px com ícone de 15px), evitando que o sol
+ultrapasse sua cápsula; notificações, avatar e atalho da agenda acompanham a escala.
+
+### Ajuste pela referência: alinhamento da agenda
+
+A barra de agenda e o conjunto de controles foram ajustados para 44px, alinhados no
+eixo central da mesma linha do logotipo. A escala interna foi redistribuída para manter
+ícones, avatar, atalho e compromissos inteiramente contidos nas cápsulas.
+
+### Ajuste: temperatura no cadastro do cliente
+
+Na página de cadastro do cliente, o selo textual de temperatura foi substituído pela
+mesma escala de bolinhas usada no card do funil. O clique alterna a classificação e a
+salva imediatamente; a indicação SDR continua visível quando a classificação ainda vem
+da confiança original do SDR.
+
+### Correção: temperatura ao lado do nome do lead
+
+A escala de temperatura foi removida do painel Cadastro e colocada imediatamente após o
+título grande com o nome do lead, no topo da página de cliente. Ela preserva o mesmo
+comportamento do card do funil: cada clique alterna e grava a temperatura na hora.

@@ -26,6 +26,7 @@ import { FunilColumn } from "./FunilColumn";
 import { TransitionPrompt, type PromptState } from "./TransitionPrompt";
 import { UndoToast } from "./UndoToast";
 import { AddListButton } from "./ListControls";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 
 /**
  * O Kanban do funil.
@@ -190,7 +191,7 @@ export function FunilBoard({ lists, clients }: Props) {
         onDragEnd={handleDragEnd}
         onDragCancel={() => setActiveId(null)}
       >
-        <div className="thin-scroll flex items-start gap-4 overflow-x-auto pb-4">
+        <FadeScroller className="items-start" fadeWidth={72}>
           {visibleLists.map((list) => {
             const ids = items[list.id] ?? [];
             return (
@@ -209,7 +210,7 @@ export function FunilBoard({ lists, clients }: Props) {
             );
           })}
           <AddListButton />
-        </div>
+        </FadeScroller>
 
         <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(.2,.8,.3,1)" }}>
           {activeCard && <ClientMiniCard client={activeCard} dragging />}

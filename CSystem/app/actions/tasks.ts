@@ -2,14 +2,25 @@
 
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { db } from "@/db";
-import { taskColumns, taskLabels, tasks } from "@/db/schema";
+import { labels, taskColumns, taskLabels, tasks } from "@/db/schema";
 import { positionBetween } from "@/lib/utils";
 import type { ActionResult } from "@/lib/action-result";
 
 function refresh() {
   revalidatePath("/", "layout");
+}
+
+function validSpecialLabelIds(ids: string[] | undefined): string[] | null {
+  const unique = [...new Set(ids ?? [])];
+  if (unique.length === 0) return unique;
+  const valid = db
+    .select({ id: labels.id })
+    .from(labels)
+    .where(and(eq(labels.group, "SITUACAO_ESPECIAL"), inArray(labels.id, unique)))
+    .all();
+  return valid.length === unique.length ? unique : null;
 }
 
 /* ---------------------------------------------------------------- tarefas */
@@ -21,9 +32,12 @@ export async function createTaskAction(input: {
   dueAt?: string | null;
   priority?: "baixa" | "media" | "alta";
   clientId?: string | null;
+  specialLabelIds?: string[];
 }): Promise<ActionResult<{ id: string }>> {
   const title = input.title.trim();
   if (!title) return { ok: false, error: "A tarefa precisa de um título." };
+  const specialLabelIds = validSpecialLabelIds(input.specialLabelIds);
+  if (!specialLabelIds) return { ok: false, error: "A tarefa aceita apenas etiquetas de Situação especial." };
 
   const siblings = db
     .select({ position: tasks.position })
@@ -34,18 +48,25 @@ export async function createTaskAction(input: {
     siblings.length === 0 ? 1000 : Math.max(...siblings.map((s) => s.position)) + 1000;
 
   const id = randomUUID();
-  db.insert(tasks)
-    .values({
-      id,
-      title,
-      columnId: input.columnId,
-      position,
-      notes: input.notes?.trim() || null,
-      dueAt: input.dueAt ? new Date(input.dueAt) : null,
-      priority: input.priority ?? "media",
-      clientId: input.clientId || null,
-    })
-    .run();
+  db.transaction((tx) => {
+    tx.insert(tasks)
+      .values({
+        id,
+        title,
+        columnId: input.columnId,
+        position,
+        notes: input.notes?.trim() || null,
+        dueAt: input.dueAt ? new Date(input.dueAt) : null,
+        priority: input.priority ?? "media",
+        clientId: input.clientId || null,
+      })
+      .run();
+    if (specialLabelIds.length > 0) {
+      tx.insert(taskLabels)
+        .values(specialLabelIds.map((labelId) => ({ taskId: id, labelId })))
+        .run();
+    }
+  });
 
   refresh();
   return { ok: true, data: { id } };
@@ -59,6 +80,7 @@ export async function updateTaskAction(
     dueAt?: string | null;
     priority?: "baixa" | "media" | "alta";
     clientId?: string | null;
+    specialLabelIds?: string[];
   },
 ): Promise<ActionResult> {
   const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -72,8 +94,20 @@ export async function updateTaskAction(
   if (patch.dueAt !== undefined) updates.dueAt = patch.dueAt ? new Date(patch.dueAt) : null;
   if (patch.priority !== undefined) updates.priority = patch.priority;
   if (patch.clientId !== undefined) updates.clientId = patch.clientId || null;
+  const specialLabelIds = validSpecialLabelIds(patch.specialLabelIds);
+  if (!specialLabelIds) return { ok: false, error: "A tarefa aceita apenas etiquetas de Situação especial." };
 
-  db.update(tasks).set(updates).where(eq(tasks.id, id)).run();
+  db.transaction((tx) => {
+    tx.update(tasks).set(updates).where(eq(tasks.id, id)).run();
+    if (patch.specialLabelIds !== undefined) {
+      tx.delete(taskLabels).where(eq(taskLabels.taskId, id)).run();
+      if (specialLabelIds.length > 0) {
+        tx.insert(taskLabels)
+          .values(specialLabelIds.map((labelId) => ({ taskId: id, labelId })))
+          .run();
+      }
+    }
+  });
   refresh();
   return { ok: true, data: undefined };
 }
@@ -123,29 +157,6 @@ export async function toggleTaskDoneAction(id: string): Promise<ActionResult<{ d
 
   refresh();
   return { ok: true, data: { done: doneAt != null } };
-}
-
-export async function toggleTaskLabelAction(
-  taskId: string,
-  labelId: string,
-): Promise<ActionResult<{ applied: boolean }>> {
-  const existing = db
-    .select()
-    .from(taskLabels)
-    .where(and(eq(taskLabels.taskId, taskId), eq(taskLabels.labelId, labelId)))
-    .get();
-
-  if (existing) {
-    db.delete(taskLabels)
-      .where(and(eq(taskLabels.taskId, taskId), eq(taskLabels.labelId, labelId)))
-      .run();
-    refresh();
-    return { ok: true, data: { applied: false } };
-  }
-
-  db.insert(taskLabels).values({ taskId, labelId }).run();
-  refresh();
-  return { ok: true, data: { applied: true } };
 }
 
 export async function deleteTaskAction(id: string): Promise<ActionResult> {

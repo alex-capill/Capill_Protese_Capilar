@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ClientMiniCard } from "@/components/funil/ClientMiniCard";
 import { FadeScroller } from "@/components/ui/FadeScroller";
+import { IconSearch } from "@/components/ui/icons";
 import { EmptyState, SectionHeader } from "@/components/ui/primitives";
 import { cx } from "@/lib/utils";
 import type { ClientView, ListView } from "@/lib/view-types";
@@ -24,11 +25,14 @@ export function LeadsRow({
   lists: ListView[];
 }) {
   const [filter, setFilter] = useState<string>("todos");
+  const [term, setTerm] = useState("");
 
   const listById = useMemo(() => new Map(lists.map((list) => [list.id, list])), [lists]);
 
   const filtered = useMemo(() => {
-    return clients.filter((client) => {
+      return clients.filter((client) => {
+      const needle = term.trim().toLowerCase();
+      if (needle && !client.name.toLowerCase().includes(needle) && !(client.city ?? "").toLowerCase().includes(needle)) return false;
       const stage = listById.get(client.listId)?.countsAsStage;
       switch (filter) {
         case "qualificado":
@@ -45,7 +49,7 @@ export function LeadsRow({
           return true;
       }
     });
-  }, [clients, filter, listById]);
+  }, [clients, filter, listById, term]);
 
   const FILTERS = [
     { id: "todos", label: "Todos" },
@@ -58,20 +62,20 @@ export function LeadsRow({
 
   return (
     <section className="mb-12">
-      <SectionHeader title="Novos Leads" count={clients.length} countLabel="no funil">
-        <FadeScroller fadeWidth={48}>
+      <SectionHeader title="Novos Leads" count={clients.length} countLabel="no funil" />
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <label className="relative flex min-w-[220px] flex-1 sm:max-w-[300px]">
+          <IconSearch size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+          <input value={term} onChange={(event) => setTerm(event.target.value)} placeholder="Buscar leads" aria-label="Buscar leads" className="field rounded-full bg-surface py-2 pl-9 text-sm" />
+        </label>
+        <FadeScroller fadeWidth={48} className="min-w-0 flex-1 items-center">
           {FILTERS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setFilter(item.id)}
-              className={cx("chip", filter === item.id ? "chip-on" : "chip-off")}
-            >
+            <button key={item.id} type="button" onClick={() => setFilter(item.id)} className={cx("chip", filter === item.id ? "chip-on" : "chip-off")}>
               {item.label}
             </button>
           ))}
         </FadeScroller>
-      </SectionHeader>
+      </div>
 
       {filtered.length === 0 ? (
         <EmptyState
@@ -96,7 +100,7 @@ export function LeadsRow({
       ) : (
         <FadeScroller>
           {filtered.slice(0, 20).map((client) => (
-            <div key={client.id} className="w-[270px] shrink-0 snap-start">
+            <div key={client.id} className="w-[288px] shrink-0 snap-start">
               <ClientMiniCard client={client} />
             </div>
           ))}

@@ -37,6 +37,7 @@ export type ClientView = {
   status: string;
   sdrClassification: string | null;
   sdrConfidence: string | null;
+  temperature: string | null;
   valueCents: number | null;
   evaluationAt: string | null;
   nextFollowupAt: string | null;
@@ -86,6 +87,7 @@ export type TaskView = {
   doneAt: string | null;
   clientId: string | null;
   clientName: string | null;
+  /** Apenas as etiquetas do grupo Situação especial. */
   labels: LabelView[];
 };
 

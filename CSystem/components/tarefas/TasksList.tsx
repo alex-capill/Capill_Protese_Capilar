@@ -97,11 +97,13 @@ function TaskRow({ task, onEdit }: { task: TaskView; onEdit: (task: TaskView) =>
         {task.notes && <p className="truncate text-xs text-muted">{task.notes}</p>}
       </button>
 
-      <div className="flex shrink-0 items-center gap-1.5 max-sm:hidden">
-        {task.labels.slice(0, 2).map((label) => (
-          <LabelChip key={label.id} name={label.name} colorHex={label.colorHex} size="sm" />
-        ))}
-      </div>
+      {task.labels.length > 0 && (
+        <div className="flex shrink-0 items-center gap-1.5 max-sm:hidden">
+          {task.labels.map((label) => (
+            <LabelChip key={label.id} name={label.name} colorHex={label.colorHex} size="sm" />
+          ))}
+        </div>
+      )}
 
       {task.clientId && task.clientName && (
         <Link
@@ -118,7 +120,9 @@ function TaskRow({ task, onEdit }: { task: TaskView; onEdit: (task: TaskView) =>
             "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
             state === "overdue" && !done
               ? "bg-[color-mix(in_srgb,var(--negative)_16%,transparent)] text-negative"
-              : state === "today" && !done
+              : state === "due-soon" && !done
+                ? "bg-warning/20 text-text"
+                : state === "today" && !done
                 ? "bg-accent-soft text-text"
                 : "bg-surface-sunken text-text-soft",
           )}

@@ -94,6 +94,7 @@ export async function updateClientAction(
     valueCents?: number | null;
     evaluationAt?: string | null;
     nextFollowupAt?: string | null;
+    temperature?: string | null;
   },
 ): Promise<ActionResult> {
   const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -135,6 +136,12 @@ export async function updateClientAction(
   }
   if (patch.nextFollowupAt !== undefined) {
     updates.nextFollowupAt = patch.nextFollowupAt ? new Date(patch.nextFollowupAt) : null;
+  }
+  if (patch.temperature !== undefined) {
+    if (patch.temperature && !["frio", "morno", "quente"].includes(patch.temperature)) {
+      return { ok: false, error: "Temperatura inválida." };
+    }
+    updates.temperature = patch.temperature || null;
   }
 
   db.update(clients).set(updates).where(eq(clients.id, id)).run();

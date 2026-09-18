@@ -19,12 +19,12 @@ export default function ConfiguracoesPage() {
     <>
       <PageHeader title="Configurações" />
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         <ListsManager lists={lists} />
         <LabelsManager labels={labels} />
 
-        <section className="card p-6">
-          <h2 className="mb-1 text-xl font-bold tracking-tight">Webhook do SDR</h2>
+        <section className="card p-7">
+          <h2 className="mb-1 text-2xl font-medium tracking-tight">Webhook do SDR</h2>
           <p className="mb-4 text-sm text-muted">
             É o endereço que o n8n chama no lugar do nó que criava o card no Trello.
           </p>
@@ -57,8 +57,8 @@ export default function ConfiguracoesPage() {
           </p>
         </section>
 
-        <section className="card p-6">
-          <h2 className="mb-1 text-xl font-bold tracking-tight">Backup</h2>
+        <section className="card p-7">
+          <h2 className="mb-1 text-2xl font-medium tracking-tight">Backup</h2>
           <p className="mb-4 text-sm text-muted">
             Todo o sistema vive em um arquivo só. Backup é copiar esse arquivo.
           </p>

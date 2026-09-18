@@ -8,11 +8,11 @@ import type { ClientView, LabelView, TaskColumnView } from "@/lib/view-types";
 /** O botão preto colado no título, como na referência. */
 export function NewTaskButton({
   columns,
-  labels,
+  specialLabels,
   clients,
 }: {
   columns: TaskColumnView[];
-  labels: LabelView[];
+  specialLabels: LabelView[];
   clients: ClientView[];
 }) {
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ export function NewTaskButton({
           task={null}
           columnId={columns[0]?.id ?? ""}
           columns={columns}
-          labels={labels}
+          specialLabels={specialLabels}
           clients={clients}
           onClose={() => setOpen(false)}
         />

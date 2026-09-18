@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ingestRepasseAction, previewRepasseAction } from "@/app/actions/sdr";
 import type { ParsedRepasse } from "@/lib/sdr-parser";
 import { formatPhone } from "@/lib/phone";
+import { temperatureFromSdrConfidence } from "@/lib/temperature";
 
 /**
  * Cola de repasse manual, com prévia do parse antes de gravar.
@@ -111,6 +112,7 @@ export function RepassePaste() {
 }
 
 export function ParsedPreview({ parsed }: { parsed: ParsedRepasse }) {
+  const temperature = temperatureFromSdrConfidence(parsed.confidence);
   const rows: Array<[string, string | null]> = [
     ["Nome", parsed.name],
     ["Telefone", parsed.phoneNormalized ? formatPhone(parsed.phoneNormalized) : null],
@@ -118,6 +120,7 @@ export function ParsedPreview({ parsed }: { parsed: ParsedRepasse }) {
     ["Origem", parsed.origin],
     ["Classificação", parsed.classification],
     ["Nível de confiança", parsed.confidence],
+    ["Temperatura aplicada pelo SDR", temperature ? temperature[0].toUpperCase() + temperature.slice(1) : null],
     ["Intenção de tempo", parsed.intencaoTempo],
     ["Disponibilidade", parsed.disponibilidade],
     ["Comentário", parsed.comentarioKeyword ?? parsed.comentarioTexto],

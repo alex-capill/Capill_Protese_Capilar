@@ -24,12 +24,14 @@ const PRIORITY_LABEL: Record<string, string> = {
   baixa: "Baixa",
 };
 
-export function dueState(task: TaskView): "overdue" | "today" | "future" | "none" {
+export function dueState(task: TaskView): "overdue" | "due-soon" | "today" | "future" | "none" {
   if (!task.dueAt) return "none";
   const due = new Date(task.dueAt);
+  const now = new Date();
   const endOfToday = new Date();
   endOfToday.setHours(23, 59, 59, 999);
-  if (due < new Date()) return "overdue";
+  if (due < now) return "overdue";
+  if (due.getTime() - now.getTime() <= 60 * 60 * 1000) return "due-soon";
   if (due <= endOfToday) return "today";
   return "future";
 }
@@ -46,14 +48,15 @@ export function TaskCard({
   const [pending, startTransition] = useTransition();
   const state = dueState(task);
   const done = task.doneAt != null;
-  const highlighted = !done && (state === "today" || state === "overdue");
+  const colored = !done;
 
   return (
     <article
       onDoubleClick={() => onEdit?.(task)}
       className={cx(
-        "group relative flex min-h-[200px] cursor-pointer flex-col rounded-[26px] rounded-tr-[8px] p-5 shadow-[var(--shadow-card)] transition",
-        highlighted ? "bg-accent text-accent-ink" : "bg-surface",
+        "group relative flex min-h-[196px] cursor-pointer flex-col rounded-[26px] rounded-tr-[8px] p-[18px] shadow-[var(--shadow-card)] transition",
+        colored ? taskTone(state) : "bg-surface",
+        colored && "text-black",
         done && "opacity-55",
         dragging && "opacity-40",
       )}
@@ -69,8 +72,8 @@ export function TaskCard({
             "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition",
             done
               ? "border-transparent bg-positive text-white"
-              : highlighted
-                ? "border-accent-ink/35 hover:border-accent-ink"
+              : colored
+                ? "border-black/25 hover:border-black/60"
                 : "border-[var(--border-strong)] hover:border-[var(--text)]",
           )}
         >
@@ -78,14 +81,14 @@ export function TaskCard({
         </button>
 
         <div className="min-w-0 flex-1 pr-7">
-          <p className={cx("text-sm font-bold leading-snug", done && "line-through")}>
+          <p className={cx("text-[16px] font-normal leading-snug", done && "line-through")}>
             {task.title}
           </p>
           {task.notes && (
             <p
               className={cx(
                 "mt-1 line-clamp-2 text-xs",
-                highlighted ? "text-accent-ink/70" : "text-muted",
+                colored ? "text-black/65" : "text-muted",
               )}
             >
               {task.notes}
@@ -118,59 +121,75 @@ export function TaskCard({
         </div>
       )}
 
-      <div
+      <footer
         className={cx(
-          "mt-auto flex flex-wrap items-center gap-2 border-t pt-3 text-[11px] font-semibold",
-          highlighted ? "border-accent-ink/15" : "border-[var(--border)]",
+          "mt-auto border-t pt-3",
+          colored ? "border-black/12" : "border-[var(--border)]",
         )}
       >
-        {task.dueAt && (
-          <span
-            className={cx(
-              "inline-flex items-center gap-1 rounded-full px-2 py-0.5",
-              highlighted
-                ? "bg-black/10"
-                : state === "overdue"
-                  ? "bg-[color-mix(in_srgb,var(--negative)_16%,transparent)] text-negative"
-                  : "bg-surface-sunken text-text-soft",
-            )}
-          >
-            <IconClock size={11} />
-            {formatDue(task.dueAt, state)}
-          </span>
-        )}
-
-        <span
-          className={cx(
-            "rounded-full px-2 py-0.5",
-            highlighted ? "bg-black/10" : "bg-surface-sunken text-text-soft",
+        <div className="flex items-center gap-2 text-[11px] font-semibold">
+          {task.dueAt && (
+            <span
+              className={cx(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-1",
+                state === "overdue"
+                  ? "bg-negative text-white"
+                  : state === "due-soon"
+                    ? "bg-[#F0A849] text-black"
+                    : "bg-black/10 text-black",
+              )}
+            >
+              <IconClock size={11} />
+              {formatDue(task.dueAt, state)}
+            </span>
           )}
-        >
-          {PRIORITY_LABEL[task.priority] ?? task.priority}
-        </span>
+
+          <span className={cx("rounded-full px-2.5 py-1", priorityTone(task.priority))}>
+            {PRIORITY_LABEL[task.priority] ?? task.priority}
+          </span>
+        </div>
 
         {task.clientId && task.clientName && (
           <Link
             href={`/clientes/${task.clientId}`}
             onDoubleClick={(event) => event.stopPropagation()}
             className={cx(
-              "ml-auto inline-flex items-center gap-1 rounded-full px-2 py-0.5 transition",
-              highlighted ? "bg-black/10 hover:bg-black/20" : "bg-surface-sunken hover:bg-surface-2",
+              "mt-2 flex w-full items-center gap-1.5 rounded-[12px] px-2.5 py-1.5 text-[11px] font-semibold transition",
+              colored
+                ? "bg-black/10 hover:bg-black/15"
+                : "bg-surface-sunken text-text-soft hover:bg-surface-2 hover:text-text",
             )}
           >
             <IconUser size={11} />
-            <span className="max-w-[110px] truncate">{task.clientName}</span>
+            <span className="truncate">{task.clientName}</span>
           </Link>
         )}
-      </div>
+      </footer>
     </article>
   );
+}
+
+function priorityTone(priority: string) {
+  if (priority === "alta") return "bg-negative/15 text-negative";
+  if (priority === "media") return "bg-warning/20 text-text";
+  return "bg-surface-sunken text-text-soft";
+}
+
+/** As cores de prazo permanecem iguais nos temas claro e escuro. */
+function taskTone(state: ReturnType<typeof dueState>) {
+  if (state === "overdue") return "bg-[#FFD1D1]";
+  if (state === "due-soon") return "bg-[#FFE2B8]";
+  return "bg-[#E5FFC7]";
 }
 
 function formatDue(iso: string, state: ReturnType<typeof dueState>): string {
   const date = new Date(iso);
   const time = date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   if (state === "today") return `Hoje ${time}`;
+  if (state === "due-soon") {
+    const minutes = Math.max(1, Math.ceil((date.getTime() - Date.now()) / 60_000));
+    return `Em ${minutes} min`;
+  }
   if (state === "overdue") {
     const days = Math.floor((Date.now() - date.getTime()) / 86_400_000);
     return days >= 1 ? `Atrasada ${days}d` : `Atrasada ${time}`;

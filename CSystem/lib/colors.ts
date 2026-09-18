@@ -82,7 +82,7 @@ export function rgba(hex: string, alpha: number): string {
 export function labelChipStyle(hex: string): CSSProperties {
   return {
     backgroundColor: rgba(hex, 0.2),
-    color: hex,
+    color: luminance(hex) > 0.45 ? readableInk(hex) : hex,
   };
 }
 

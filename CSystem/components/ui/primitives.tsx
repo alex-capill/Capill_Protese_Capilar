@@ -83,13 +83,13 @@ export function StatCounter({
   const isPreview = delta == null && previewDelta != null;
 
   return (
-    <div className="flex items-start gap-2">
-      <span className="display-title text-[42px] leading-none sm:text-[52px]">{value}</span>
-      <div className="flex flex-col gap-1 pt-1">
+    <div className="flex items-baseline gap-2.5 whitespace-nowrap">
+      <span className="display-title text-[42px] leading-none sm:text-[46px]">{value}</span>
+      <div className="flex items-baseline gap-2">
         {displayedDelta != null && displayedDelta !== 0 && (
           <span
             className={cx(
-              "inline-flex w-fit self-start items-center gap-px rounded-full px-1.5 py-0.5 text-[10px] font-extrabold leading-none text-black",
+              "inline-flex w-fit items-center gap-px rounded-full px-1.5 py-0.5 text-[10px] font-extrabold leading-none text-black",
               displayedDelta > 0
                 ? "bg-accent"
                 : "bg-negative",
@@ -109,7 +109,7 @@ export function StatCounter({
             {Math.abs(displayedDelta)}
           </span>
         )}
-        <span className="text-xs font-medium text-muted">{label}</span>
+        <span className="text-sm font-medium text-text-soft">{label}</span>
       </div>
     </div>
   );
@@ -152,14 +152,14 @@ export function SectionHeader({
   children?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+    <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+      <h2 className="text-[28px] font-medium tracking-tight">{title}</h2>
       {count != null && (
         <span className="border-b border-current pb-0.5 text-sm font-semibold text-text-soft">
           {count} {countLabel}
         </span>
       )}
-      <div className="ml-auto flex flex-wrap items-center gap-2">{children}</div>
+      {children}
     </div>
   );
 }

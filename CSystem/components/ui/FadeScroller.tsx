@@ -61,7 +61,7 @@ export function FadeScroller({
     <div
       ref={ref}
       onScroll={updateEdges}
-      className={cx("scroll-row", className)}
+      className={cx("scroll-row px-[10px] pb-1 pt-[10px] -mx-[10px]", className)}
       style={fadeStyle}
     >
       {children}

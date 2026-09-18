@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/primitives";
 import { formatPhone } from "@/lib/phone";
 import { getSdrInbox } from "@/lib/queries";
 import { cx } from "@/lib/utils";
+import { TEMPERATURE_LABEL, temperatureFromSdrConfidence } from "@/lib/temperature";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,21 @@ export default function EntradaSdrPage() {
           ) : (
             <ul className="space-y-2">
               {inbox.map((row) => (
-                <li key={row.id} className="card p-4">
+                <InboxRow key={row.id} row={row} />
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+    </>
+  );
+}
+
+function InboxRow({ row }: { row: ReturnType<typeof getSdrInbox>[number] }) {
+  const temperature = temperatureFromSdrConfidence(row.confidence);
+
+  return (
+    <li className="card p-4">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span className="text-sm font-bold">{row.name ?? "Lead sem nome"}</span>
                     {row.classification && (
@@ -60,6 +75,11 @@ export default function EntradaSdrPage() {
                     {row.confidence && (
                       <span className="rounded-full bg-surface-sunken px-2 py-0.5 text-[10px] font-semibold text-text-soft">
                         confiança {row.confidence}
+                      </span>
+                    )}
+                    {temperature && (
+                      <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[10px] font-semibold text-accent-ink">
+                        temperatura aplicada: {TEMPERATURE_LABEL[temperature]}
                       </span>
                     )}
                     <span className="ml-auto text-[11px] text-muted">
@@ -94,12 +114,6 @@ export default function EntradaSdrPage() {
                       {row.rawText}
                     </pre>
                   </details>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
-    </>
+    </li>
   );
 }

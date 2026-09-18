@@ -9,12 +9,17 @@ import {
 } from "@/app/actions/clients";
 import { Dialog } from "@/components/ui/Dialog";
 import { LabelChip } from "@/components/ui/primitives";
+import { TemperatureControl } from "@/components/ui/TemperatureControl";
 import { IconWhatsapp } from "@/components/ui/icons";
 import { LABEL_GROUP_LABEL } from "@/db/seed-data";
 import { MOTIVO_NAO_IDENTIFICADO, REASONS } from "@/lib/keywords";
 import { formatPhone, whatsappUrl } from "@/lib/phone";
 import { cx, formatBRL, parseBRL } from "@/lib/utils";
 import type { LabelView, ListView } from "@/lib/view-types";
+import {
+  normalizeTemperature,
+  temperatureFromSdrConfidence,
+} from "@/lib/temperature";
 
 type ClientRecord = {
   id: string;
@@ -30,6 +35,7 @@ type ClientRecord = {
   lostReason: string | null;
   sdrClassification: string | null;
   sdrConfidence: string | null;
+  temperature: string | null;
   labels: LabelView[];
 };
 
@@ -51,7 +57,6 @@ export function ClientDetails({
   const currentList = lists.find((list) => list.id === client.listId);
   const groups = [...new Set(allLabels.map((label) => label.group))];
   const wa = whatsappUrl(client.phoneNormalized);
-
   function toggleLabel(labelId: string) {
     setApplied((current) =>
       current.includes(labelId) ? current.filter((id) => id !== labelId) : [...current, labelId],
@@ -61,12 +66,12 @@ export function ClientDetails({
 
   return (
     <div className="space-y-4">
-      <div className="card p-5">
-        <div className="mb-4 flex items-start justify-between gap-3">
+      <div className="card p-6 sm:p-7">
+        <div className="mb-6 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-xl font-bold tracking-tight">Cadastro</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Cadastro</h2>
             {currentList && (
-              <p className="mt-0.5 text-xs text-muted">Etapa atual: {currentList.name}</p>
+              <p className="mt-1 text-sm text-muted">Etapa atual: {currentList.name}</p>
             )}
           </div>
           <button
@@ -78,7 +83,7 @@ export function ClientDetails({
           </button>
         </div>
 
-        <dl className="space-y-2.5 text-sm">
+        <dl className="space-y-4 text-[15px] sm:text-base">
           <Field label="Telefone">
             {client.phoneNormalized ? (
               <span className="flex items-center gap-2">
@@ -119,11 +124,11 @@ export function ClientDetails({
         </dl>
 
         {client.description && (
-          <div className="mt-4 border-t border-[var(--border)] pt-4">
-            <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
+          <div className="mt-6 border-t border-[var(--border)] pt-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
               Contexto
             </p>
-            <p className="whitespace-pre-wrap text-sm text-text-soft">{client.description}</p>
+            <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-text-soft">{client.description}</p>
           </div>
         )}
       </div>
@@ -208,9 +213,9 @@ export function ClientDetails({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-5">
       <dt className="shrink-0 text-muted">{label}</dt>
-      <dd className="text-right font-medium">{children}</dd>
+      <dd className="text-right font-medium leading-snug">{children}</dd>
     </div>
   );
 }
@@ -225,11 +230,13 @@ function EditClientDialog({
   const [name, setName] = useState(client.name);
   const [phone, setPhone] = useState(client.phoneRaw ?? "");
   const [city, setCity] = useState(client.city ?? "");
-  const [modality, setModality] = useState(client.modality ?? "");
   const [value, setValue] = useState(
     client.valueCents != null ? (client.valueCents / 100).toFixed(2).replace(".", ",") : "",
   );
   const [description, setDescription] = useState(client.description ?? "");
+  const [temperature, setTemperature] = useState(
+    normalizeTemperature(client.temperature) ?? temperatureFromSdrConfidence(client.sdrConfidence) ?? "",
+  );
   const [error, setError] = useState<string | null>(null);
   const [conflictId, setConflictId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -240,9 +247,9 @@ function EditClientDialog({
         name,
         phone: phone || null,
         city: city || null,
-        modality: modality || null,
         valueCents: value.trim() ? parseBRL(value) : null,
         description: description || null,
+        temperature: temperature || null,
       });
       if (result.ok) {
         onClose();
@@ -297,29 +304,27 @@ function EditClientDialog({
           </label>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-sm">
-            <span className="mb-1.5 block font-medium">Modalidade</span>
-            <select
-              value={modality}
-              onChange={(e) => setModality(e.target.value)}
-              className="field"
-            >
-              <option value="">Não definida</option>
-              <option value="studio">Avaliação no Studio</option>
-              <option value="online">Avaliação Online</option>
-            </select>
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1.5 block font-medium">Valor (R$)</span>
-            <input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="1.800,00"
-              className="field"
-            />
-          </label>
-        </div>
+        <fieldset>
+          <legend className="mb-1.5 text-sm font-medium">Temperatura</legend>
+          <TemperatureControl
+            value={normalizeTemperature(temperature)}
+            onChange={(next) => setTemperature(next ?? "")}
+            clientName={client.name}
+            size="edit"
+            className="w-full justify-between border border-[var(--border)] bg-surface-2 px-3 py-3"
+          />
+          <p className="mt-1.5 text-xs text-muted">Clique nas bolinhas para alternar a classificação.</p>
+        </fieldset>
+
+        <label className="block text-sm sm:max-w-[calc(50%-0.5rem)]">
+          <span className="mb-1.5 block font-medium">Valor (R$)</span>
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="1.800,00"
+            className="field"
+          />
+        </label>
 
         <label className="block text-sm">
           <span className="mb-1.5 block font-medium">Contexto</span>

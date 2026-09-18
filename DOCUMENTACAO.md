@@ -442,3 +442,139 @@ limpo sem autorização explícita.
 
 **Retomada:** foi criado `CSystem/AGENTS.md`, que direciona todo novo agente ao README,
 ao handoff, ao planejamento e a este arquivo append-only.
+
+### 2026-09-18 — CSystem V1.01: auditoria visual aplicada
+
+Alex autorizou a aplicação dos mockups definidos na auditoria visual: Workspace 1C,
+Funil 2A, Tarefas 2B, Agenda 3A, Métricas 3B e Configurações 3C. O Workspace ganhou
+grade assimétrica com a lateral "Onde os cards estão" e "Fila de follow-up", busca e
+filtros antes dos cards, e a mesma largura visual de 288px nas fileiras. Cabeçalhos,
+contadores, cápsula de controles, cards, Agenda, Métricas e Configurações foram
+ajustados para a composição dos mockups. Etiquetas claras passaram a escurecer apenas
+o texto para preservar legibilidade.
+
+As regras de negócio, banco, webhook, listas, palavras-chave, transições e cálculos de
+métrica permaneceram intocados. `npx tsc --noEmit` passou e `npm test -- --run`
+passou com 38 testes. A tela Workspace foi conferida visualmente em `localhost:3002`;
+o build ficou pendente porque havia um servidor `next dev` ativo na porta 3000 e o
+handoff exige que ele seja parado antes de gerar build.
+
+### 2026-09-18 — Temperatura manual no card do CSystem
+
+Alex definiu que o Workspace deve manter temperatura e valor no rodapé do card e que
+a temperatura seja classificada conforme a interação com o lead. O CSystem passou a
+ter o campo nullable `clients.temperature`, com as opções `Frio`, `Morno`, `Quente` e
+`Classificar`, seleção rápida no card e seleção no diálogo de edição.
+
+No ingresso do SDR, o `NÍVEL DE CONFIANÇA` declarado preenche a temperatura inicial em
+mapeamento direto: `ALTA` → `Quente`, `MODERADA` → `Morno`, `BAIXA` → `Frio`. Se Alex
+já alterou manualmente o cliente, o próximo repasse preserva a classificação manual.
+Não há inferência, pontuação ou cálculo de temperatura; `sdr_confidence` continua
+preservado como dado original e a classificação não altera as métricas do funil.
+`npm run db:push` aplicou a coluna sem resetar o banco; typecheck e os 38 testes
+continuam passando.
+
+### 2026-09-18 — Segunda rodada visual: temperatura SDR e controles do cliente
+
+Funil, Tarefas e a tabela de listas passaram a reutilizar o fade lateral do Workspace
+quando há conteúdo além da largura visível. O shell agora aplica margem interna
+simétrica, deixando a distância direita dos painéis proporcional à esquerda.
+
+O Cadastro do cliente foi reorganizado com mais respiro, hierarquia e um chip de
+temperatura. Em registros anteriores à coluna `temperature`, a interface apresenta a
+conversão direta já declarada pelo SDR (`ALTA`/`MODERADA`/`BAIXA`) e identifica a origem
+como SDR; nenhum score, inferência ou dado operacional foi criado. O diálogo Editar
+cliente substituiu selects nativos de Temperatura e Modalidade por escolhas visuais
+arredondadas, e o foco dos campos segue o mesmo raio do controle.
+
+### 2026-09-18 — Temperatura clicável e modalidade por etiqueta
+
+Por decisão posterior do Alex, Modalidade da Avaliação não é mais editável no cadastro:
+ela continua definida pelas etiquetas. O controle de temperatura foi unificado entre
+o rodapé do card e o diálogo Editar cliente. As bolinhas agora são clicáveis e percorrem
+`Classificar → Frio → Morno → Quente → Classificar`; no card a gravação é imediata e,
+no diálogo, a escolha é gravada ao salvar.
+
+### 2026-09-18 — Simplificação de tarefas e prioridade
+
+Alex decidiu que tarefas não precisam de etiquetas. A atribuição e a exibição de
+etiquetas foram removidas das telas e da query de tarefas; a tabela histórica
+`task_labels` foi preservada, sem apagar dados existentes. A prioridade saiu do select
+nativo e passou a usar uma caixa arredondada de três opções nas cores do CSystem. Como
+todo campo do pop-up, essa escolha fica somente no estado local e só é gravada ao usar
+Salvar. Os pontos de temperatura no pop-up Editar cliente foram aumentados levemente,
+mantendo o mesmo desenho do card.
+
+### 2026-09-18 — Correção: sinalizações especiais em tarefas
+
+Alex esclareceu que tarefas não usam etiquetas gerais, mas precisam manter as três
+sinalizações de Situação especial: `Prioridade`, `Retorno Necessário` e `Problema`.
+Elas foram reintroduzidas na criação, edição e leitura de tarefas. A seleção fica local
+no pop-up e só é gravada em Salvar; o servidor aceita somente IDs do grupo
+`SITUACAO_ESPECIAL`, impedindo Origem, Modalidade ou Pagamento em tarefas.
+
+### 2026-09-18 — Rodapé dos cartões de tarefa
+
+O rodapé dos cartões de tarefa foi reorganizado: prazo e nível de prioridade ocupam a
+primeira linha, com cores semânticas, e o cliente relacionado passou para uma faixa
+única abaixo. Isso elimina a quebra irregular de chips e separa visualmente atraso,
+urgência e vínculo com o cliente.
+
+### 2026-09-18 — Cor de tarefa pelo prazo
+
+Alex definiu a cor integral dos cartões de tarefa por prazo: verde-claro para tarefa
+ativa, laranja-claro quando restam até 60 minutos e vermelho-claro em atraso. As cores
+permanecem literais nos dois temas. O estado de menos de uma hora também integra o
+filtro Hoje para evitar que uma tarefa crítica desapareça da leitura diária.
+
+### 2026-09-18 — Colunas de tarefa sem faixa e H1 menor
+
+Por pedido do Alex, o painel cinza atrás dos cartões de tarefa foi removido para seguir
+o mockup. Os títulos H1 compartilhados pelo Workspace, Funil e demais páginas foram
+reduzidos em aproximadamente 20%, de 48/62px para 38/50px.
+
+### 2026-09-18 — Correção da faixa de tarefas
+
+O pedido anterior de remover a faixa foi corrigido: a coluna de tarefas voltou a ter seu
+painel com o título do dia, contador e ação de nova tarefa. O que foi retirado é somente
+o fundo cinza amplo que ficava atrás das colunas, substituído por uma superfície neutra.
+
+### 2026-09-18 — Ajuste final da faixa de tarefas
+
+A faixa interna da coluna voltou ao visual anterior, sem painel cinza. Continua removido
+somente o fundo amplo atrás dos cartões de tarefa.
+
+### 2026-09-18 — Kanban restaurado conforme referência
+
+A referência do anexo foi confirmada: o Kanban usa fundo geral cinza e cada coluna é um
+painel cinza-claro arredondado, contendo cabeçalho, contador, cartões e Nova tarefa.
+
+### 2026-09-18 — Agenda compacta no Workspace
+
+A barra de agenda no topo do Workspace passou a ter 40px, mantendo seu comprimento. Os
+compromissos e controles de tema, notificações e perfil foram ajustados à mesma altura,
+alinhada aos ícones da rail lateral.
+
+### 2026-09-18 — Refinamento da agenda compacta
+
+A agenda foi reduzida de 40px para 36px. O controle de tema agora usa botão de 28px e
+ícone de 15px, contido integralmente em sua cápsula; os controles vizinhos acompanham a
+mesma escala.
+
+### 2026-09-18 — Alinhamento da agenda conforme referência
+
+A barra de agenda e seus controles passaram a 44px e foram equilibrados na mesma linha
+do logotipo. Atalho, tema, notificações, avatar e compromissos foram redimensionados
+para permanecerem alinhados e contidos em suas cápsulas.
+
+### 2026-09-18 — Temperatura clicável no cadastro
+
+O painel Cadastro da página do cliente agora mostra a mesma escala de bolinhas do card
+do funil. Cada clique altera e grava a temperatura imediatamente; a origem SDR continua
+identificada enquanto não houver classificação manual.
+
+### 2026-09-18 — Temperatura no título do lead
+
+A escala de temperatura foi posicionada imediatamente após o título grande com o nome
+do lead. O controle é o mesmo do card do funil e salva a classificação a cada clique.
+O painel Cadastro deixou de duplicar essa informação.

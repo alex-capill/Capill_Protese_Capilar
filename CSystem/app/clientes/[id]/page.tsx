@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientDetails } from "@/components/cliente/ClientDetails";
+import { ClientPageHeader } from "@/components/cliente/ClientPageHeader";
 import { ClientTimeline } from "@/components/cliente/ClientTimeline";
 import { EventComposer } from "@/components/cliente/EventComposer";
 import { PaymentsPanel } from "@/components/cliente/PaymentsPanel";
-import { PageHeader } from "@/components/shell/PageHeader";
 import { IconChevronLeft } from "@/components/ui/icons";
 import {
   getClient,
@@ -48,7 +48,12 @@ export default async function ClientePage({
         </Link>
       </div>
 
-      <PageHeader title={client.name} />
+      <ClientPageHeader
+        clientId={client.id}
+        name={client.name}
+        temperature={client.temperature}
+        sdrConfidence={client.sdrConfidence}
+      />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-4 lg:order-2">

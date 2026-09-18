@@ -88,6 +88,21 @@ export function getLabels(includeArchived = false): LabelView[] {
     .all();
 }
 
+/** As únicas etiquetas disponíveis para tarefas: sinalizações excepcionais. */
+export function getSpecialTaskLabels(): LabelView[] {
+  return db
+    .select({
+      id: labels.id,
+      name: labels.name,
+      group: labels.group,
+      colorHex: labels.colorHex,
+    })
+    .from(labels)
+    .where(and(eq(labels.archived, false), eq(labels.group, "SITUACAO_ESPECIAL")))
+    .orderBy(asc(labels.position))
+    .all();
+}
+
 /* ---------------------------------------------------------------- clientes */
 
 function labelsByClient(): Map<string, LabelView[]> {
@@ -163,6 +178,7 @@ export function getClients(options?: { includeInactive?: boolean }): ClientView[
     status: row.status,
     sdrClassification: row.sdrClassification,
     sdrConfidence: row.sdrConfidence,
+    temperature: row.temperature,
     valueCents: row.valueCents,
     evaluationAt: iso(row.evaluationAt),
     nextFollowupAt: iso(row.nextFollowupAt),
@@ -287,6 +303,8 @@ export function getTasks(): TaskView[] {
     })
     .from(taskLabels)
     .innerJoin(labels, eq(labels.id, taskLabels.labelId))
+    .where(eq(labels.group, "SITUACAO_ESPECIAL"))
+    .orderBy(asc(labels.position))
     .all();
 
   const labelMap = new Map<string, LabelView[]>();

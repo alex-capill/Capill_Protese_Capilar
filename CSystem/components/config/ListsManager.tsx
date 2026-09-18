@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { updateListAction } from "@/app/actions/lists";
 import { ALL_STAGES, KEYWORDS, STAGE_LABEL, type Stage } from "@/lib/keywords";
 import type { ListView } from "@/lib/view-types";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 
 /**
  * Configuração das listas: o que cada uma significa para a métrica e qual
@@ -15,14 +16,14 @@ import type { ListView } from "@/lib/view-types";
 export function ListsManager({ lists }: { lists: ListView[] }) {
   return (
     <section className="card p-7">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Listas do funil</h2>
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Listas do funil</h2>
       <p className="mb-5 text-sm text-muted">
         <strong className="text-text">Conta como</strong> é o que o dashboard soma. Duas
         listas podem apontar para a mesma etapa — é o caso de AGUARDANDO CONTRATO e FAZER
         PEDIDO DO SISTEMA, que ambas significam &quot;fechou&quot;.
       </p>
 
-      <div className="thin-scroll overflow-x-auto">
+      <FadeScroller className="items-start" fadeWidth={48}>
         <table className="w-full min-w-[620px] text-sm">
           <thead>
             <tr className="border-b border-[var(--border)] text-left text-xs uppercase tracking-wide text-muted">
@@ -37,7 +38,7 @@ export function ListsManager({ lists }: { lists: ListView[] }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </FadeScroller>
     </section>
   );
 }

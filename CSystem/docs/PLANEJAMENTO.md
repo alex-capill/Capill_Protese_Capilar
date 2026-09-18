@@ -423,3 +423,108 @@ Decisão do Alex nesta rodada de refino visual. Detalhe e as ressalvas em
   [`INTEGRACAO_N8N.md`](INTEGRACAO_N8N.md); nada foi aplicado.
 - **Arquivar o board do Trello** ao fim da migração.
 - **Os ~21 cards do funil ativo** que ficaram no Trello: digitar à mão ou importar.
+
+### Adendo de decisão — temperatura manual do cliente — 18/09/2026
+
+Alex solicitou que o Workspace mostre temperatura no rodapé do card, junto dos
+pontos e do valor, e que ele possa classificar o cliente conforme a interação.
+Esta decisão cria o campo operacional nullable `clients.temperature`, com as opções
+fechadas `frio`, `morno` e `quente`, além de vazio para "Classificar".
+
+O campo recebe inicialmente a classificação declarada pelo SDR através do mapeamento
+direto `ALTA` → `Quente`, `MODERADA` → `Morno`, `BAIXA` → `Frio`. O Alex pode alterar
+essa classificação manualmente conforme a interação; depois de alterada, novos
+repasses preservam o valor manual. Não há cálculo a partir de mensagens, tempo, etapa
+ou probabilidade de fechamento. `sdr_confidence` continua sendo preservado como o
+dado original do SDR. A classificação não alimenta as métricas do funil.
+
+### Adendo visual — rolagem, cadastro e edição — 18/09/2026
+
+- [x] Usar `FadeScroller` nos quadros horizontais de Funil e Tarefas e na tabela de
+      listas, preservando a indicação visual de conteúdo lateral oculto.
+- [x] Exibir a temperatura do SDR como `Quente`, `Morno` ou `Frio` também em cards
+      legados sem a coluna preenchida, identificado como dado do SDR.
+- [x] Reorganizar Cadastro e substituir os selects nativos de Temperatura e
+      Modalidade no diálogo de edição por escolhas arredondadas e minimalistas.
+- [x] Igualar a margem horizontal interna das páginas e o arredondamento do foco ao
+      formato dos campos.
+
+### Adendo visual — temperatura clicável — 18/09/2026
+
+- [x] Remover Modalidade do diálogo Editar cliente, pois a definição continua nas
+      etiquetas de modalidade da avaliação.
+- [x] Usar o mesmo controle de pontos de temperatura no card e na edição; cada clique
+      avança `Classificar → Frio → Morno → Quente → Classificar`.
+
+### Adendo visual — tarefas sem etiquetas — 18/09/2026
+
+- [x] Remover etiquetas de tarefas da interface e das queries de tarefas, preservando
+      os registros históricos no banco sem apagar dados.
+- [x] Trocar a seleção nativa de prioridade por caixa arredondada de opções Baixa,
+      Média e Alta; a escolha só é persistida ao clicar em Salvar.
+- [x] Aumentar discretamente os pontos de temperatura no diálogo Editar cliente, sem
+      alterar o tamanho do controle no card.
+
+### Correção de escopo — etiquetas de Situação especial — 18/09/2026
+
+- [x] Manter em tarefas apenas `Prioridade`, `Retorno Necessário` e `Problema`, do
+      grupo Situação especial.
+- [x] Persistir essas sinalizações somente junto do botão Salvar e validar no servidor
+      que nenhuma etiqueta de outra categoria entra em uma tarefa.
+
+### Adendo visual — rodapé de tarefas — 18/09/2026
+
+- [x] Separar prazo/prioridade do cliente relacionado em duas linhas e usar cores
+      semânticas para melhorar a leitura dos cards de tarefa.
+
+### Adendo visual — cor por prazo — 18/09/2026
+
+- [x] Colorir cartões ativos de verde-claro, laranja-claro nos últimos 60 minutos e
+      vermelho-claro após o prazo, preservando as mesmas cores no modo escuro.
+- [x] Incluir tarefa a menos de uma hora no filtro Hoje.
+
+### Adendo visual — colunas e H1 — 18/09/2026
+
+- [x] Remover o painel de fundo das colunas de tarefas, mantendo somente o cabeçalho e
+      os cartões.
+- [x] Reduzir os títulos H1 compartilhados das páginas em cerca de 20%.
+
+### Correção visual — faixa de tarefas — 18/09/2026
+
+- [x] Restaurar a faixa da coluna de tarefas (dia, contador e ação Nova tarefa).
+- [x] Manter removido apenas o fundo cinza amplo do quadro atrás das colunas.
+
+### Correção visual — faixa da coluna — 18/09/2026
+
+- [x] Voltar a faixa interna da coluna de tarefas ao visual anterior, sem painel cinza.
+- [x] Preservar a remoção do fundo amplo atrás dos cartões.
+
+### Correção visual final — Kanban — 18/09/2026
+
+- [x] Restaurar o Kanban ao padrão do anexo: fundo geral cinza e painéis de coluna
+      cinza-claro arredondados.
+
+### Ajuste visual — agenda do Workspace — 18/09/2026
+
+- [x] Reduzir a barra superior de agenda e seus controles para 40px, preservando seu
+      comprimento e alinhando-a aos ícones da navegação lateral.
+
+### Refinamento visual — agenda do Workspace — 18/09/2026
+
+- [x] Reduzir a agenda de 40px para 36px e corrigir o controle de tema para caber
+      integralmente na cápsula.
+
+### Ajuste pela referência — agenda do Workspace — 18/09/2026
+
+- [x] Ajustar a agenda e controles para 44px e alinhar toda a linha ao logotipo,
+      conforme referência visual.
+
+### Ajuste — temperatura no cadastro — 18/09/2026
+
+- [x] Usar a escala de temperatura clicável do card no painel Cadastro do cliente,
+      com gravação imediata a cada clique.
+
+### Correção — temperatura no título do lead — 18/09/2026
+
+- [x] Posicionar a escala de temperatura ao lado do nome no título da página do cliente,
+      com gravação imediata a cada clique.

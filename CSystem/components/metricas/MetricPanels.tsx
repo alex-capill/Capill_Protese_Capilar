@@ -15,9 +15,9 @@ export function AttendancePanel({
   };
 }) {
   return (
-    <div className="card p-6">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Comparecimento</h2>
-      <p className="mb-5 text-sm text-muted">
+    <div className="rounded-[var(--radius-card)] bg-[#111111] p-[26px] text-white shadow-[var(--shadow-card)]">
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Comparecimento</h2>
+      <p className="mb-5 text-sm text-white/55">
         Quantas avaliações marcadas viraram avaliação feita.
       </p>
 
@@ -26,8 +26,8 @@ export function AttendancePanel({
           <NoData>Sem avaliações agendadas no período</NoData>
         ) : (
           <>
-            <span className="display-title text-[44px]">{formatRate(data.rate)}</span>
-            <span className="text-sm text-muted">compareceram</span>
+            <span className="display-title text-[60px] text-accent">{formatRate(data.rate)}</span>
+            <span className="text-sm text-white/60">compareceram</span>
           </>
         )}
       </div>
@@ -38,8 +38,8 @@ export function AttendancePanel({
           { label: "Compareceram", value: data.compareceu },
           { label: "Não compareceram", value: data.naoCompareceu },
         ].map((item) => (
-          <div key={item.label} className="rounded-[var(--radius-inner)] bg-surface-sunken p-3">
-            <dt className="text-xs font-medium text-muted">{item.label}</dt>
+          <div key={item.label} className="rounded-[var(--radius-inner)] bg-white/[0.08] p-3">
+            <dt className="text-xs font-medium text-white/55">{item.label}</dt>
             <dd className="mt-0.5 text-2xl font-bold tabular-nums">{item.value}</dd>
           </div>
         ))}
@@ -70,7 +70,7 @@ export function DurationsPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Tempo médio entre etapas</h2>
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Tempo médio entre etapas</h2>
       <p className="mb-5 text-sm text-muted">
         Em dias. Sai das próprias transições — você não precisou anotar nada para isto
         existir.
@@ -130,7 +130,7 @@ export function ReasonsPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Motivos registrados</h2>
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Motivos registrados</h2>
       <p className="mb-5 text-sm text-muted">
         Só aparece aqui o motivo que você registrou com evidência. O sistema nunca
         adivinha motivo.
@@ -196,7 +196,7 @@ export function OriginPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Origem dos leads</h2>
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Origem dos leads</h2>
       <p className="mb-5 text-sm text-muted">
         Clientes criados no período, pelas etiquetas do grupo Origem.
       </p>
@@ -246,7 +246,7 @@ export function DistributionPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-xl font-bold tracking-tight">Onde os cards estão agora</h2>
+      <h2 className="mb-1 text-2xl font-medium tracking-tight">Onde os cards estão agora</h2>
       <p className="mb-5 text-sm text-muted">
         Foto do presente — {totalCards} card{totalCards === 1 ? "" : "s"} ativo
         {totalCards === 1 ? "" : "s"}. Não depende do período selecionado.

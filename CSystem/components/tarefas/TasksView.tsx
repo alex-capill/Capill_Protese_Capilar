@@ -38,12 +38,12 @@ import { TasksList } from "./TasksList";
 export function TasksView({
   columns,
   tasks,
-  labels,
+  specialLabels,
   clients,
 }: {
   columns: TaskColumnView[];
   tasks: TaskView[];
-  labels: LabelView[];
+  specialLabels: LabelView[];
   clients: ClientView[];
 }) {
   const [mode, setMode] = useViewMode("csystem-tarefas-view", "kanban");
@@ -58,7 +58,7 @@ export function TasksView({
       const state = dueState(task);
       switch (filter) {
         case "hoje":
-          return !task.doneAt && state === "today";
+          return !task.doneAt && (state === "today" || state === "due-soon");
         case "atrasadas":
           return !task.doneAt && state === "overdue";
         case "abertas":
@@ -73,7 +73,7 @@ export function TasksView({
 
   const counts = useMemo(
     () => ({
-      hoje: tasks.filter((t) => !t.doneAt && dueState(t) === "today").length,
+      hoje: tasks.filter((t) => !t.doneAt && (dueState(t) === "today" || dueState(t) === "due-soon")).length,
       atrasadas: tasks.filter((t) => !t.doneAt && dueState(t) === "overdue").length,
       abertas: tasks.filter((t) => !t.doneAt).length,
     }),
@@ -122,7 +122,7 @@ export function TasksView({
           task={editing}
           columnId={creatingIn ?? editing?.columnId ?? columns[0]?.id ?? ""}
           columns={columns}
-          labels={labels}
+          specialLabels={specialLabels}
           clients={clients}
           onClose={() => {
             setEditing(null);
@@ -154,11 +154,10 @@ function TasksBoard({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
-  // Inclui etiquetas: o quadro mantém um cache local para o drag-and-drop e
-  // antes ignorava mudanças de `task.labels`, deixando o chip desatualizado
-  // até um reload completo.
+  // O quadro mantém um cache local para o drag-and-drop; inclui as sinalizações
+  // especiais porque elas podem mudar ao salvar a edição.
   const signature = tasks
-    .map((t) => `${t.id}:${t.columnId}:${t.position}:${t.doneAt}:${t.labels.map((l) => l.id).join(",")}`)
+    .map((t) => `${t.id}:${t.columnId}:${t.position}:${t.doneAt}:${t.priority}:${t.dueAt}:${t.labels.map((label) => label.id).join(",")}`)
     .join("|");
   const [synced, setSynced] = useState(signature);
   if (synced !== signature) {
@@ -236,26 +235,28 @@ function TasksBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="thin-scroll flex items-start gap-4 overflow-x-auto pb-4">
-        {columns.map((column) => {
-          const ids = items[column.id] ?? [];
-          return (
-            <SortableContext
-              key={column.id}
-              id={column.id}
-              items={ids}
-              strategy={verticalListSortingStrategy}
-            >
-              <TaskColumn
-                column={column}
-                tasks={ids.map((id) => byId[id]).filter(Boolean)}
-                onEdit={onEdit}
-                onCreate={onCreate}
-              />
-            </SortableContext>
-          );
-        })}
-        <AddColumnButton />
+      <div className="-mx-4 px-4 py-5 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8">
+        <FadeScroller className="items-start" fadeWidth={72}>
+          {columns.map((column) => {
+            const ids = items[column.id] ?? [];
+            return (
+              <SortableContext
+                key={column.id}
+                id={column.id}
+                items={ids}
+                strategy={verticalListSortingStrategy}
+              >
+                <TaskColumn
+                  column={column}
+                  tasks={ids.map((id) => byId[id]).filter(Boolean)}
+                  onEdit={onEdit}
+                  onCreate={onCreate}
+                />
+              </SortableContext>
+            );
+          })}
+          <AddColumnButton />
+        </FadeScroller>
       </div>
 
       <DragOverlay>{activeTask && <TaskCard task={activeTask} />}</DragOverlay>
