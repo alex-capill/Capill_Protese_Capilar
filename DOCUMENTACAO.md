@@ -578,3 +578,218 @@ identificada enquanto não houver classificação manual.
 A escala de temperatura foi posicionada imediatamente após o título grande com o nome
 do lead. O controle é o mesmo do card do funil e salva a classificação a cada clique.
 O painel Cadastro deixou de duplicar essa informação.
+
+### 2026-09-18 — Correção de bug: mancha visível atrás dos cards no Workspace
+
+Alex reportou uma "marcação" cinza atrás dos cards de Minhas Tarefas no Workspace, que
+não batia com o design aprovado. Causa: o brilho radial do `body`
+(`app/globals.css`) tinha a altura definida em `%`, relativa à altura *total* da
+página (que cresce com o conteúdo) em vez da altura da tela. Na página do Workspace
+(1532px de altura total), isso fazia o brilho se apagar por volta de 414px do topo —
+bem onde caem os cards de tarefa — criando uma borda visível entre o brilho e o fundo
+chapado, em vez de um degradê que passa despercebido perto do cabeçalho.
+
+Correção: a altura do gradiente passou a ser um valor fixo em `px` (1000px, fade
+completo por volta de 300px do topo), independente do tamanho da página. Conferido nos
+temas claro e escuro, no Workspace (onde o bug aparecia) e nas demais telas (onde o
+brilho continua atrás do cabeçalho, sem regressão). `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da correção.
+
+### 2026-09-18 — Correção de bug: fade lateral imperceptível nas fileiras de cards claros
+
+Alex pediu que a rolagem horizontal das fileiras de card (Novos Leads, Minhas Tarefas,
+colunas do Funil/Tarefas, tabela de Listas) tivesse o mesmo efeito visível de degradê
+que o brilho do topo da página. Verificação: o `FadeScroller`
+(`components/ui/FadeScroller.tsx`) já aplicava um `mask-image` nas bordas, mas essa
+técnica apaga a opacidade do próprio conteúdo — em chips escuros/saturados o efeito
+aparecia bem, mas em cards claros sobre fundo cinza-claro quase da mesma cor o
+desvanecimento era real, porém visualmente imperceptível, parecendo um corte reto.
+
+Correção: trocada a técnica de `mask-image` por uma camada de degradê sobreposta
+(`linear-gradient` de opaco a transparente) na cor real do fundo por trás da fileira
+(`fadeColor`, novo prop, default `var(--bg)` = fundo da página). A única fileira que
+não fica sobre o fundo da página é a tabela de Listas em Configurações, dentro de um
+cartão branco — recebeu `fadeColor="var(--surface)"` para desvanecer na cor certa.
+Conferido nos temas claro e escuro, no Workspace, no Funil (colunas do Kanban) e em
+Configurações — o degradê agora é visivelmente igual ao efeito do topo em qualquer
+conteúdo. `npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da correção.
+
+### 2026-09-18 — Fundo do body virou 100% chapado, sem brilho nenhum
+
+Alex mandou um mockup de referência ("1c — Workspace") e pediu o fundo exatamente
+igual a ele. Para não adivinhar, o fundo do mockup foi amostrado pixel a pixel
+(cópia temporária do PNG em `CSystem/public/`, servida pelo próprio dev server, lida
+via `canvas.getImageData` no navegador — arquivo temporário removido depois, nunca
+ficou no Git). Resultado: o fundo do mockup é a cor sólida `#d2d2d2` (já era o valor
+de `--bg`) — não há brilho/vinheta de propósito atrás do cabeçalho; qualquer variação
+de tom encontrada perto do topo (poucos pontos) é consistente com sombra dos próprios
+elementos escuros da barra de agenda, não um gradiente de fundo.
+
+Como o brilho radial (mesmo já corrigido para altura fixa em px) é uma fonte
+recorrente de bug visual — qualquer altura escolhida pode voltar a aparecer como
+borda em outra combinação de tela/conteúdo — ele foi removido inteiramente.
+`body` agora só tem `background-color: var(--bg)`, sem `background-image`. Conferido
+nos temas claro e escuro via `getComputedStyle` (`backgroundImage: "none"`).
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da remoção.
+
+### 2026-09-18 — Coluna lateral do Workspace alinhada com "Novos Leads"
+
+Alex pediu para descer um pouco "Onde os cards estão" e "Fila de follow-up" para
+alinhar com o subtítulo "Novos Leads". O topo do cartão já coincidia com o topo da
+caixa do `<h2>`, mas não com o topo visual das letras (que sobra ~12px abaixo por
+causa do `line-height`, medido com `canvas.measureText`). `WorkspaceAside` em
+`app/page.tsx` ganhou `pt-3` (12px). Conferido nos dois temas; `npx tsc --noEmit`
+(0 erros) e `npm test` (41 testes).
+
+### 2026-09-18 — "Onde os cards estão" e "Fila de follow-up" viraram janelas soltas
+
+Alex pediu que as duas janelas do Workspace pudessem ser arrastadas pela tela e
+fechadas, com botões de mostrar/ocultar do lado direito no mesmo padrão visual dos
+chips de filtro da esquerda. Componente novo e reutilizável
+`components/ui/DraggableWindow.tsx` (arrasta pela alça, sem medição prévia — vira
+`fixed` na posição atual só no primeiro arrasto; posição em `localStorage` por
+painel). `components/workspace/WorkspaceAside.tsx` extraído de `app/page.tsx`
+(precisa ser Client Component para ter estado); dois chips de alternância
+(`chip`/`chip-on`/`chip-off`, mesma classe da fileira de filtros) sempre visíveis
+para reabrir um painel fechado, alinhados com a fileira "Buscar leads" (`pt-[59px]`
+no `<aside>`, medido via `getBoundingClientRect`). Estado de aberto/fechado também
+em `localStorage`, por navegador. Nenhuma regra de negócio, banco ou webhook
+tocado — é preferência de tela. `npx tsc --noEmit` (0 erros) e `npm test`
+(41 testes) depois da mudança.
+
+### 2026-09-18 — Arrastar foi removido; virou ícone no rail, só no Workspace
+
+Alex testou o arrasto e pediu para desfazer, voltando ao estado estático de antes
+(removidos `DraggableWindow.tsx` e o `WorkspaceAside.tsx` extraído). Os botões de
+mostrar/ocultar "Onde os cards estão" e "Fila de follow-up" viraram dois ícones
+redondos pequenos no rodapé do rail (menu vertical), sem texto, visíveis só na
+tela Workspace. Como rail e painel são irmãos no layout, o estado precisou de um
+contexto React compartilhado, novo:
+`components/workspace/WorkspacePanelsContext.tsx`, consumido pelo rail
+(`Rail.tsx`) e por um envelope mínimo (`PanelSlot.tsx`) em volta de cada seção em
+`app/page.tsx`. Estado por navegador em `localStorage`, nunca no banco. Alex
+também definiu, para quando o botão "+" de janela personalizada for construído:
+no máximo duas janelas abertas ao mesmo tempo. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Ícones de mostrar/ocultar saíram do rail, foram para o canto inferior direito
+
+Alex pediu para os dois ícones saírem do rodapé do rail (canto inferior esquerdo
+da tela) e ficarem soltos no canto inferior direito, só ícone, pelo menos 30%
+menores. Novo `components/workspace/WorkspacePanelToggles.tsx` (`fixed bottom-5
+right-5`, botões de 32px — 33% menor que os 48px do rail), renderizado só em
+`app/page.tsx`. `Rail.tsx` voltou a ser só navegação. `npx tsc --noEmit` (0 erros)
+e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Painel da direita fixo ao rolar; ícones sem fundo até clicar
+
+Três ajustes: (1) o `<aside>` do Workspace ganhou `sticky top-6` — cola a 24px do
+topo da tela ao rolar, em vez de sumir de vista; (2) realinhado com a fileira de
+busca+chips do Novos Leads (`pt-[59px]`, mesma medição de uma rodada anterior,
+repetida porque tinha sido revertida); (3) os dois ícones do canto inferior
+direito perderam o fundo permanente — agora ficam transparentes (como os itens
+inativos do rail) até serem clicados, só então mostram o fundo preto. `npx tsc
+--noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Widescreen: fim da coluna reservada, painéis flutuando com bandeja de fundo
+
+Alex pediu que Novos Leads e Minhas Tarefas ocupassem a largura inteira da tela
+(removida a coluna de grade de 300px reservada para o `<aside>`) e que "Onde os
+cards estão"/"Fila de follow-up" ganhassem um fundo discreto atrás deles (agora
+que flutuam sobre conteúdo de verdade, não mais sobre uma coluna vazia).
+`app/page.tsx` perdeu a grade de duas colunas; novo
+`components/workspace/WorkspacePanels.tsx` (substitui `WorkspaceAside` inline e
+`PanelSlot.tsx`, removido) renderiza os dois cartões como overlay `fixed`
+(`top-[233px] right-8`, trocando o `sticky` da rodada anterior porque sem coluna
+de grade não sobra "altura de contenção" para ele grudar) dentro de uma bandeja
+`bg-surface-sunken` com `shadow-[var(--shadow-raised)]` — cor e sombra já
+existentes no sistema de design, não inventadas. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Bandeja realinhada com os filtros; alça de arrastar pra recolher
+
+Dois ajustes: (1) o topo da bandeja de fundo passou a bater exatamente com o
+topo da fileira de busca+chips do Novos Leads (`top-[245px]`, antes o topo do
+cartão de dentro é que batia, deixando a bandeja 12px acima da linha); (2) nova
+alça de arrastar no topo da bandeja (estilo bottom sheet) — arrastar para baixo
+recolhe as duas janelas, arrastar para cima ou um clique simples reabre/alterna;
+não decide quais painéis existem (isso continua com os ícones do rail), só se a
+bandeja está expandida ou minimizada. Lógica verificada via simulação de
+eventos de ponteiro; **o arrasto de mouse de verdade ainda não foi confirmado
+nesta sessão** — a ferramenta de automação disponível não reproduziu o gesto,
+então vale o Alex testar com a mão antes de dar como fechado. `npx tsc --noEmit`
+(0 erros) e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Bandeja presa embaixo à direita, laterais rentes com os cartões
+
+Alex mandou uma referência (widget de chamada com painel de resumo embaixo, no
+canto inferior direito, com alça no topo) e pediu duas mudanças: (1) a bandeja
+de fundo perdeu o `px-3` — agora as laterais dela batem exatamente com as
+laterais dos cartões, sem gap; (2) trocado o posicionamento de `top-[245px]`
+(alinhado com a fileira de filtros) para `bottom-28` (112px do rodapé,
+acima do cluster de ícones de mostrar/ocultar) — a bandeja agora cresce para
+cima conforme mais painéis abrem, com a base sempre fixa. `npx tsc --noEmit`
+(0 erros) e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Zero respiro embaixo, vidro fosco na bandeja, ícones foram pro lado
+
+Alex pediu zero espaço entre a bandeja e o rodapé da tela (`bottom-28` →
+`bottom-0`, cantos de baixo deixaram de ser arredondados) e um fundo
+translúcido com desfoque (`bg-surface-sunken` a 70% de opacidade +
+`backdrop-blur-md`, efeito vidro fosco). Como isso tira o espaço que os dois
+ícones de mostrar/ocultar usavam embaixo da bandeja, eles mudaram para o lado
+esquerdo dela (`WorkspacePanelToggles.tsx`) — ao lado, não acima, porque a
+altura da bandeja varia com quantos painéis estão abertos, e "ao lado" nunca
+colide independente dessa altura. `npx tsc --noEmit` (0 erros) e `npm test`
+(41 testes) depois da mudança.
+
+### 2026-09-18 — Correção de bug: clique na temperatura não avançava (Funil, cadastro, edição)
+
+Alex reportou que clicar nas bolinhas de temperatura no Funil não fazia nada.
+Investigação: o card mostra, quando não há classificação manual, a conversão
+direta da confiança do SDR (`temperatureFromSdrConfidence`) para não parecer
+"sem dado" — mas esse valor CONVERTIDO (não o dado real, que era `null`) estava
+sendo passado como o valor que o clique avança. Resultado: o primeiro clique
+calculava o próximo passo a partir de "Quente" (a conversão exibida) em vez de
+a partir de `null` (o dado real) — o ciclo pulava direto para "Classificar" em
+vez de avançar para "Frio", e como a interface volta a mostrar a mesma
+conversão do SDR enquanto o campo real continuar `null`, parecia que o clique
+não tinha feito nada.
+
+O mesmo padrão (conversão do SDR usada como se fosse o dado editável) existia
+em três lugares: `components/funil/ClientMiniCard.tsx`, `components/cliente/
+ClientPageHeader.tsx` (temperatura ao lado do nome) e `components/cliente/
+ClientDetails.tsx` (diálogo Editar cliente) — este último tinha uma
+consequência mais séria: salvar o diálogo SEM tocar na temperatura gravava a
+conversão do SDR como se fosse uma classificação manual, contrariando a decisão
+já registrada de que a conversão é só exibição enquanto não houver escolha
+manual.
+
+Correção: `components/ui/TemperatureControl.tsx` ganhou um `displayValue`
+separado de `value` — `value` é sempre o dado real (o que orienta o próximo
+clique), `displayValue` é só o que aparece nas bolinhas quando `value` é
+`null`. Os três locais foram ajustados para passar os dois separadamente.
+Verificado clicando de fato no Funil (via evento de clique real e via
+`dispatchEvent`) e recarregando a página: o ciclo agora avança
+Classificar → Frio → Morno → Quente → Classificar, e a nova classificação
+persiste no banco corretamente a cada passo. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da correção.
+
+### 2026-09-18 — "Fila de follow-up" vazia: não é bug, é a fonte de dado esperada
+
+Alex também reportou que a "Fila de follow-up" não mostra nenhum card mesmo
+depois de arrastar um cliente para a lista "Follow-up" no Funil. Investigação:
+o widget (`getFollowupQueue` em `lib/queries.ts`) lê exclusivamente o campo
+`clients.nextFollowupAt` — uma data — e não tem nenhuma relação com em qual
+lista do Kanban o cliente está. Esse campo só é gravado num lugar do sistema
+inteiro: quando o Alex registra um comentário no formato `FOLLOW-UP` com uma
+data (`app/actions/events.ts`), o mesmo fluxo documentado em
+`PADRAO_DE_COMENTARIOS_EVENTOS_CAPILL_V1.md`. Mover um card para uma lista
+chamada "Follow-up" é só categorização do Kanban — não grava data nenhuma, de
+propósito: a Regra "ausência de dado não é dado negativo" e o princípio de não
+inferir motivo/data se aplicam aqui — o sistema não pode supor que mover um
+card para essa lista significa uma data de retorno específica.
+**Nenhum código foi alterado por este item** — é um esclarecimento de
+comportamento existente, não uma correção. Se o Alex quiser que a lista
+"Follow-up" e o campo de data fiquem ligados de alguma forma, isso é uma
+decisão de produto nova que precisa ser conversada antes de qualquer mudança.

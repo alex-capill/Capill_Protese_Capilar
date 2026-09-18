@@ -119,12 +119,15 @@ body {
 }
 
 body {
+  /*
+   * Fundo chapado, de propósito: a referência aprovada por Alex (mockup
+   * "1c") não tem brilho/vinheta nenhum atrás do cabeçalho — é uma cor
+   * sólida só. Um brilho radial existiu aqui antes; foi removido porque
+   * qualquer altura escolhida para ele (relativa ao conteúdo ou fixa em
+   * px) sempre corria o risco de aparecer como uma borda visível em
+   * páginas mais longas. Cor sólida não tem essa borda para aparecer.
+   */
   background-color: var(--bg);
-  background-image: radial-gradient(
-    120% 90% at 50% 0%,
-    color-mix(in srgb, var(--surface) 35%, transparent) 0%,
-    transparent 60%
-  );
   color: var(--text);
   font-family: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

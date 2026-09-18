@@ -36,7 +36,10 @@ export function ClientMiniCard({
   const others = client.labels.filter((label) => label.group !== "ORIGEM");
   // Cards anteriores à coluna nova mantêm o dado original do SDR. Exibir a
   // conversão direta evita que pareçam sem classificação até o próximo repasse.
-  const temperature = normalizeTemperature(client.temperature) ?? temperatureFromSdrConfidence(client.sdrConfidence);
+  // `rawTemperature` (não a conversão) é o que orienta o próximo clique — ver
+  // o comentário em TemperatureControl.tsx.
+  const rawTemperature = normalizeTemperature(client.temperature);
+  const displayTemperature = rawTemperature ?? temperatureFromSdrConfidence(client.sdrConfidence);
 
   return (
     <article
@@ -97,7 +100,8 @@ export function ClientMiniCard({
       <div className="mt-auto flex items-end justify-between gap-2 border-t border-[var(--border)] pt-2.5">
         <div className="min-w-0">
           <TemperatureControl
-            value={temperature}
+            value={rawTemperature}
+            displayValue={displayTemperature}
             clientName={client.name}
             onChange={(next) => startTransition(() => void updateClientAction(client.id, { temperature: next }))}
             className="-ml-2 -my-1 px-2 py-1"

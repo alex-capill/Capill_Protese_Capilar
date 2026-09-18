@@ -23,7 +23,7 @@ export function ListsManager({ lists }: { lists: ListView[] }) {
         PEDIDO DO SISTEMA, que ambas significam &quot;fechou&quot;.
       </p>
 
-      <FadeScroller className="items-start" fadeWidth={48}>
+      <FadeScroller className="items-start" fadeWidth={48} fadeColor="var(--surface)">
         <table className="w-full min-w-[620px] text-sm">
           <thead>
             <tr className="border-b border-[var(--border)] text-left text-xs uppercase tracking-wide text-muted">

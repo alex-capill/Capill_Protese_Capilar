@@ -234,9 +234,12 @@ function EditClientDialog({
     client.valueCents != null ? (client.valueCents / 100).toFixed(2).replace(".", ",") : "",
   );
   const [description, setDescription] = useState(client.description ?? "");
-  const [temperature, setTemperature] = useState(
-    normalizeTemperature(client.temperature) ?? temperatureFromSdrConfidence(client.sdrConfidence) ?? "",
-  );
+  // Só o valor classificado manualmente (nunca a conversão do SDR) — salvar
+  // sem tocar na temperatura não pode transformar a estimativa do SDR numa
+  // classificação manual, e o ciclo de clique precisa partir do valor real,
+  // não do que aparece por padrão. Ver comentário em TemperatureControl.tsx.
+  const [temperature, setTemperature] = useState(normalizeTemperature(client.temperature) ?? "");
+  const temperatureDisplay = normalizeTemperature(temperature) ?? temperatureFromSdrConfidence(client.sdrConfidence);
   const [error, setError] = useState<string | null>(null);
   const [conflictId, setConflictId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -308,6 +311,7 @@ function EditClientDialog({
           <legend className="mb-1.5 text-sm font-medium">Temperatura</legend>
           <TemperatureControl
             value={normalizeTemperature(temperature)}
+            displayValue={temperatureDisplay}
             onChange={(next) => setTemperature(next ?? "")}
             clientName={client.name}
             size="edit"

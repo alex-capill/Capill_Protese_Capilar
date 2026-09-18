@@ -1,0 +1,728 @@
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/app/agenda/page.tsx b/app/agenda/page.tsx
+--- a/app/agenda/page.tsx	2026-09-18 00:35:37.525447801 -0300
++++ b/app/agenda/page.tsx	2026-09-18 00:44:13.027158084 -0300
+@@ -55,7 +55,7 @@
+ 
+       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+         <section>
+-          <h2 className="mb-3 text-lg font-bold tracking-tight">Próximos 30 dias</h2>
++          <h2 className="mb-3 text-xl font-bold tracking-tight">Próximos 30 dias</h2>
+ 
+           {appointments.length === 0 ? (
+             <EmptyState
+@@ -121,7 +121,7 @@
+         </section>
+ 
+         <section>
+-          <h2 className="mb-1 text-lg font-bold tracking-tight">Fila de follow-up</h2>
++          <h2 className="mb-1 text-xl font-bold tracking-tight">Fila de follow-up</h2>
+           <p className="mb-3 text-xs text-muted">
+             Quem tem data de retorno registrada.
+             {overdue.length > 0 && (
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/app/configuracoes/page.tsx b/app/configuracoes/page.tsx
+--- a/app/configuracoes/page.tsx	2026-09-18 00:35:39.637447753 -0300
++++ b/app/configuracoes/page.tsx	2026-09-18 00:44:13.022845495 -0300
+@@ -24,7 +24,7 @@
+         <LabelsManager labels={labels} />
+ 
+         <section className="card p-6">
+-          <h2 className="mb-1 text-lg font-bold tracking-tight">Webhook do SDR</h2>
++          <h2 className="mb-1 text-xl font-bold tracking-tight">Webhook do SDR</h2>
+           <p className="mb-4 text-sm text-muted">
+             É o endereço que o n8n chama no lugar do nó que criava o card no Trello.
+           </p>
+@@ -58,7 +58,7 @@
+         </section>
+ 
+         <section className="card p-6">
+-          <h2 className="mb-1 text-lg font-bold tracking-tight">Backup</h2>
++          <h2 className="mb-1 text-xl font-bold tracking-tight">Backup</h2>
+           <p className="mb-4 text-sm text-muted">
+             Todo o sistema vive em um arquivo só. Backup é copiar esse arquivo.
+           </p>
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/app/entrada-sdr/page.tsx b/app/entrada-sdr/page.tsx
+--- a/app/entrada-sdr/page.tsx	2026-09-18 00:35:39.493447756 -0300
++++ b/app/entrada-sdr/page.tsx	2026-09-18 00:44:13.025053842 -0300
+@@ -29,7 +29,7 @@
+         </section>
+ 
+         <section className="lg:order-1">
+-          <h2 className="mb-1 text-lg font-bold tracking-tight">Repasses recebidos</h2>
++          <h2 className="mb-1 text-xl font-bold tracking-tight">Repasses recebidos</h2>
+           <p className="mb-3 text-sm text-muted">
+             Tudo que o SDR mandou, qualificado ou não. Nada aqui exige uma ação sua.
+           </p>
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/cliente/ClientDetails.tsx b/components/cliente/ClientDetails.tsx
+--- a/components/cliente/ClientDetails.tsx	2026-09-18 00:35:40.757447728 -0300
++++ b/components/cliente/ClientDetails.tsx	2026-09-18 00:44:13.045795490 -0300
+@@ -64,7 +64,7 @@
+       <div className="card p-5">
+         <div className="mb-4 flex items-start justify-between gap-3">
+           <div className="min-w-0">
+-            <h2 className="text-lg font-bold tracking-tight">Cadastro</h2>
++            <h2 className="text-xl font-bold tracking-tight">Cadastro</h2>
+             {currentList && (
+               <p className="mt-0.5 text-xs text-muted">Etapa atual: {currentList.name}</p>
+             )}
+@@ -129,7 +129,7 @@
+       </div>
+ 
+       <div className="card p-5">
+-        <h2 className="mb-1 text-lg font-bold tracking-tight">Etiquetas</h2>
++        <h2 className="mb-1 text-xl font-bold tracking-tight">Etiquetas</h2>
+         <p className="mb-4 text-xs text-muted">
+           Os grupos são independentes — o card pode ter etiqueta de vários ao mesmo tempo.
+         </p>
+@@ -166,7 +166,7 @@
+       </div>
+ 
+       <div className="card p-5">
+-        <h2 className="mb-3 text-lg font-bold tracking-tight">Situação</h2>
++        <h2 className="mb-3 text-xl font-bold tracking-tight">Situação</h2>
+         {client.status === "lost" ? (
+           <div>
+             <p className="mb-3 text-sm">
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/cliente/ClientTimeline.tsx b/components/cliente/ClientTimeline.tsx
+--- a/components/cliente/ClientTimeline.tsx	2026-09-18 00:35:41.461447711 -0300
++++ b/components/cliente/ClientTimeline.tsx	2026-09-18 00:44:13.043648629 -0300
+@@ -63,7 +63,7 @@
+       <details open className="group card overflow-hidden">
+         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 marker:hidden">
+           <div>
+-            <h2 className="text-lg font-bold tracking-tight">Eventos</h2>
++            <h2 className="text-xl font-bold tracking-tight">Eventos</h2>
+             <p className="text-xs text-muted">
+               {comments.length === 1 ? "1 evento registrado" : `${comments.length} eventos registrados`}
+             </p>
+@@ -94,7 +94,7 @@
+       <details open className="group card overflow-hidden">
+         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 marker:hidden">
+           <div>
+-            <h2 className="text-lg font-bold tracking-tight">Registros do sistema</h2>
++            <h2 className="text-xl font-bold tracking-tight">Registros do sistema</h2>
+             <p className="text-xs text-muted">
+               Movimentações, entradas do SDR e informações automáticas.
+             </p>
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/cliente/PaymentsPanel.tsx b/components/cliente/PaymentsPanel.tsx
+--- a/components/cliente/PaymentsPanel.tsx	2026-09-18 00:35:41.733447705 -0300
++++ b/components/cliente/PaymentsPanel.tsx	2026-09-18 00:44:13.041482059 -0300
+@@ -48,7 +48,7 @@
+     <div className="card p-5">
+       <div className="mb-4 flex items-start justify-between gap-3">
+         <div>
+-          <h2 className="text-lg font-bold tracking-tight">Pagamentos</h2>
++          <h2 className="text-xl font-bold tracking-tight">Pagamentos</h2>
+           {payments.length > 0 && (
+             <p className="mt-0.5 text-xs text-muted">
+               {formatBRL(paid)} de {formatBRL(total)}
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/config/LabelsManager.tsx b/components/config/LabelsManager.tsx
+--- a/components/config/LabelsManager.tsx	2026-09-18 00:35:42.385447690 -0300
++++ b/components/config/LabelsManager.tsx	2026-09-18 00:44:13.035821424 -0300
+@@ -32,7 +32,7 @@
+     <section className="card p-7">
+       <div className="mb-5 flex flex-wrap items-center gap-3">
+         <div>
+-          <h2 className="text-lg font-bold tracking-tight">Etiquetas</h2>
++          <h2 className="text-xl font-bold tracking-tight">Etiquetas</h2>
+           <p className="text-sm text-muted">
+             {labels.length} etiquetas em {groups.filter((g) => labels.some((l) => l.group === g)).length} grupos.
+           </p>
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/config/ListsManager.tsx b/components/config/ListsManager.tsx
+--- a/components/config/ListsManager.tsx	2026-09-18 00:35:42.905447678 -0300
++++ b/components/config/ListsManager.tsx	2026-09-18 00:44:13.033733954 -0300
+@@ -15,7 +15,7 @@
+ export function ListsManager({ lists }: { lists: ListView[] }) {
+   return (
+     <section className="card p-7">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Listas do funil</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Listas do funil</h2>
+       <p className="mb-5 text-sm text-muted">
+         <strong className="text-text">Conta como</strong> é o que o dashboard soma. Duas
+         listas podem apontar para a mesma etapa — é o caso de AGUARDANDO CONTRATO e FAZER
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/funil/FunilView.tsx b/components/funil/FunilView.tsx
+--- a/components/funil/FunilView.tsx	2026-09-18 00:35:44.013447653 -0300
++++ b/components/funil/FunilView.tsx	2026-09-18 00:42:54.197437814 -0300
+@@ -1,8 +1,9 @@
+ "use client";
+ 
+-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
++import { useMemo, useState } from "react";
+ import Link from "next/link";
+ import { IconSearch } from "@/components/ui/icons";
++import { FadeScroller } from "@/components/ui/FadeScroller";
+ import { Avatar, LabelChip } from "@/components/ui/primitives";
+ import { ViewToggle, useViewMode } from "@/components/ui/ViewToggle";
+ import { formatPhone } from "@/lib/phone";
+@@ -97,49 +98,9 @@
+   selectedId: string | null;
+   onSelect: (id: string | null) => void;
+ }) {
+-  const ref = useRef<HTMLDivElement>(null);
+-  const [hasLeft, setHasLeft] = useState(false);
+-  const [hasRight, setHasRight] = useState(false);
+-
+-  function updateEdges() {
+-    const node = ref.current;
+-    if (!node) return;
+-    const tolerance = 2;
+-    setHasLeft(node.scrollLeft > tolerance);
+-    setHasRight(node.scrollLeft + node.clientWidth < node.scrollWidth - tolerance);
+-  }
+-
+-  useEffect(() => {
+-    updateEdges();
+-    const node = ref.current;
+-    if (!node) return;
+-    const observer = new ResizeObserver(updateEdges);
+-    observer.observe(node);
+-    return () => observer.disconnect();
+-  }, [labels]);
+-
+-  // A máscara apaga o próprio conteúdo — não é uma faixa aplicada por cima,
+-  // portanto não deixa uma linha de transição sobre os chips.
+-  const fadeWidth = "88px";
+-  const maskImage = hasLeft
+-    ? hasRight
+-      ? `linear-gradient(to right, transparent, black ${fadeWidth}, black calc(100% - ${fadeWidth}), transparent)`
+-      : `linear-gradient(to right, transparent, black ${fadeWidth})`
+-    : hasRight
+-      ? `linear-gradient(to right, black calc(100% - ${fadeWidth}), transparent)`
+-      : undefined;
+-  const fadeStyle: CSSProperties | undefined = maskImage
+-    ? { maskImage, WebkitMaskImage: maskImage }
+-    : undefined;
+-
+   return (
+     <div className="relative min-w-0 flex-1">
+-      <div
+-        ref={ref}
+-        onScroll={updateEdges}
+-        className="scroll-row items-center"
+-        style={fadeStyle}
+-      >
++      <FadeScroller className="items-center">
+         <button
+           type="button"
+           onClick={() => onSelect(null)}
+@@ -158,8 +119,7 @@
+             {label.name}
+           </button>
+         ))}
+-      </div>
+-
++      </FadeScroller>
+     </div>
+   );
+ }
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/metricas/FunnelChart.tsx b/components/metricas/FunnelChart.tsx
+--- a/components/metricas/FunnelChart.tsx	2026-09-18 00:35:45.261447625 -0300
++++ b/components/metricas/FunnelChart.tsx	2026-09-18 00:44:13.031537679 -0300
+@@ -19,7 +19,7 @@
+   if (!hasAnyData) {
+     return (
+       <div className="card p-6">
+-        <h2 className="mb-1 text-lg font-bold tracking-tight">Funil do período</h2>
++        <h2 className="mb-1 text-xl font-bold tracking-tight">Funil do período</h2>
+         <p className="mb-6 text-sm text-muted">
+           Cada etapa conta clientes distintos que entraram nela no período.
+         </p>
+@@ -36,7 +36,7 @@
+ 
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Funil do período</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Funil do período</h2>
+       <p className="mb-6 text-sm text-muted">
+         Clientes distintos que entraram em cada etapa. A porcentagem é a conversão a
+         partir da etapa anterior com base.
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/metricas/MetricPanels.tsx b/components/metricas/MetricPanels.tsx
+--- a/components/metricas/MetricPanels.tsx	2026-09-18 00:35:45.913447610 -0300
++++ b/components/metricas/MetricPanels.tsx	2026-09-18 00:44:13.029421794 -0300
+@@ -16,7 +16,7 @@
+ }) {
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Comparecimento</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Comparecimento</h2>
+       <p className="mb-5 text-sm text-muted">
+         Quantas avaliações marcadas viraram avaliação feita.
+       </p>
+@@ -70,7 +70,7 @@
+ 
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Tempo médio entre etapas</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Tempo médio entre etapas</h2>
+       <p className="mb-5 text-sm text-muted">
+         Em dias. Sai das próprias transições — você não precisou anotar nada para isto
+         existir.
+@@ -130,7 +130,7 @@
+ 
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Motivos registrados</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Motivos registrados</h2>
+       <p className="mb-5 text-sm text-muted">
+         Só aparece aqui o motivo que você registrou com evidência. O sistema nunca
+         adivinha motivo.
+@@ -196,7 +196,7 @@
+ 
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Origem dos leads</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Origem dos leads</h2>
+       <p className="mb-5 text-sm text-muted">
+         Clientes criados no período, pelas etiquetas do grupo Origem.
+       </p>
+@@ -246,7 +246,7 @@
+ 
+   return (
+     <div className="card p-6">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Onde os cards estão agora</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Onde os cards estão agora</h2>
+       <p className="mb-5 text-sm text-muted">
+         Foto do presente — {totalCards} card{totalCards === 1 ? "" : "s"} ativo
+         {totalCards === 1 ? "" : "s"}. Não depende do período selecionado.
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/sdr/RepassePaste.tsx b/components/sdr/RepassePaste.tsx
+--- a/components/sdr/RepassePaste.tsx	2026-09-18 00:35:46.889447587 -0300
++++ b/components/sdr/RepassePaste.tsx	2026-09-18 00:44:13.037979152 -0300
+@@ -46,7 +46,7 @@
+ 
+   return (
+     <div className="card p-5">
+-      <h2 className="mb-1 text-lg font-bold tracking-tight">Colar repasse</h2>
++      <h2 className="mb-1 text-xl font-bold tracking-tight">Colar repasse</h2>
+       <p className="mb-4 text-sm text-muted">
+         Cole o bloco <code className="font-mono text-xs">===REPASSE===</code> que o SDR
+         mandou no WhatsApp. Serve enquanto o webhook não está ligado, e para testar.
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/shell/Rail.tsx b/components/shell/Rail.tsx
+--- a/components/shell/Rail.tsx	2026-09-18 00:35:47.317447578 -0300
++++ b/components/shell/Rail.tsx	2026-09-18 00:44:31.325435592 -0300
+@@ -34,16 +34,16 @@
+   return (
+     <nav
+       aria-label="Navegação principal"
+-      className="sticky top-0 z-30 flex h-dvh w-[76px] shrink-0 flex-col items-center px-3 py-6 max-md:hidden"
++      className="sticky top-0 z-30 flex h-dvh w-[84px] shrink-0 flex-col items-center px-3 py-7 max-md:hidden"
+     >
+       <Link
+         href="/"
+         aria-label="Capill Workspace"
+-        className="flex size-11 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-ink-invert shadow-[var(--shadow-raised)]"
++        className="flex size-12 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-ink-invert shadow-[var(--shadow-raised)]"
+       >
+         C
+       </Link>
+-      <div className="mt-16 flex flex-col items-center gap-2">
++      <div className="mt-16 flex flex-col items-center gap-2.5">
+         {ITEMS.map(({ href, label, Icon }) => {
+           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+           return (
+@@ -54,7 +54,7 @@
+               aria-label={label}
+               aria-current={active ? "page" : undefined}
+               className={cx(
+-                "flex size-11 items-center justify-center rounded-full transition",
++                "flex size-12 items-center justify-center rounded-full transition",
+                 active
+                   ? "bg-ink text-ink-invert shadow-[var(--shadow-raised)]"
+                   : "text-muted hover:bg-surface hover:text-text",
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/shell/ScheduleBar.tsx b/components/shell/ScheduleBar.tsx
+--- a/components/shell/ScheduleBar.tsx	2026-09-18 00:35:47.809447566 -0300
++++ b/components/shell/ScheduleBar.tsx	2026-09-18 00:45:26.721434325 -0300
+@@ -69,7 +69,7 @@
+ 
+   return (
+     <div className="flex items-center gap-3">
+-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-1.5 text-white shadow-[var(--shadow-card)]">
++      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-2 text-white shadow-[var(--shadow-card)]">
+       <div className="flex shrink-0 items-center gap-3 pl-3 pr-1">
+         <span className="text-sm font-semibold max-sm:hidden">Sua agenda</span>
+         <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
+@@ -78,7 +78,7 @@
+         </span>
+       </div>
+ 
+-      <div className="relative h-10 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
++      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
+         {items.length === 0 ? (
+           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/55">
+             Nenhum compromisso hoje
+@@ -98,7 +98,7 @@
+                 key={item.id}
+                 href="/agenda"
+                 title={`${formatTime(item.startsAt)} — ${item.title}`}
+-                className="absolute top-1 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
++                className="absolute top-1.5 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
+                 style={{ left: `${left}%`, width: `${width}%` }}
+               >
+                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-black/15 text-[10px] font-bold">
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/tarefas/TasksView.tsx b/components/tarefas/TasksView.tsx
+--- a/components/tarefas/TasksView.tsx	2026-09-18 00:35:49.757447522 -0300
++++ b/components/tarefas/TasksView.tsx	2026-09-18 00:43:43.565436685 -0300
+@@ -21,6 +21,7 @@
+ } from "@dnd-kit/sortable";
+ import { createTaskColumnAction, moveTaskAction } from "@/app/actions/tasks";
+ import { IconPlus } from "@/components/ui/icons";
++import { FadeScroller } from "@/components/ui/FadeScroller";
+ import { ViewToggle, useViewMode } from "@/components/ui/ViewToggle";
+ import { cx } from "@/lib/utils";
+ import type { ClientView, LabelView, TaskColumnView, TaskView } from "@/lib/view-types";
+@@ -90,7 +91,7 @@
+   return (
+     <div className="space-y-6">
+       <div className="flex flex-wrap items-center gap-3">
+-        <div className="scroll-row flex-1 items-center">
++        <FadeScroller className="min-w-0 flex-1 items-center" fadeWidth={48}>
+           {FILTERS.map((item) => (
+             <button
+               key={item.id}
+@@ -101,7 +102,7 @@
+               {item.label}
+             </button>
+           ))}
+-        </div>
++        </FadeScroller>
+         <ViewToggle mode={mode} onChange={setMode} />
+       </div>
+ 
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/ui/FadeScroller.tsx b/components/ui/FadeScroller.tsx
+--- a/components/ui/FadeScroller.tsx	1969-12-31 21:00:00.000000000 -0300
++++ b/components/ui/FadeScroller.tsx	2026-09-18 00:42:34.074876350 -0300
+@@ -0,0 +1,70 @@
++"use client";
++
++import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
++import { cx } from "@/lib/utils";
++
++/**
++ * Rolagem horizontal com fade suave nas laterais que ainda têm conteúdo oculto.
++ *
++ * Extraído do filtro de etiquetas do Funil, que foi o primeiro lugar a resolver
++ * isto: a máscara apaga o próprio conteúdo (não é uma faixa por cima), então não
++ * deixa uma linha de transição visível. `ResizeObserver` recalcula início/fim
++ * porque o conteúdo pode mudar de largura (filtro aplicado, fonte carregada).
++ *
++ * Reaproveitado nas fileiras roláveis do Workspace e das Tarefas para o mesmo
++ * comportamento aparecer em todo lugar onde a referência corta cards na borda.
++ */
++export function FadeScroller({
++  children,
++  className,
++  fadeWidth = 88,
++}: {
++  children: ReactNode;
++  className?: string;
++  fadeWidth?: number;
++}) {
++  const ref = useRef<HTMLDivElement>(null);
++  const [hasLeft, setHasLeft] = useState(false);
++  const [hasRight, setHasRight] = useState(false);
++
++  function updateEdges() {
++    const node = ref.current;
++    if (!node) return;
++    const tolerance = 2;
++    setHasLeft(node.scrollLeft > tolerance);
++    setHasRight(node.scrollLeft + node.clientWidth < node.scrollWidth - tolerance);
++  }
++
++  useEffect(() => {
++    updateEdges();
++    const node = ref.current;
++    if (!node) return;
++    const observer = new ResizeObserver(updateEdges);
++    observer.observe(node);
++    return () => observer.disconnect();
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [children]);
++
++  const width = `${fadeWidth}px`;
++  const maskImage = hasLeft
++    ? hasRight
++      ? `linear-gradient(to right, transparent, black ${width}, black calc(100% - ${width}), transparent)`
++      : `linear-gradient(to right, transparent, black ${width})`
++    : hasRight
++      ? `linear-gradient(to right, black calc(100% - ${width}), transparent)`
++      : undefined;
++  const fadeStyle: CSSProperties | undefined = maskImage
++    ? { maskImage, WebkitMaskImage: maskImage }
++    : undefined;
++
++  return (
++    <div
++      ref={ref}
++      onScroll={updateEdges}
++      className={cx("scroll-row", className)}
++      style={fadeStyle}
++    >
++      {children}
++    </div>
++  );
++}
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/ui/primitives.tsx b/components/ui/primitives.tsx
+--- a/components/ui/primitives.tsx	2026-09-18 00:36:07.633447113 -0300
++++ b/components/ui/primitives.tsx	2026-09-18 00:44:19.229435869 -0300
+@@ -152,8 +152,8 @@
+   children?: ReactNode;
+ }) {
+   return (
+-    <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+-      <h2 className="text-xl font-bold tracking-tight">{title}</h2>
++    <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
++      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+       {count != null && (
+         <span className="border-b border-current pb-0.5 text-sm font-semibold text-text-soft">
+           {count} {countLabel}
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/workspace/LeadsRow.tsx b/components/workspace/LeadsRow.tsx
+--- a/components/workspace/LeadsRow.tsx	2026-09-18 00:36:07.337447120 -0300
++++ b/components/workspace/LeadsRow.tsx	2026-09-18 00:43:10.501437441 -0300
+@@ -3,6 +3,7 @@
+ import { useMemo, useState } from "react";
+ import Link from "next/link";
+ import { ClientMiniCard } from "@/components/funil/ClientMiniCard";
++import { FadeScroller } from "@/components/ui/FadeScroller";
+ import { EmptyState, SectionHeader } from "@/components/ui/primitives";
+ import { cx } from "@/lib/utils";
+ import type { ClientView, ListView } from "@/lib/view-types";
+@@ -58,7 +59,7 @@
+   return (
+     <section className="mb-12">
+       <SectionHeader title="Novos Leads" count={clients.length} countLabel="no funil">
+-        <div className="scroll-row">
++        <FadeScroller fadeWidth={48}>
+           {FILTERS.map((item) => (
+             <button
+               key={item.id}
+@@ -69,7 +70,7 @@
+               {item.label}
+             </button>
+           ))}
+-        </div>
++        </FadeScroller>
+       </SectionHeader>
+ 
+       {filtered.length === 0 ? (
+@@ -93,13 +94,13 @@
+           }
+         />
+       ) : (
+-        <div className="scroll-row">
++        <FadeScroller>
+           {filtered.slice(0, 20).map((client) => (
+             <div key={client.id} className="w-[270px] shrink-0 snap-start">
+               <ClientMiniCard client={client} />
+             </div>
+           ))}
+-        </div>
++        </FadeScroller>
+       )}
+     </section>
+   );
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/components/workspace/TodayTasksRow.tsx b/components/workspace/TodayTasksRow.tsx
+--- a/components/workspace/TodayTasksRow.tsx	2026-09-18 00:36:08.525447092 -0300
++++ b/components/workspace/TodayTasksRow.tsx	2026-09-18 00:43:27.181437059 -0300
+@@ -2,6 +2,7 @@
+ 
+ import { useMemo, useState } from "react";
+ import { SectionHeader, EmptyState } from "@/components/ui/primitives";
++import { FadeScroller } from "@/components/ui/FadeScroller";
+ import { TaskCard, dueState } from "@/components/tarefas/TaskCard";
+ import { TaskDialog } from "@/components/tarefas/TaskDialog";
+ import { cx } from "@/lib/utils";
+@@ -53,7 +54,7 @@
+   return (
+     <section className="mb-8">
+       <SectionHeader title="Minhas Tarefas" count={openCount} countLabel="abertas">
+-        <div className="scroll-row">
++        <FadeScroller fadeWidth={48}>
+           {FILTERS.map((item) => (
+             <button
+               key={item.id}
+@@ -64,7 +65,7 @@
+               {item.label}
+             </button>
+           ))}
+-        </div>
++        </FadeScroller>
+       </SectionHeader>
+ 
+       {filtered.length === 0 ? (
+@@ -77,13 +78,13 @@
+           }
+         />
+       ) : (
+-        <div className="scroll-row">
++        <FadeScroller>
+           {filtered.slice(0, 20).map((task) => (
+             <div key={task.id} className="w-[320px] shrink-0 snap-start">
+               <TaskCard task={task} onEdit={setEditing} />
+             </div>
+           ))}
+-        </div>
++        </FadeScroller>
+       )}
+ 
+       {editing && (
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/docs/CONTEXTO_DE_CONTINUIDADE.md b/docs/CONTEXTO_DE_CONTINUIDADE.md
+--- a/docs/CONTEXTO_DE_CONTINUIDADE.md	2026-09-18 00:48:13.397430513 -0300
++++ b/docs/CONTEXTO_DE_CONTINUIDADE.md	2026-09-18 00:49:21.665428951 -0300
+@@ -1,8 +1,9 @@
+ # CSystem — contexto de continuidade
+ 
+-> Atualizado em 18/09/2026. Este é o ponto de partida para outro chat, Claude ou
+-> agente técnico retomar o projeto. Ele descreve fatos observados nesta sessão; não
+-> substitui os documentos-fonte da Capill.
++> Atualizado em 18/09/2026 (duas rodadas no mesmo dia — ver "Rodada de refino
++> visual" abaixo para a mais recente). Este é o ponto de partida para outro chat,
++> Claude ou agente técnico retomar o projeto. Ele descreve fatos observados nesta
++> sessão; não substitui os documentos-fonte da Capill.
+ 
+ ## Leitura obrigatória e ordem de confiança
+ 
+@@ -30,14 +31,17 @@
+   ```text
+   app/agenda/page.tsx                   components/funil/ClientMiniCard.tsx
+   app/configuracoes/page.tsx            components/funil/FunilView.tsx
+-  app/globals.css                       components/shell/AppShell.tsx
+-  app/layout.tsx                        components/shell/PageHeader.tsx
+-  app/metricas/page.tsx                 components/shell/Rail.tsx
+-  app/page.tsx                          components/shell/ScheduleBar.tsx
+-  components/cliente/ClientDetails.tsx  components/shell/ThemeToggle.tsx
+-  components/cliente/ClientTimeline.tsx components/tarefas/TaskCard.tsx
+-  components/config/LabelsManager.tsx   components/tarefas/TaskDialog.tsx
+-  components/config/ListsManager.tsx    components/tarefas/TasksView.tsx
++  app/entrada-sdr/page.tsx              components/metricas/FunnelChart.tsx
++  app/globals.css                       components/metricas/MetricPanels.tsx
++  app/layout.tsx                        components/sdr/RepassePaste.tsx
++  app/metricas/page.tsx                 components/shell/AppShell.tsx
++  app/page.tsx                          components/shell/PageHeader.tsx
++  components/cliente/ClientDetails.tsx  components/shell/Rail.tsx
++  components/cliente/ClientTimeline.tsx components/shell/ScheduleBar.tsx
++  components/cliente/PaymentsPanel.tsx  components/shell/ThemeToggle.tsx
++  components/config/LabelsManager.tsx   components/tarefas/TaskCard.tsx
++  components/config/ListsManager.tsx    components/tarefas/TaskDialog.tsx
++  components/ui/FadeScroller.tsx (novo) components/tarefas/TasksView.tsx
+   components/ui/icons.tsx               components/ui/primitives.tsx
+   components/workspace/LeadsRow.tsx     components/workspace/TodayTasksRow.tsx
+   lib/colors.ts
+@@ -108,6 +112,68 @@
+   não humanos ficam em **Registros do sistema**, também retrátil. Isso separa texto
+   humano de auditoria sem apagar entradas existentes.
+ 
++### Rodada de refino visual — 18/09/2026 (auditoria contra a referência Dribbble)
++
++Pedido do Alex: aproximar ainda mais o Workspace, Funil, Tarefas, Agenda, Métricas
++e Configurações da referência (Dribbble "HubSpot CRM — Sales Management
++Dashboard", Jack R./RonDesignLab), sem alterar regra de negócio, métrica, banco,
++webhook, palavra-chave, lista, transição ou dado. Nenhuma dessas restrições foi
++tocada. Mudanças aplicadas, todas em CSS/marcação:
++
++- **Fade nas rolagens horizontais.** O mascaramento de borda que já existia só no
++  filtro de etiquetas do Funil foi extraído para `components/ui/FadeScroller.tsx`
++  (mesma lógica de `ResizeObserver`, mesmo cálculo de máscara) e passou a ser usado
++  também nas fileiras "Novos Leads" e "Minhas Tarefas" do Workspace e no filtro de
++  Tarefas — os cards agora recebem o mesmo corte suave na borda que a referência
++  mostra em suas fileiras roláveis, em vez de cortar bruscamente.
++- **Hierarquia tipográfica.** Os títulos de cartão/seção que usavam `text-lg`
++  (Cadastro, Etiquetas, Situação, Pagamentos, Eventos, Registros do sistema,
++  Comparecimento, Tempo médio, Motivos, Origem, Distribuição, Funil do período,
++  Listas do funil, Próximos 30 dias, Fila de follow-up etc.) subiram para
++  `text-xl`, e os títulos de fileira do Workspace ("Novos Leads", "Minhas
++  Tarefas", via `SectionHeader`) subiram de `text-xl` para `text-2xl`. Os títulos
++  de diálogo (`components/ui/Dialog.tsx`) ficaram de propósito em `text-lg`, para
++  não competir com o conteúdo da página por trás. Objetivo: uma escala mais clara
++  entre título da página (42–56px) → título de fileira (24px) → título de cartão
++  (20px) → corpo (14px).
++- **Rail.** Botões do rail (logo e ícones de navegação) de 44px para 48px
++  (`size-11` → `size-12`), com um pouco mais de espaço entre eles; a coluna do
++  rail cresceu de 76px para 84px para caber a folga sem apertar.
++- **Barra de agenda.** Preenchimento interno de `p-1.5` para `p-2` e altura da
++  trilha de compromissos de `h-10` para `h-11`, para ficar mais próxima da barra
++  preta "encorpada" da referência; os blocos de compromisso foram recentralizados
++  nessa trilha mais alta.
++
++**O que este refino NÃO fez:** não mudou nenhuma regra de negócio, cálculo de
++métrica, schema de banco, payload de webhook, palavra-chave, nome ou
++comportamento de lista, nem os deltas de exemplo de Fechadas/Perdidas (que
++continuam exemplo visual documentado, não dado real). Também não tocou
++`data/csystem.db`, não rodou `db:reset` nem mexeu no n8n.
++
++**Como foi validado — e o limite disso.** Esta sessão rodou num ambiente de nuvem
++sem acesso a um terminal na máquina do Alex: os arquivos foram lidos e escritos
++pela ponte de arquivos, mas `npm run dev`, `npm run build` e a inspeção visual no
++navegador local **não puderam ser exercitados nesta rodada**. A validação foi:
++
++- Cópia integral do código-fonte relevante para um ambiente Node separado, nesta
++  sessão de nuvem.
++- `npm install --ignore-scripts` (o binário nativo do `better-sqlite3` não pôde
++  ser compilado ali por falta de acesso à rede de download de headers do Node;
++  isso não afeta `tsc` nem os testes, que não tocam o banco).
++- `npx tsc --noEmit`: **0 erros**.
++- `npx vitest run`: **3 arquivos, 38 testes, todos passando** — os mesmos three
++  arquivos e contagem de antes desta rodada (`lib/keywords.test.ts`,
++  `lib/phone.test.ts`, `lib/sdr-parser.test.ts`); nenhum teste novo foi necessário
++  porque a mudança é só visual.
++- Revisão manual de cada arquivo alterado, comparando com screenshots da
++  referência do Dribbble (capturados nesta sessão).
++
++Isto confirma que o código compila e os testes de domínio continuam passando —
++**não confirma a aparência real na tela**, porque a alteração não foi vista
++rodando. Antes de aprovar ou commitar, o ideal é o Alex rodar
++`npm run dev` localmente (com o dev server parado antes de qualquer `build`,
++como já registrado abaixo) e olhar as seis telas.
++
+ ## Métricas do workspace: dado real versus demonstração visual
+ 
+ `components/ui/primitives.tsx` renderiza variações reais como pequenos badges:
+@@ -214,9 +280,13 @@
+ ## Preparação para o próximo commit
+ 
+ Proposta de escopo, ainda **não executada**: refinamento visual do workspace e das
+-demais telas, interações de card, tema, etiquetas, timeline e a documentação deste
+-handoff. Sugestão de mensagem: `feat(csystem): refina workspace, cards e histórico de eventos`.
++demais telas, interações de card, tema, etiquetas, timeline, a rodada de fade/
++hierarquia/rail/barra de agenda descrita acima, e a documentação deste handoff.
++Sugestão de mensagem: `feat(csystem): refina workspace, cards, histórico de eventos e auditoria visual`.
+ 
+ Antes de commitar, mostrar ao Alex o `git diff --stat` e o diff dos arquivos alterados,
+-confirmar que `data/csystem.db` não entrou no staging, e informar os comandos de
+-validação acima. O commit continua dependendo da autorização explícita dele.
++confirmar que `data/csystem.db` não entrou no staging, rodar `npm run dev` localmente
++para conferir visualmente as seis telas (a rodada de fade/hierarquia/rail/barra de
++agenda só foi validada por `tsc`/`vitest` e revisão de código, não visualmente — ver
++seção acima), e informar os comandos de validação. O commit continua dependendo da
++autorização explícita dele.
+diff -ruN '--exclude=node_modules' '--exclude=tsconfig.tsbuildinfo' '--exclude=package-lock.json' a/docs/PLANEJAMENTO.md b/docs/PLANEJAMENTO.md
+--- a/docs/PLANEJAMENTO.md	2026-09-18 00:48:12.997430522 -0300
++++ b/docs/PLANEJAMENTO.md	2026-09-18 00:49:33.881428672 -0300
+@@ -369,6 +369,29 @@
+       `next dev` pode inutilizar temporariamente `.next`; a recuperação comprovada é
+       iniciar o dev server limpo novamente.
+ 
++### Adendo de continuidade — 18/09/2026 (auditoria visual contra a referência)
++
++Segunda rodada do mesmo dia, a pedido do Alex: auditoria visual comparando
++Workspace, Funil, Tarefas, Agenda, Métricas e Configurações à referência do
++Dribbble, mantendo Urbanist, a paleta e as regras de negócio intactas. Detalhe
++completo em [`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
++
++- [x] Extrair o fade de borda do filtro de etiquetas do Funil para um componente
++      reutilizável (`components/ui/FadeScroller.tsx`) e aplicá-lo também às
++      fileiras roláveis do Workspace (Novos Leads, Minhas Tarefas) e ao filtro de
++      Tarefas.
++- [x] Subir a hierarquia tipográfica dos títulos de cartão/seção (`text-lg` →
++      `text-xl`) e das fileiras do Workspace (`text-xl` → `text-2xl`), mantendo os
++      títulos de diálogo menores de propósito.
++- [x] Aumentar levemente os botões do rail (44px → 48px) e a barra de agenda
++      (altura da trilha e preenchimento), para mais presença visual.
++- [x] `npx tsc --noEmit` e `npm test` (38 testes) confirmados numa cópia do
++      código rodada num ambiente separado, sem acesso a terminal na máquina do
++      Alex nesta rodada.
++- [ ] **Não verificado nesta rodada:** aparência real no navegador (`npm run
++      dev`), porque a sessão não teve acesso a um terminal local desta vez. Alex
++      precisa abrir o app localmente para confirmar visualmente antes do commit.
++
+ ---
+ 
+ ## 11. Pendências abertas

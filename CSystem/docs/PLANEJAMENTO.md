@@ -410,6 +410,90 @@ Decisão do Alex nesta rodada de refino visual. Detalhe e as ressalvas em
       card "Marcos Vinicius" mostra "Quente" com
       `title="Nível de confiança do SDR: ALTA"`.
 
+### Adendo de continuidade — 18/09/2026 (verificação visual no navegador, pendência fechada)
+
+Fechamento da pendência registrada no adendo "auditoria visual contra a
+referência": desta vez a sessão teve acesso a um terminal e a um navegador
+locais, então o que antes só tinha sido validado por `tsc`/`vitest`/leitura de
+código foi finalmente visto rodando. Detalhe completo em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] Confirmar que o fade/hierarquia/rail/barra de agenda da rodada anterior já
+      estavam commitados (`6203c33`, `67e16ab`) e batem com o patch do handoff —
+      nada ficou pendente de aplicar.
+- [x] Rodar `npm run dev` e comparar Workspace, Funil, Tarefas, Agenda,
+      Métricas e Configurações com a referência, nos temas claro e escuro.
+- [x] Conferir especificamente o rail (84px) e o fade de 48px nas fileiras de
+      chips — nenhum dos dois mostrou problema real: o rail tem folga de 6px de
+      cada lado do botão de 48px dentro do padding, dentro do esperado; o fade
+      de 48px desvanece suavemente o próprio conteúdo perto da borda (não é uma
+      faixa por cima) e não removeu nem cortou texto de nenhum chip, incluindo
+      os rótulos mais longos já visíveis ("Avaliação marcada",
+      "Avaliação agendada"). Nenhuma mudança de código foi necessária nesses
+      dois pontos.
+- [x] Duplo clique abrindo cliente e tarefa, alternância de tema, separação
+      Eventos/Registros do sistema e etiquetas sem contorno preto — todos
+      conferidos rodando.
+- [x] `npx tsc --noEmit` (0 erros) e `npm test` (4 arquivos, 41 testes — o
+      arquivo `lib/temperature.test.ts` foi somado desde a última rodada)
+      passando neste ambiente.
+- [x] Nenhum erro no console do navegador durante a navegação pelas seis telas.
+
+### Adendo — dois bugs visuais reportados pelo Alex após a verificação, 18/09/2026
+
+Alex testou pessoalmente logo após o fechamento acima e reportou dois problemas reais,
+que a verificação anterior não tinha pegado porque foi feita com poucos cards (sem
+overflow suficiente para expor o segundo). Ambos corrigidos e detalhados em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md) e no
+[`DOCUMENTACAO.md`](../../DOCUMENTACAO.md) raiz.
+
+- [x] **Mancha atrás dos cards de tarefa no Workspace** — o brilho do topo do `body`
+      usava altura em `%` da altura total da página; corrigido para um valor fixo em
+      `px`.
+- [x] **Fade lateral imperceptível em cards claros** — o `FadeScroller` usava
+      `mask-image` (apaga a opacidade do próprio conteúdo), que só é visível em
+      conteúdo escuro/saturado. Trocado por uma camada de degradê sobreposta na cor
+      real do fundo (`fadeColor`), visível em qualquer conteúdo.
+- [x] `npx tsc --noEmit` e `npm test` (41 testes) depois das duas correções.
+
+### Adendo — fundo do body virou chapado, a pedido do Alex, 18/09/2026
+
+Alex mandou o mockup "1c — Workspace" e pediu o fundo exatamente igual. Amostragem
+pixel a pixel do PNG (via `canvas.getImageData`, arquivo temporário nunca commitado)
+confirmou que o fundo da referência é a cor sólida `#d2d2d2` (já era `--bg`), sem
+brilho de propósito. O brilho radial do `body` foi removido por completo —
+`background-color` sozinho, sem `background-image` — porque qualquer altura de
+brilho escolhida continuava sendo um risco de virar borda visível em outra
+combinação de tela/conteúdo. Detalhe em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] `npx tsc --noEmit` e `npm test` (41 testes) depois da remoção.
+
+### Adendo — "Onde os cards estão" e "Fila de follow-up" viraram janelas soltas, 18/09/2026
+
+Alex pediu que os dois painéis da coluna direita do Workspace pudessem ser
+arrastados pela tela e fechados, com chips de mostrar/ocultar do lado direito no
+mesmo padrão visual dos chips de filtro à esquerda, e que a janela branca alinhasse
+com a fileira de filtros (não mais com o título). Componente novo
+`components/ui/DraggableWindow.tsx` (genérico, reutilizável) e
+`components/workspace/WorkspaceAside.tsx` (extraído de `app/page.tsx`, virou Client
+Component). Posição e estado aberto/fechado por painel em `localStorage`, por
+navegador — não é dado do sistema. Detalhe completo em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] `npx tsc --noEmit` e `npm test` (41 testes) depois da mudança.
+
+### Correção de rumo — arrastar removido, virou ícone no rail, 18/09/2026
+
+Alex testou o arrasto do adendo acima e pediu para desfazer — voltou ao estado
+estático de antes. O pedido revisado: os botões de mostrar/ocultar viraram dois
+ícones redondos no rodapé do rail, sem texto, visíveis só no Workspace (rail e
+painel são irmãos no layout, por isso o estado agora mora num contexto React
+compartilhado, `WorkspacePanelsContext`). Detalhe completo em
+[`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
+
+- [x] `npx tsc --noEmit` e `npm test` (41 testes) depois da mudança.
+
 ---
 
 ## 11. Pendências abertas
@@ -423,6 +507,14 @@ Decisão do Alex nesta rodada de refino visual. Detalhe e as ressalvas em
   [`INTEGRACAO_N8N.md`](INTEGRACAO_N8N.md); nada foi aplicado.
 - **Arquivar o board do Trello** ao fim da migração.
 - **Os ~21 cards do funil ativo** que ficaram no Trello: digitar à mão ou importar.
+- **Botão "+" de janela personalizada no Workspace.** Alex quer poder criar,
+  além de "Onde os cards estão" e "Fila de follow-up", outras janelas: agenda
+  estilo Google, resumo de dados de um cliente, gráfico de uma métrica
+  específica. São três recursos distintos — decidir com o Alex qual construir
+  primeiro antes de desenhar o pop-up de criação. Regra já combinada: no máximo
+  duas janelas abertas ao mesmo tempo (as duas atuais já contam); abrir uma
+  terceira exige fechar uma antes. Contexto em
+  [`CONTEXTO_DE_CONTINUIDADE.md`](CONTEXTO_DE_CONTINUIDADE.md).
 
 ### Adendo de decisão — temperatura manual do cliente — 18/09/2026
 

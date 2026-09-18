@@ -1,0 +1,64 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+
+export type WorkspacePanelId = "onde-os-cards" | "fila-follow-up";
+
+export const WORKSPACE_PANELS: { id: WorkspacePanelId; label: string }[] = [
+  { id: "onde-os-cards", label: "Onde os cards estão" },
+  { id: "fila-follow-up", label: "Fila de follow-up" },
+];
+
+const STORAGE_KEY = "csystem-workspace-panels";
+const DEFAULTS: Record<WorkspacePanelId, boolean> = {
+  "onde-os-cards": true,
+  "fila-follow-up": true,
+};
+
+const WorkspacePanelsCtx = createContext<{
+  open: Record<WorkspacePanelId, boolean>;
+  toggle: (id: WorkspacePanelId) => void;
+} | null>(null);
+
+/**
+ * Mostrar/ocultar "Onde os cards estão" e "Fila de follow-up" — os botões que
+ * fazem isso ficam no rail (`Rail.tsx`), mas os painéis em si moram na página
+ * do Workspace (`app/page.tsx`). Como rail e página são irmãos no layout (os
+ * dois filhos de `AppShell`), o estado precisa de um contexto compartilhado
+ * em vez de `useState` local em qualquer um dos dois.
+ *
+ * Preferência de tela, por navegador — guardada em `localStorage`, nunca no
+ * banco.
+ */
+export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState<Record<WorkspacePanelId, boolean>>(DEFAULTS);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setOpen((current) => ({ ...current, ...JSON.parse(raw) }));
+    } catch {
+      // localStorage pode falhar (aba anônima, storage bloqueado) — fica no padrão (os dois abertos).
+    }
+  }, []);
+
+  function toggle(id: WorkspacePanelId) {
+    setOpen((current) => {
+      const next = { ...current, [id]: !current[id] };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ver comentário acima.
+      }
+      return next;
+    });
+  }
+
+  return <WorkspacePanelsCtx.Provider value={{ open, toggle }}>{children}</WorkspacePanelsCtx.Provider>;
+}
+
+export function useWorkspacePanels() {
+  const ctx = useContext(WorkspacePanelsCtx);
+  if (!ctx) throw new Error("useWorkspacePanels precisa estar dentro de WorkspacePanelsProvider");
+  return ctx;
+}

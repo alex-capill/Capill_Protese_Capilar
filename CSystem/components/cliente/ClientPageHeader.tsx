@@ -19,14 +19,16 @@ export function ClientPageHeader({
   sdrConfidence: string | null;
 }) {
   const [, startTransition] = useTransition();
-  const temperature = normalizeTemperature(storedTemperature) ?? temperatureFromSdrConfidence(sdrConfidence);
+  const rawTemperature = normalizeTemperature(storedTemperature);
+  const displayTemperature = rawTemperature ?? temperatureFromSdrConfidence(sdrConfidence);
 
   return (
     <PageHeader
       title={name}
       action={
         <TemperatureControl
-          value={temperature}
+          value={rawTemperature}
+          displayValue={displayTemperature}
           clientName={name}
           onChange={(next) => startTransition(() => void updateClientAction(clientId, { temperature: next }))}
           className="mb-1 rounded-full bg-surface px-3 py-2 shadow-[var(--shadow-chip)]"

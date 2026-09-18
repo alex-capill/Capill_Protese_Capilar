@@ -13,23 +13,37 @@ import { cx } from "@/lib/utils";
 /**
  * Um único controle para a temperatura no card e no diálogo de edição.
  * Cada clique avança: Classificar → Frio → Morno → Quente → Classificar.
+ *
+ * `value` é o dado de verdade (o que foi classificado manualmente, ou `null`
+ * se nunca foi) — é dele que o próximo clique parte. `displayValue` é só o
+ * que aparece nas bolinhas/rótulo antes do primeiro clique: quando não há
+ * classificação manual, os cards mostram a conversão direta da confiança do
+ * SDR (`temperatureFromSdrConfidence`) para não parecerem "sem dado". Sem
+ * separar os dois, o primeiro clique partia do valor exibido (ex.: "Quente",
+ * herdado do SDR) em vez do valor real (`null`) — o ciclo pulava direto para
+ * "Classificar" em vez de avançar para "Frio", parecendo que o clique não
+ * fazia nada.
  */
 export function TemperatureControl({
   value,
+  displayValue,
   onChange,
   clientName,
   className,
   size = "card",
 }: {
   value: Temperature | null;
+  /** O que mostrar quando `value` for `null` (ex.: a conversão do SDR). Default: `value`. */
+  displayValue?: Temperature | null;
   onChange: (value: Temperature | null) => void;
   clientName?: string;
   className?: string;
   /** A edição ganha pontos levemente maiores para facilitar o clique. */
   size?: "card" | "edit";
 }) {
-  const dots = value ? TEMPERATURE_DOTS[value] : 0;
-  const label = value ? TEMPERATURE_LABEL[value] : "Classificar";
+  const shown = displayValue ?? value;
+  const dots = shown ? TEMPERATURE_DOTS[shown] : 0;
+  const label = shown ? TEMPERATURE_LABEL[shown] : "Classificar";
   const next = nextTemperature(value);
 
   return (

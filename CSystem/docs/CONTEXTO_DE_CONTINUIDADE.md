@@ -476,3 +476,554 @@ da confiança original do SDR.
 A escala de temperatura foi removida do painel Cadastro e colocada imediatamente após o
 título grande com o nome do lead, no topo da página de cliente. Ela preserva o mesmo
 comportamento do card do funil: cada clique alterna e grava a temperatura na hora.
+
+### Verificação visual no navegador — 18/09/2026 (pendência da rodada de refino fechada)
+
+As sessões anteriores desta rodada de refino (fade, hierarquia tipográfica, rail,
+barra de agenda) tinham sido validadas só por `tsc`/`vitest`/leitura de código,
+porque rodaram sem acesso a terminal e navegador locais. Esta sessão teve os dois,
+então a pendência foi fechada de verdade.
+
+**Estado do Git no início desta sessão:** as mudanças descritas no handoff
+(`CSystem/Claude outputs/HANDOFF_refino_visual_csystem.md` e o patch anexo) já
+estavam commitadas em `67e16ab` e `6203c33` — a árvore de trabalho estava limpa
+(`git status` sem alterações em `CSystem/`, só a pasta `Claude outputs/` nova e
+não rastreada). Conferido com `git apply --check` mental (diff linha a linha):
+o conteúdo do patch bate com o que já está em disco. Nada precisou ser reaplicado.
+
+**Como foi verificado:**
+
+- Servidor local: criado `CSystem/.claude/launch.json` (ignorado pelo Git,
+  `.gitignore:2` cobre `.claude/`) apontando `npm run dev` para a porta 3000, que
+  estava livre nesta máquina (3002 e 3003 tinham processos de outras ferramentas
+  não relacionados ao CSystem — não foram tocados).
+- Percorridas as seis telas (Workspace, Funil, Tarefas, Agenda, Métricas,
+  Configurações) nos temas escuro e claro, em duas larguras (1280×800 e a
+  largura padrão do painel), comparando com a referência do Dribbble.
+- Duplo clique abrindo cliente e tarefa: confirmado (`window.location.pathname`
+  mudou para `/clientes/<id>` depois do duplo clique num card do Workspace).
+- Alternador de tema: primeiro clique já troca claro ⇄ escuro, sem precisar de
+  um segundo clique.
+- Separação Eventos / Registros do sistema, ambos retráteis, e etiquetas sem
+  contorno preto: confirmado na tela do cliente.
+- Console do navegador sem erros durante toda a navegação.
+
+**Sobre o rail (84px) e o fade de 48px nas chips — as duas dúvidas que o handoff
+tinha deixado em aberto:**
+
+- Rail: o botão tem 48px (`size-12`), a coluna tem `px-3` (12px de padding de
+  cada lado) dentro de uma largura total de 84px. Isso deixa 6px de folga de
+  cada lado do botão além do padding — visualmente discreto, não "folgado
+  demais". Nenhuma mudança foi feita.
+- Fade de 48px: a máscara CSS desvanece o próprio conteúdo perto da borda (não
+  é uma faixa sólida por cima) e o efeito é gradual, não um corte abrupto. Os
+  chips mais longos já visíveis nas fileiras que usam `fadeWidth=48` ("Avaliação
+  marcada" no Workspace, "Avaliação agendada" no Funil) apareceram inteiros,
+  sem texto suprimido — o que se vê no chip parcialmente sob a máscara, próximo
+  da borda com mais conteúdo, é o mesmo comportamento pretendido de indicar que
+  há mais itens fora da área visível. Nenhuma mudança foi feita.
+
+**Limite desta verificação:** a inspeção foi feita com dados de seed/teste (os
+mesmos citados nas rodadas anteriores: `João Nicodemos`, `Carlos Mendes`,
+`Rafael Duarte`, `Marcos Vinicius`, `Cliente Teste CRUD`), não com o volume real
+de produção — filas com muito mais cards ou etiquetas com nomes ainda mais
+longos que os do seed não foram exercitadas.
+
+**Validação:** `npx tsc --noEmit` — 0 erros. `npm test` — 4 arquivos, 41 testes
+(cresceu de 38 para 41 desde a última rodada, por causa de
+`lib/temperature.test.ts`, adicionado na decisão de temperatura manual).
+`npm run build` não foi executado nesta rodada porque não havia necessidade de
+recompilar para produção; o dev server foi parado ao final da verificação.
+
+Nenhuma mudança de código de produto foi necessária nesta rodada — a única
+alteração em disco é `CSystem/.claude/launch.json` (fora do Git), criado para
+abrir o preview local.
+
+### Dois bugs reais encontrados pelo Alex após esta verificação — 18/09/2026
+
+A verificação acima usou poucos dados de seed (3 leads, 2 tarefas) e a largura padrão
+do painel do Claude, o que não expôs overflow suficiente em todos os pontos. Alex
+testou pessoalmente com a janela mais larga e achou dois bugs reais:
+
+**1. Mancha cinza atrás dos cards de "Minhas Tarefas" no Workspace.**
+
+Causa: o brilho radial do `body` (`app/globals.css`) tinha a altura em `%`, relativa à
+altura TOTAL da página (que cresce com o conteúdo), não à altura da tela. Na página do
+Workspace (1532px de altura total nesta sessão), o brilho se apagava por volta de
+414px do topo — bem onde caem os cards de tarefa — criando uma borda visível entre o
+brilho e o fundo chapado.
+
+Correção: a altura do gradiente virou um valor fixo em `px` (`1000px`, fade completo
+por volta de 300px do topo), independente do tamanho da página. Conferido nos temas
+claro e escuro; sem regressão no brilho atrás do cabeçalho nas outras telas.
+
+**2. Fade lateral das fileiras de card imperceptível — pedido do Alex para igualar ao
+efeito do topo.**
+
+Depois da correção acima, Alex pediu que a rolagem horizontal (Novos Leads, Minhas
+Tarefas, colunas do Funil e Tarefas, tabela de Listas) tivesse o mesmo tipo de fade
+visível que o brilho do topo. Ao investigar, o `FadeScroller`
+(`components/ui/FadeScroller.tsx`) já tinha a lógica de detectar bordas com conteúdo
+oculto (`ResizeObserver`, `hasLeft`/`hasRight`), mas usava `mask-image` — uma técnica
+que apaga a opacidade do próprio conteúdo. Isso funciona bem em conteúdo escuro ou
+saturado (chips de filtro, como confirmado na rodada anterior), mas em cards CLAROS
+sobre fundo cinza-claro quase da mesma cor, o efeito era real (confirmado via
+`getComputedStyle` no navegador) mas visualmente imperceptível — parecia um corte reto.
+
+Correção: `FadeScroller` foi reescrito para usar uma camada de degradê sobreposta
+(`linear-gradient`, opaco → transparente) na cor real do fundo por trás da fileira, em
+vez de mascarar o conteúdo. Novo prop `fadeColor` (default `var(--bg)`, o fundo da
+página) permite indicar a cor certa quando a fileira não está sobre o fundo da página
+— usado em `components/config/ListsManager.tsx` (`fadeColor="var(--surface)"`, porque
+aquela tabela vive dentro de um cartão branco, não do fundo cinza da página).
+
+Estrutura do componente: um wrapper `relative` recebeu a margem/padding negativos que
+antes estavam no próprio elemento com scroll (para manter o alinhamento visual com o
+resto da seção), e duas camadas absolutas (`aria-hidden`, `pointer-events-none`) nas
+bordas esquerda/direita, com opacidade 0/1 conforme `hasLeft`/`hasRight`, cada uma um
+`linear-gradient` da `fadeColor` para transparente.
+
+Conferido nos temas claro e escuro, forçando overflow horizontal em: Novos Leads e
+Minhas Tarefas no Workspace (`getComputedStyle` confirmou `scrollWidth > clientWidth`
+e opacidade correta da camada de fade), colunas do Kanban no Funil (fade visível a
+olho nu, mais evidente que antes por causa dos rótulos de coluna mais escuros) e a
+tabela de Listas em Configurações (fade na cor do cartão branco).
+
+Nenhuma regra de negócio, banco ou webhook foi tocado. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois das duas correções.
+
+### Fundo do body: de brilho radial para chapado, a pedido do Alex — 18/09/2026
+
+Alex mandou o mockup "1c — Workspace" (uma das referências já aprovadas na rodada de
+auditoria visual anterior) e pediu o fundo exatamente igual a ele, depois das duas
+correções acima. Em vez de comparar a olho, o PNG foi amostrado pixel a pixel: copiado
+temporariamente para `CSystem/public/` (removido depois — nunca ficou no Git, e a
+pasta `public/` também foi apagada por não existir antes), servido pelo próprio
+`next dev`, e lido com `canvas.getImageData` numa aba do navegador.
+
+Resultado da amostragem: o fundo do mockup é a cor sólida `#d2d2d2` — o mesmo valor
+que já era `--bg` no código. Não há um brilho/vinheta de propósito atrás do
+cabeçalho; a pequena variação de tom encontrada bem perto do topo em alguns pontos é
+consistente com sombra dos próprios elementos escuros da barra de agenda (a barra
+preta, o texto), não um gradiente de página.
+
+Diagnóstico: o brilho radial do `body`, mesmo já corrigido para altura fixa em `px`
+(ver seção acima), continuava sendo uma fonte de risco — qualquer altura escolhida
+pode voltar a aparecer como uma borda visível em outra combinação de tela e
+conteúdo que não foi testada. Como a referência aprovada não tem brilho nenhum, a
+solução mais robusta era remover o efeito por completo, não ajustar o número de
+pixels de novo.
+
+`app/globals.css`: `body` ficou só com `background-color: var(--bg)`, sem
+`background-image`. Conferido nos temas claro e escuro via `getComputedStyle`
+(`backgroundImage` retornando `"none"` nos dois). `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da remoção.
+
+### Alinhamento da coluna lateral do Workspace com "Novos Leads" — 18/09/2026
+
+Alex pediu para descer um pouco os dois painéis da coluna direita do Workspace
+("Onde os cards estão" e "Fila de follow-up") para alinhar com o subtítulo "Novos
+Leads" à esquerda. Medi via `getBoundingClientRect` antes de mexer: o topo do
+cartão branco já coincidia matematicamente com o topo da CAIXA do `<h2>` (ambos em
+y=186), mas não com o topo VISUAL das letras — o `<h2>` usa `line-height: 42px`
+para um `font-size: 28px`, então sobra espaço (leading) acima do traço da letra em
+si. Calculei esse espaço com `canvas.measureText` (fonte Urbanist, 500 28px):
+`fontBoundingBoxAscent` 25 + `actualBoundingBoxAscent` 20 apontam a tinta da letra
+começando ~12px abaixo do topo da caixa do `<h2>`.
+
+Correção: `app/page.tsx`, `WorkspaceAside` — troquei `className="hidden flex-col
+gap-4 xl:flex"` por `className="hidden flex-col gap-4 pt-3 xl:flex"` (12px). Depois
+do ajuste, o topo do cartão "Onde os cards estão" ficou exatamente em y=198, igual à
+estimativa do topo visual das letras de "Novos Leads". Conferido nos temas claro e
+escuro (com `body.style.zoom` temporário só para inspecionar visualmente de perto,
+desfeito depois). `npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois do
+ajuste.
+
+### "Onde os cards estão" e "Fila de follow-up" viraram janelas soltas — 18/09/2026
+
+Pedido seguinte do Alex, em três partes (confirmadas por `AskUserQuestion` antes de
+mexer, porque a frase original misturava vários pedidos):
+
+1. As duas janelas devem poder ser arrastadas pela tela e fechadas.
+2. A janela branca ("Onde os cards estão") deve alinhar com a **fileira de filtros**
+   dos leads (não mais com o título "Novos Leads" — supera o ajuste da seção
+   anterior), e "Fila de follow-up" continua logo abaixo dela.
+3. Do lado direito, no mesmo padrão visual da fileira de filtros à esquerda (os
+   chips "Todos/Qualificados/..."), tem que ter botões para mostrar/ocultar cada
+   painel.
+
+**Arquivos novos:**
+
+- `components/ui/DraggableWindow.tsx` — wrapper genérico e reutilizável: antes do
+  primeiro arrasto ocupa o próprio lugar no layout (`position: relative`, sem
+  medição nem flash); no primeiro `pointerdown` na alça (ícone de grip), lê a
+  posição atual via `getBoundingClientRect`, vira `position: fixed` nessa mesma
+  posição (sem pulo visual) e passa a seguir o cursor via `pointermove`. Fechar é
+  responsabilidade de quem usa o componente (prop `onClose`) — o wrapper só cuida
+  de arrastar. Posição por painel em `localStorage`
+  (`csystem-window-pos:<id>`), envolta em `try/catch` (pode falhar em aba anônima
+  ou storage bloqueado; sem posição salva, o painel só nasce no lugar de sempre).
+- `components/workspace/WorkspaceAside.tsx` — extraído de dentro de `app/page.tsx`
+  (precisava virar Client Component para ter estado de aberto/fechado). Renderiza
+  os dois chips de alternância (mesmas classes `chip`/`chip-on`/`chip-off` da
+  fileira de filtros — pedido 3) sempre visíveis, e cada painel dentro de um
+  `DraggableWindow` só quando está aberto. Estado de aberto/fechado por painel
+  também em `localStorage` (`csystem-window-open`), começando com os dois
+  abertos (era o único comportamento antes) até o efeito ler a preferência salva.
+
+**Alinhamento (pedido 2):** medi a fileira de filtros (`input` "Buscar leads" +
+chips) via `getBoundingClientRect`: topo em y=245.2, contra y=186 do `<aside>` sem
+padding. `WorkspaceAside` ganhou `pt-[59px]` (substituindo o `pt-3` da seção
+anterior) — o topo da fileira de chips de alternância bateu em y=245, igual à
+fileira de filtros à esquerda.
+
+**`app/page.tsx`** ficou só com a chamada `<WorkspaceAside clients={clients}
+lists={lists} followups={followups} />`; a função que antes desenhava os dois
+painéis inline foi removida de lá (mudou de arquivo, não de comportamento visual
+por padrão — o layout inicial, sem nenhum arrasto, é visualmente idêntico ao de
+antes, só a fileira de chips nova no topo).
+
+**Verificado nesta sessão** (via `dispatchEvent` de `PointerEvent` — mais confiável
+que coordenada de mouse no viewport emulado desta sessão, que às vezes escala):
+fechar por chip funciona (o painel some, o chip vira `chip-off`); reabrir pelo
+mesmo chip funciona; arrastar pela alça muda a posição pelo delta exato do
+movimento e grava em `localStorage`; a posição sobrevive a um F5 (`navigate` de
+novo, painel reaparece no mesmo lugar); fechar funciona também com o painel já
+flutuando (`position: fixed`). Testado nos dois temas. `localStorage` de teste
+limpo ao final, para o Alex ver os painéis nascendo no lugar padrão na primeira
+vez que abrir.
+
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança. Nenhuma
+regra de negócio, banco ou webhook tocado — é só uma preferência de tela, por
+navegador, guardada em `localStorage`, nunca sincronizada nem gravada no banco.
+
+### Correção de rumo: sem arrastar, botões viraram ícones no rail — 18/09/2026
+
+Alex testou o resultado da seção anterior e voltou atrás: "não ficou bom, ele
+[móvel] não" — pediu para desfazer o arrasto e voltar exatamente ao estado
+anterior. Removidos `components/ui/DraggableWindow.tsx` e
+`components/workspace/WorkspaceAside.tsx` (o arquivo extraído na tentativa
+anterior); `app/page.tsx` voltou a ter a função `WorkspaceAside` inline, do jeito
+que estava antes de qualquer coisa deste round (só com o `pt-3` de alinhamento com
+"Novos Leads", sem chips, sem arrastar).
+
+Pedido revisado, confirmado sem mais popups depois de uma pergunta com
+`AskUserQuestion` (o Alex pediu explicitamente **no máximo dois popups de
+pergunta por vez**, registrado abaixo para valer também no recurso de janela
+personalizada):
+
+1. Os botões de mostrar/ocultar viram **ícones redondos pequenos, sem texto**, no
+   rodapé do rail (menu vertical de navegação) — não mais chips com rótulo no
+   Workspace.
+2. Só aparecem **na tela Workspace** (confirmado via `AskUserQuestion`) — nas
+   outras telas o rail continua igual a antes.
+3. O botão "+" de criar janela personalizada e o auto-ajuste ficam para depois
+   (ver pendência abaixo); o Alex já adiantou que quer no máximo **duas janelas
+   abertas ao mesmo tempo** — para abrir uma terceira, precisa fechar uma antes.
+   Essa regra ainda não está implementada (não há terceira janela ainda), só
+   registrada para quando o botão "+" for construído.
+
+**Arquitetura:** o rail (`components/shell/Rail.tsx`) e a página do Workspace
+(`app/page.tsx`) são irmãos no layout — os dois filhos de `AppShell`. Um clique no
+ícone do rail precisa mostrar/ocultar um painel que vive em outro branch da árvore,
+então o estado não pode ser local a nenhum dos dois. Solução: um contexto React
+compartilhado.
+
+- `components/workspace/WorkspacePanelsContext.tsx` (novo) — `WorkspacePanelsProvider`
+  guarda `{ "onde-os-cards": boolean, "fila-follow-up": boolean }`, persistido em
+  `localStorage` (`csystem-workspace-panels`), começando com os dois abertos até o
+  efeito ler a preferência salva. Exporta também `useWorkspacePanels()` e a lista
+  `WORKSPACE_PANELS` (id + rótulo, usada tanto pelo rail quanto pela página).
+- `components/shell/AppShell.tsx` — o provider agora envolve `<Rail />` e o
+  `<main>`, o nível mais alto que os dois compartilham.
+- `components/shell/Rail.tsx` — quando `pathname === "/"`, renderiza (com
+  `mt-auto`, empurrando pro final da coluna) dois botões circulares de 48px, no
+  mesmo padrão visual dos itens de navegação existentes (`IconChart` para "Onde os
+  cards estão", `IconClock` para "Fila de follow-up"; preenchido/preto quando
+  aberto, como o item de navegação ativo). Cada um chama `toggle(id)` do contexto.
+- `components/workspace/PanelSlot.tsx` (novo) — envelope client mínimo:
+  `<PanelSlot id="...">{children}</PanelSlot>` só renderiza `children` (já montado
+  no servidor) se o painel estiver marcado como aberto. Existe para `app/page.tsx`
+  continuar Server Component — só este envelope precisa ser client. Cada uma das
+  duas seções da `WorkspaceAside` (o cartão branco e o cartão preto) ficou
+  envolvida por um `PanelSlot`.
+
+**Verificado:** ícones aparecem só no Workspace (confirmado que em `/funil` o rail
+tem zero botões extras); clicar oculta o painel correspondente sem deixar vão (é
+renderização condicional normal, não posição fixa); clicar de novo mostra; estado
+inicial dos dois é aberto; testado nos dois temas. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da mudança.
+
+### Ajuste de posição e tamanho: do rail para o canto inferior direito da tela — 18/09/2026
+
+Alex viu os dois ícones no rodapé do rail (canto inferior **esquerdo** da tela,
+porque o rail fica à esquerda) e pediu para ficarem no canto inferior **direito**
+da tela — soltos, não mais dentro do rail — só ícone (sem texto, como já estavam),
+e pelo menos 30% menores.
+
+- Removida a seção de ícones de `components/shell/Rail.tsx` (o rail voltou a ser
+  só navegação, sem saber nada do Workspace).
+- Novo `components/workspace/WorkspacePanelToggles.tsx`: `fixed bottom-5 right-5`,
+  dois botões `size-8` (32px — 33% menor que os 48px do rail, satisfaz "pelo menos
+  30%"), ícone reduzido de 19px para 13px na mesma proporção. Estado aberto usa o
+  mesmo padrão visual do item de navegação ativo (`bg-ink`/`shadow-raised`);
+  estado fechado usa `bg-surface`/`shadow-chip` (em vez de fundo transparente como
+  no rail) porque aqui o botão flutua sobre conteúdo variado da página, não sobre
+  o fundo constante do rail — sem uma superfície própria ficaria ilegível
+  dependendo do que estiver embaixo.
+- Renderizado direto em `app/page.tsx` (`<WorkspacePanelToggles />`), então só
+  existe na árvore da página do Workspace — nas outras telas nem é montado.
+- `WorkspacePanelsContext` não mudou; só mudou quem consome o `toggle()`.
+
+Verificado: os dois botões aparecem no canto inferior direito (medido via
+`getBoundingClientRect`, ~20px das bordas), 32×32px; ocultar/mostrar cada um
+isoladamente sem afetar o outro (testado clicando só um por vez, com
+`localStorage` limpo antes de cada teste — uma vez o teste anterior tinha deixado
+os dois marcados como fechados de uma rodada de verificação anterior, o que
+pareceu um bug de "os dois fecham juntos" até eu limpar o estado e reproduzir
+isolado: não é bug, é preciso sempre partir de um estado limpo ao testar
+manualmente esta função). Sumiu do rail e do Funil (0 botões extras fora do
+Workspace). Testado nos dois temas. `npx tsc --noEmit` (0 erros) e `npm test`
+(41 testes) depois da mudança.
+
+### Painel fixo ao rolar, realinhado com a fileira de filtros, ícones sem fundo — 18/09/2026
+
+Três ajustes finos no mesmo conjunto, pedidos juntos:
+
+1. **Fixo ao rolar.** O painel da direita (`<aside>`) rolava junto com a página e
+   desaparecia de vista. Trocado `pt-3` por `sticky top-6 pt-[59px]` em
+   `app/page.tsx`. `pt-[59px]` é o mesmo cálculo de antes (repetido porque a
+   rodada de "voltar como estava" tinha revertido para `pt-3`, alinhado com o
+   título): mede a fileira de busca+chips do Novos Leads via
+   `getBoundingClientRect` (topo em y≈245) contra o topo do `<aside>` sem
+   padding (y≈186) — diferença de 59px. `sticky top-6` faz o painel colar a 24px
+   do topo da tela assim que a rolagem normal o levaria além desse ponto; até lá,
+   ele se comporta como posição normal (por isso o alinhamento inicial com a
+   fileira de filtros continua valendo sem nenhuma mudança extra). Funciona
+   porque o item de grid tem como *containing block* a área inteira da grade (a
+   altura da coluna principal, mais alta), não só a altura do próprio conteúdo do
+   `<aside>` — por isso há "espaço" para ele grudar em vez de já estar esticado.
+   Confirmado via `getBoundingClientRect` antes/depois de rolar 300px: o topo
+   travou em 24px em vez de continuar subindo.
+2. **Ícones sem fundo até clicar.** `WorkspacePanelToggles.tsx`: removido o
+   `bg-surface text-muted shadow-[var(--shadow-chip)]` do estado fechado (que eu
+   tinha adicionado para eles não sumirem sobre fundo variado) e substituído por
+   `text-muted hover:bg-surface hover:text-text` — exatamente a mesma classe do
+   item de navegação inativo do rail. Fundo preto (`bg-ink`) continua aparecendo
+   só quando o painel está aberto, igual ao item de navegação ativo. Confirmado
+   via `getComputedStyle` que o fundo fica `rgba(0,0,0,0)` (transparente de
+   verdade) quando fechado, batendo com o mesmo teste num item real do rail.
+3. Nenhuma mudança de posição/tamanho além dessas — os 32px e o canto inferior
+   direito da rodada anterior continuam.
+
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança. Uma
+referência visual foi prometida pelo Alex para uma rodada futura, mas ainda não
+chegou anexada nesta sessão — se as medidas acima não baterem com o que ele tem em
+mente, é questão de reajustar os valores (`top-6`, `pt-[59px]`), não a abordagem.
+
+### Widescreen: fim da coluna reservada, painéis viraram overlay flutuante — 18/09/2026
+
+Alex aprovou o alinhamento/fixo da rodada anterior ("ficou muito bom") e pediu o
+próximo passo: as fileiras de Novos Leads e Minhas Tarefas deveriam ir até a borda
+direita de verdade — hoje reservavam 300px fixos para a coluna do
+`<aside>`, mesmo com "Onde os cards estão"/"Fila de follow-up" já flutuando por
+cima delas. Junto, pediu um fundo discreto atrás dos dois pop-ups (um cinza um
+pouco mais claro que o fundo da página, com leve sombra 3D), porque agora eles
+ficam sobre conteúdo de verdade (os cards de lead), não mais sobre uma coluna
+vazia — sem separação visual, ia ficar tudo misturado.
+
+**Arquitetura nova:**
+
+- `app/page.tsx` — removida a grade `xl:grid-cols-[minmax(0,1fr)_300px]`. A
+  agenda e o cabeçalho continuam dentro do `max-w-[1320px]` de leitura (não foi
+  pedido mexer neles); Novos Leads e Minhas Tarefas passaram para um `<div
+  className="w-full">` fora desse limite, ocupando toda a largura disponível
+  dentro do padding do `<main>` do `AppShell`.
+- `components/workspace/WorkspacePanels.tsx` (novo, substitui a função
+  `WorkspaceAside` inline e o `PanelSlot.tsx`, removido): recebe `counts`, `max`
+  e `followups` já calculados no servidor (a mesma lógica de antes, só que
+  computada uma vez em `app/page.tsx` e passada como prop) e renderiza os dois
+  cartões como *overlay* `fixed`, não mais como coluna de grade. Some por
+  completo (`return null`) quando os dois painéis estão fechados — nada de caixa
+  vazia sobrando.
+- O grupo dos dois cartões ganhou uma bandeja de fundo:
+  `bg-surface-sunken` (o cinza um degrau mais claro que `--bg`, já existia como
+  token — não é cor nova) com `p-3` de respiro e `shadow-[var(--shadow-raised)]`
+  (a sombra mais forte, a mesma dos itens "ativos" do rail) em vez da sombra
+  padrão de cartão — dá a separação e a impressão de profundidade pedidas, sem
+  inventar uma cor fora da paleta.
+- **Posicionamento:** trocado de `sticky` (dentro da grade) para `fixed`
+  (`top-[233px] right-8`) puro, porque sem a coluna de grade não há mais uma
+  "área de contenção" alta o bastante para o `sticky` ter onde grudar. `fixed`
+  simplifica e ainda cumpre as duas exigências: sempre visível ao rolar (mais
+  literal que `sticky`, que só prende depois de passar do ponto) e alinhado com
+  a fileira de busca+chips desde o início (233px = 245px medidos da fileira de
+  filtro menos os 12px do padding da bandeja nova). Medido via
+  `getBoundingClientRect` antes/depois de rolar 300px: o topo do cartão interno
+  ficou fixo em 233px nos dois casos.
+- `WorkspacePanelToggles.tsx` não mudou — continua no canto inferior direito,
+  ícone sem fundo até clicar.
+
+**Verificado:** todas as quatro fileiras roláveis (chips e cards de Novos Leads e
+Minhas Tarefas) agora terminam no mesmo x (~1273px numa janela de 1320px, batendo
+com a borda direita do `<main>` menos o padding e a barra de rolagem) — antes
+paravam ~300px antes disso. Fechar os dois painéis remove a bandeja
+inteira, sem sobra. Testado nos dois temas (no escuro, a bandeja fica bem
+próxima da cor do cartão preto de "Fila de follow-up" — separação sutil, do jeito
+que "leve sombreamento" sugere). `npx tsc --noEmit` (0 erros) e `npm test`
+(41 testes) depois da mudança.
+
+### Realinhamento fino e alça de arrastar no topo da bandeja — 18/09/2026
+
+Alex aprovou o widescreen ("ficou muito bom") e pediu dois ajustes finos na
+bandeja de fundo:
+
+1. **Alinhar a borda da bandeja com a fileira de filtros**, não só o cartão de
+   dentro. Antes (`top-[233px]`), o topo da BANDEJA ficava 12px acima da
+   fileira de busca+chips (só o cartão branco de dentro, depois do padding,
+   batia com ela); agora (`top-[245px]`) é o topo da bandeja em si que bate,
+   então nada dela aparece acima da linha dos filtros.
+2. **Uma alça de arrastar no topo**, como as de bottom sheet (barrinha
+   arredondada, `h-1 w-10`, cor `--border-strong`): arrastar para baixo (mais de
+   24px) recolhe as janelas; arrastar para cima reabre; um clique simples (sem
+   arrastar) alterna do mesmo jeito. A alça em si NUNCA desaparece enquanto
+   pelo menos um painel estiver marcado como aberto nos ícones do rail — ela é
+   o "recolher tudo", não um terceiro painel; quem decide QUAIS painéis existem
+   continua sendo só os ícones do canto inferior direito.
+
+**Implementação:** `components/workspace/WorkspacePanels.tsx` ganhou
+`useState<boolean>` local (`collapsed`) e um `useRef` para a coordenada Y do
+início do arrasto — mesmo padrão do `DraggableWindow.tsx` de uma rodada anterior
+(`onPointerDown` chama `setPointerCapture`; `onPointerUp` calcula o delta e
+decide recolher/abrir/alternar). Acessível: `role="button"`, `tabIndex={0}`,
+`aria-expanded`, e `Enter`/`Espaço` alternam via teclado.
+
+**Verificado:**
+
+- Alinhamento: `getBoundingClientRect` do topo da bandeja bate com o topo da
+  fileira de busca+chips (245px nos dois, numa aba nova e limpa).
+- Lógica de arrasto: simulada via `dispatchEvent` de `PointerEvent`
+  (`pointerdown` na alça, depois `pointerup` a diferentes distâncias) — recolhe
+  com >24px para baixo, reabre com >24px para cima, alterna com deslocamento
+  pequeno (efeito de clique). Teclado (`Enter`) também alterna.
+- Fechar os dois painéis pelos ícones do rail remove a alça inteira (nenhuma
+  bandeja vazia sobrando), independente do estado de recolhido/expandido.
+- **Limite da verificação:** a ferramenta de automação usada nesta sessão
+  (`left_click_drag`, um arrasto de mouse "de verdade" simulado por fora da
+  página) não conseguiu acionar o gesto — o clique parece não gerar a mesma
+  sequência de eventos de ponteiro que um arrasto real do usuário dispara. A
+  lógica em si foi confirmada correta via simulação de eventos DENTRO da
+  página (o mesmo caminho de código que um arrasto de mouse real percorre), e
+  o padrão é idêntico ao já usado e comprovado em `DraggableWindow.tsx`. Ainda
+  assim, **o Alex deveria confirmar com um arrasto de mouse de verdade** antes
+  de considerar isto fechado — se não responder ao toque, é aqui que
+  investigar primeiro.
+
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### Bandeja presa embaixo, laterais rentes — inspirada num widget de chamada, 18/09/2026
+
+Alex mandou uma referência (mockup do Dribbble original, o mesmo da rodada de
+auditoria visual do começo do projeto) mostrando um widget de chamada de vídeo
+com um painel "Summary" embaixo dele, os dois no canto inferior direito, com uma
+alcinha arredondada no topo do widget. Pediu para misturar essa ideia com o que
+já existe: duas mudanças pontuais, não uma reconstrução.
+
+1. **Laterais da bandeja rentes com as laterais dos cartões** — antes a bandeja
+   tinha `px-3` (12px de cada lado) entre sua borda e o cartão de dentro; virou
+   `w-[300px]` sem padding horizontal nenhum, então os cartões (que preenchem
+   100% da largura do pai) ficam exatamente do mesmo tamanho que a bandeja.
+2. **Abre de baixo para cima, fixo embaixo** — trocado `top-[245px]` (alinhado
+   com a fileira de filtros, do jeito que tinha ficado numa rodada anterior) por
+   `bottom-28` (112px do rodapé da tela). Como a bandeja é uma coluna flexível
+   com altura automática, prender pela base faz ela crescer para CIMA conforme
+   mais painéis abrem (ou encolher para baixo conforme fecham/recolhem) — a
+   base nunca se move. `112px` foi escolhido para não encostar no cluster dos
+   dois ícones de mostrar/ocultar (`bottom-5` + 2×32px + 8px de gap = 92px de
+   altura a partir do rodapé); sobra ~20px de respiro entre os dois.
+
+**O que isso substitui:** o alinhamento com a fileira de filtros da rodada
+anterior não faz mais sentido com posicionamento pelo rodapé (são
+mutuamente exclusivos — não dá pra estar preso no topo alinhado com uma coisa e
+preso na base ao mesmo tempo). É uma correção de rumo, não um bug: o Alex viu o
+resultado anterior e decidiu por outra direção, baseado numa referência nova.
+
+**Verificado** (`getBoundingClientRect`, aba nova e limpa): o `left`/`right` da
+bandeja bate exatamente com o `left`/`right` do cartão de dentro (nenhum gap
+lateral); a base da bandeja fica fixa em `viewportHeight - 112px` com 1 painel
+aberto ou com os 2 — só o topo sobe/desce; fechar um painel encolhe a bandeja
+pra baixo sem mover a base; a alça continua recolhendo/reabrindo do mesmo jeito
+de antes (arrasto ou clique), e nesse estado recolhido a base também não se
+move (só o topo sobe até a altura da própria alça). Testado nos dois temas.
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### Zero respiro embaixo, vidro fosco, ícones foram para o lado — 18/09/2026
+
+Alex pediu, em duas mensagens seguidas: "fixe igual a referência, zero respiro
+embaixo" e "aplique uma leve transparência no fundo e um efeito blur, como na
+referência".
+
+- `bottom-28` → `bottom-0`: a bandeja agora encosta rente no rodapé da tela,
+  sem nenhum respiro. Cantos de baixo deixaram de ser arredondados
+  (`rounded-[...]` → `rounded-t-[...]`) porque uma borda rente à tela não tem
+  como mostrar arredondamento embaixo mesmo.
+- Fundo sólido (`bg-surface-sunken`) virou translúcido com desfoque:
+  `bg-[color-mix(in_srgb,var(--surface-sunken)_70%,transparent)]` (70% de
+  opacidade) + `backdrop-blur-md` (desfoca o que passar atrás, efeito vidro
+  fosco). Confirmado via `getComputedStyle`: `backgroundColor` com alpha 0.7 e
+  `backdropFilter: blur(12px)`.
+- **Ícones de mostrar/ocultar mudaram de lugar** — consequência direta do
+  `bottom-0`: não sobra mais espaço abaixo da bandeja para eles (que estavam em
+  `bottom-5`, ficariam embaixo da própria bandeja agora que ela desce até o
+  fim). Movidos para o **lado esquerdo** da bandeja (`WorkspacePanelToggles.tsx`:
+  `right-[340px]`, mesma altura aproximada) — de propósito ao lado, não acima
+  dela, porque a altura da bandeja varia com quantos painéis estão abertos; um
+  espaço fixo "acima" exigiria medir a altura toda vez, enquanto "ao lado"
+  nunca colide, seja qual for a altura.
+
+**Verificado:** `getBoundingClientRect` da bandeja tem `bottom` exatamente igual
+à altura da viewport (zero gap) com qualquer combinação de painéis abertos; os
+dois ícones ficam ao lado, sem sobrepor a bandeja em nenhuma altura testada (1
+painel, 2 painéis, recolhido). Testado nos dois temas. `npx tsc --noEmit`
+(0 erros) e `npm test` (41 testes) depois da mudança.
+
+### Bug real corrigido: clique na temperatura não avançava — 18/09/2026
+
+Alex reportou dois problemas de funcionalidade (não visuais) no Funil. Um era
+bug de verdade, o outro é esclarecimento de comportamento existente.
+
+**Bug real:** clicar nas bolinhas de temperatura não mudava nada visualmente.
+Causa: `ClientMiniCard.tsx` passava para `TemperatureControl` o valor JÁ
+CONVERTIDO da confiança do SDR (`temperatureFromSdrConfidence`) como se fosse o
+dado real — então o primeiro clique calculava o próximo passo a partir de
+"Quente" (a conversão exibida), pulando para `null` em vez de avançar para
+"Frio"; e como a interface volta a mostrar a mesma conversão enquanto o campo
+real (`client.temperature`) continua `null`, o clique parecia não fazer nada.
+O mesmo padrão existia em `ClientPageHeader.tsx` e no diálogo Editar cliente
+(`ClientDetails.tsx`) — este último com uma consequência mais séria: salvar o
+diálogo sem tocar na temperatura gravava a conversão do SDR como se fosse
+escolha manual.
+
+Corrigido separando os dois conceitos em `TemperatureControl.tsx`: `value`
+(o dado real, que orienta o próximo clique) e `displayValue` (o que aparece
+quando `value` é `null`). Verificado clicando de fato e recarregando: o ciclo
+Classificar→Frio→Morno→Quente→Classificar avança e persiste corretamente a
+cada passo, testado no Funil.
+
+**Não é bug:** "Fila de follow-up" vazia mesmo com um card na lista
+"Follow-up" do Kanban. O widget lê só `clients.nextFollowupAt` (uma data),
+gravada apenas pelo fluxo de comentário `FOLLOW-UP` com data — nunca por
+posição no Kanban. Nenhum código alterado; se o Alex quiser ligar os dois,
+é decisão de produto nova a conversar antes.
+
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da correção.
+
+**Pendência para a próxima rodada:** o botão "+" (agora ao lado esquerdo da
+bandeja, não mais no rail), que abre um pop-up para
+criar uma janela personalizada. Alex já indicou três tipos de conteúdo que quer
+poder criar (agenda estilo Google, resumo de dados de um cliente, gráfico de uma
+métrica específica) — cada um é essencialmente uma feature própria, então a
+sugestão registrada é construir um tipo de cada vez, começando pelo que o Alex
+escolher primeiro. Regra já combinada para quando isso for construído: no máximo
+duas janelas abertas ao mesmo tempo (as duas atuais já contam para esse limite);
+abrir uma terceira exige fechar uma antes.
