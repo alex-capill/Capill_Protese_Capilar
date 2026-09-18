@@ -39,7 +39,7 @@ export default async function MetricasPage({
   const metrics = headlineMetrics(period);
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       <PageHeader title="Métricas" metrics={metrics} />
 
       <p className="mb-8 text-sm text-muted">
@@ -60,6 +60,6 @@ export default async function MetricasPage({
           <DistributionPanel distribution={currentDistribution()} />
         </div>
       </div>
-    </>
+    </div>
   );
 }

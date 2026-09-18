@@ -24,10 +24,13 @@ export const dynamic = "force-dynamic";
  * Ordem de leitura pensada para o começo do dia: a agenda de hoje primeiro,
  * depois os números do mês, depois quem chegou, depois o que fazer.
  *
- * Novos Leads e Minhas Tarefas ocupam a largura inteira disponível (pedido
- * "widescreen" do Alex) — só a agenda e o cabeçalho continuam na largura de
- * leitura de 1320px. "Onde os cards estão" e "Fila de follow-up" flutuam por
- * cima (`WorkspacePanels`), não ocupam mais coluna própria na grade.
+ * A tela inteira ocupa a largura disponível (pedido "widescreen" do Alex) —
+ * inclusive a agenda e o cabeçalho, para os controles de tema/notificações/
+ * perfil baterem na mesma margem direita dos ícones de mostrar/ocultar dos
+ * painéis flutuantes. As outras páginas continuam com `max-w-[1320px]`
+ * (cada uma define isso internamente agora — ver `AppShell.tsx`); só o
+ * Workspace abre mão disso. "Onde os cards estão" e "Fila de follow-up"
+ * flutuam por cima (`WorkspacePanels`), não ocupam coluna própria na grade.
  */
 export default function WorkspacePage() {
   const lists = getLists();
@@ -48,40 +51,36 @@ export default function WorkspacePage() {
 
   return (
     <div className="w-full">
-      <div className="fixed bottom-0 right-8 z-30 hidden flex-col items-end gap-2 xl:flex">
-        <WorkspacePanelToggles />
+      <WorkspacePanelToggles />
+      <div className="fixed bottom-0 right-[76px] z-30 hidden xl:block">
         <WorkspacePanels counts={counts} max={max} followups={followups} />
       </div>
 
-      <div className="mx-auto w-full max-w-[1320px]">
-        <div className="mb-8">
-          <ScheduleBar
-            items={appointments.map((appointment) => ({
-              id: appointment.id,
-              title: appointment.title,
-              clientName: appointment.clientName,
-              startsAt: appointment.startsAt,
-              endsAt: appointment.endsAt,
-              kind: appointment.kind,
-            }))}
-          />
-        </div>
-
-        <div className="mb-8">
-          <PageHeader
-            title="Workspace"
-            metrics={metrics}
-            action={<NewTaskButton columns={columns} specialLabels={specialTaskLabels} clients={clients} />}
-            controls={false}
-            metricExamples={{ Fechadas: 1, Perdidas: -1 }}
-          />
-        </div>
+      <div className="mb-8">
+        <ScheduleBar
+          items={appointments.map((appointment) => ({
+            id: appointment.id,
+            title: appointment.title,
+            clientName: appointment.clientName,
+            startsAt: appointment.startsAt,
+            endsAt: appointment.endsAt,
+            kind: appointment.kind,
+          }))}
+        />
       </div>
 
-      <div className="w-full">
-        <LeadsRow clients={clients} lists={lists} />
-        <TodayTasksRow tasks={tasks} columns={columns} specialLabels={specialTaskLabels} clients={clients} />
+      <div className="mb-8">
+        <PageHeader
+          title="Workspace"
+          metrics={metrics}
+          action={<NewTaskButton columns={columns} specialLabels={specialTaskLabels} clients={clients} />}
+          controls={false}
+          metricExamples={{ Fechadas: 1, Perdidas: -1 }}
+        />
       </div>
+
+      <LeadsRow clients={clients} lists={lists} />
+      <TodayTasksRow tasks={tasks} columns={columns} specialLabels={specialTaskLabels} clients={clients} />
     </div>
   );
 }

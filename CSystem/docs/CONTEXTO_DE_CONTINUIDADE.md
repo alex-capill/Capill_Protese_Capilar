@@ -1121,6 +1121,122 @@ sintoma é sempre o mesmo (página para de compilar,
 sendo `rm -rf .next` + reiniciar — só que agora não deveria mais ser
 necessário.
 
+### Arrasto de verdade (dnd-kit), recolher suave e ícones fixos de vez — 18/09/2026
+
+Alex rejeitou a solução "clique = troca instantânea" da rodada anterior — queria
+um arrasto de Kanban de verdade, com movimento suave, e reclamou que os ícones
+de mostrar/ocultar sobem e descem junto com a bandeja (efeito colateral de eu
+tê-los colocado na mesma coluna flexível dela). Três correções:
+
+1. **Reorganizar virou arrasto de verdade.** Substituí a lógica manual de
+   "clique/arrasto na alça troca os dois" por `@dnd-kit/sortable` — a mesma
+   biblioteca (já dependência do projeto) usada no Kanban do Funil e nas
+   colunas de Tarefas, com o mesmo sensor (`PointerSensor` com
+   `activationConstraint: { distance: 6 }`, que também resolve de graça a
+   reclamação "eu clico e ele já muda": só ativa depois de mover 6px de
+   verdade). Cada cartão agora é um item `useSortable`, com uma alça de grip
+   sobreposta no canto (`SortablePanel`, novo, dentro de
+   `WorkspacePanels.tsx`). `WorkspacePanelsContext` trocou `swapOrder()` (só
+   invertia os dois) por `setOrder(next)` (recebe a lista inteira, calculada
+   por `arrayMove` no `onDragEnd`) — já pronto para quando o "+" trouxer um
+   terceiro painel, sem precisar reescrever a lógica de novo.
+2. **Recolher/expandir ganhou transição suave.** Trocado o `{!collapsed &&
+   <div>...}` (aparece/desaparece na hora) pela técnica de CSS
+   `grid-template-rows: 0fr ⇄ 1fr` com `transition-[grid-template-rows]
+   duration-300` — anima para/de altura automática sem JavaScript medindo
+   pixel, com o filho em `overflow-hidden` para o conteúdo não vazar durante a
+   transição. O gesto de arrastar a tarjinha continua igual (para baixo
+   recolhe, para cima ou clique simples expande); só a transição visual mudou
+   de instantânea para suave.
+3. **Ícones de mostrar/ocultar voltaram a ter posição fixa e independente**
+   (`WorkspacePanelToggles`: `fixed bottom-3 right-[340px]`, fora da coluna
+   flexível da bandeja) — não se movem mais conforme a bandeja
+   cresce/encolhe/recolhe. Ficam ao lado da bandeja (não embaixo, que
+   colidiria com o `bottom-0` dela) — não é o pixel mais à direita da tela,
+   mas é uma posição que nunca muda, o que era o problema relatado.
+
+**Verificado:**
+
+- Ícones não se movem: medida a posição antes e depois de recolher a bandeja
+  via `getBoundingClientRect` — pixel idêntico nos dois casos.
+- Transição suave confirmada via `getComputedStyle`:
+  `transitionProperty: "grid-template-rows"`.
+- Arrasto de verdade: **a automação desta sessão só conseguiu reproduzir o
+  gesto com uma sequência gradual de `pointermove` (20 passos com atraso entre
+  eles), não com um "salto" de posição único** — um clique/arrasto único não
+  bastava para o `PointerSensor` do dnd-kit detectar o movimento. Isso é
+  esperado (arrasto real de mouse gera múltiplos eventos de movimento
+  naturalmente; a ferramenta de arrasto único desta sessão, não). Com a
+  sequência gradual, a troca de posição funcionou e persistiu depois de
+  recarregar a página.
+- Testado nos dois temas. `npx tsc --noEmit` (0 erros) e `npm test`
+  (41 testes) depois da mudança.
+
+### Ajuste fino: ícones para o lado direito de verdade, bandeja recuada — 18/09/2026
+
+Depois da correção anterior (ícones fixos, independentes da bandeja), Alex
+notou que eles tinham ficado do lado ESQUERDO da bandeja, não do lado direito.
+Pediu para puxar a bandeja um pouco para o centro (esquerda) e colocar os
+ícones na extremidade direita de verdade.
+
+- `WorkspacePanelToggles`: `right-[340px]` → `right-8` — mesma borda que a
+  bandeja usava antes de tudo isso começar.
+- `app/page.tsx` (o `<div>` que envolve `WorkspacePanels`): `right-8` →
+  `right-[76px]` — a bandeja recuou para abrir espaço: `76px` = 32px (margem
+  dos ícones) + 32px (largura do ícone) + 12px de vão, então os dois nunca se
+  tocam, com qualquer altura de bandeja.
+
+Verificado via `getBoundingClientRect`: borda direita dos ícones em 1272.8px
+(num viewport de 1320px, batendo com `right-8` menos a barra de rolagem),
+borda direita da bandeja em 1228.8px — 12px de vão limpo entre as duas. Os
+ícones continuam sem se mover ao recolher a bandeja (mesmo teste da rodada
+anterior, repetido: pixel idêntico antes/depois). Testado nos dois temas.
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### Bug real encontrado e corrigido: "widescreen" não funcionava em monitores largos
+
+Alex pediu para igualar o respiro das margens esquerda/direita ao dos ícones, e
+alinhar o cabeçalho (agenda + tema/notificações/perfil) na mesma borda. Ao
+investigar, achei um bug real da rodada "widescreen": `AppShell.tsx` (usado por
+TODAS as páginas) envolve `{children}` num `<div className="mx-auto w-full
+max-w-[1320px]">` — um limite GLOBAL que eu nunca tinha removido. As fileiras
+"widescreen" do Workspace pareciam ocupar a tela inteira nos testes desta
+sessão **só porque toda verificação aconteceu numa janela de exatamente
+1320px** — largura que nunca aciona o limite. Num monitor mais largo de
+verdade (testei 1600px), o `max-w-[1320px]` do `AppShell` prendia o Workspace
+inteiro de volta a 1320px, cancelando o "widescreen" da rodada de várias
+sessões atrás. Isso nunca tinha sido percebido porque a verificação sempre
+usou o mesmo tamanho de janela que mascarava o problema.
+
+**Correção estrutural:** o limite de largura saiu do `AppShell` (que agora só
+passa `{children}` direto) e entrou em cada página que precisa dele — Funil,
+Tarefas, Agenda, Métricas, Configurações, Entrada SDR e o card do cliente
+(`app/clientes/[id]/page.tsx`) ganharam seu próprio `<div className="mx-auto
+w-full max-w-[1320px]">` envolvendo o conteúdo, preservando exatamente a
+largura que já tinham. O Workspace (`app/page.tsx`) é a única página sem
+nenhum limite agora — a agenda e o cabeçalho, que antes tinham seu próprio
+`max-w-[1320px]` interno (uma sobra da rodada de widescreen anterior, que só
+cobria Novos Leads/Minhas Tarefas), perderam esse limite também, então os
+controles de tema/notificações/perfil da barra de agenda agora terminam na
+MESMA borda que os ícones flutuantes e o resto do conteúdo.
+
+**Respiro esquerdo reduzido:** `AppShell.tsx` trocou o padding simétrico
+(`md:px-8`, 32px dos dois lados) por assimétrico a partir de `md` (quando o
+rail aparece): `md:pl-5` (20px) + `md:pr-8` (32px). O rail tem seu próprio
+respiro interno até a borda do ícone; somado ao `pl-5` novo, o vão visual da
+esquerda (ícone do rail → conteúdo) fica perto do vão da direita (conteúdo →
+ícones flutuantes), sem ficar maior como antes. Abaixo de `md` (rail
+escondido) o padding continua simétrico — não tem rail para comparar.
+
+**Verificado** (`getBoundingClientRect`, viewport de 1600px — deliberadamente
+diferente de 1320px para não mascarar o bug de novo): a fileira de Novos Leads
+e os ícones flutuantes terminam exatamente na mesma borda (1552.8px); o
+conjunto tema/notificações/perfil da barra de agenda termina na MESMA borda
+também (1552.8px) — confirmando o alinhamento pedido. Funil e Tarefas
+continuam com sua largura de leitura de 1320px inalterada (conferido
+visualmente nos dois). Testado nos dois temas. `npx tsc --noEmit` (0 erros) e
+`npm test` (41 testes) depois da mudança.
+
 **Pendência para a próxima rodada:** o botão "+" (no mesmo canto inferior
 direito, junto dos ícones de mostrar/ocultar), que abre um pop-up para
 criar uma janela personalizada. Alex já indicou três tipos de conteúdo que quer

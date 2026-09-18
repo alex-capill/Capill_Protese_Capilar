@@ -37,7 +37,7 @@ export default async function ClientePage({
   const labels = getLabels();
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       <div className="mb-4">
         <Link
           href="/funil"
@@ -66,6 +66,6 @@ export default async function ClientePage({
           <ClientTimeline events={events} transitions={transitions} />
         </div>
       </div>
-    </>
+    </div>
   );
 }

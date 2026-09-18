@@ -11,9 +11,9 @@ export default function TarefasPage() {
   const clients = getClients();
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       <PageHeader title="Minhas Tarefas" />
       <TasksView columns={columns} tasks={tasks} specialLabels={specialTaskLabels} clients={clients} />
-    </>
+    </div>
   );
 }

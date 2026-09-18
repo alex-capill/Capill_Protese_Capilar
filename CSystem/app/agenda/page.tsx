@@ -50,7 +50,7 @@ export default function AgendaPage() {
   );
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       <PageHeader title="Agenda" />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -188,7 +188,7 @@ export default function AgendaPage() {
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }
 

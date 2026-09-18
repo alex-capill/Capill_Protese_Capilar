@@ -840,3 +840,54 @@ deslocamento de fuso horário na leitura `new Date(...).getDate()` em
 `WorkspacePanels.tsx`). Não corrigido nesta rodada porque não foi pedido —
 vale confirmar com o Alex antes, já que a mesma lógica pode existir em outras
 telas de data.
+
+### 2026-09-18 — Arrasto de verdade (dnd-kit), recolher suave, ícones fixos de vez
+
+Alex rejeitou a troca instantânea por clique/arrasto simples da rodada
+anterior — queria arrasto de Kanban de verdade — e reclamou que os ícones de
+mostrar/ocultar sobem e desciam junto com a bandeja. Reorganizar virou arrasto
+de verdade com `@dnd-kit/sortable` (mesma biblioteca já usada no Funil e em
+Tarefas, mesmo `PointerSensor` com `activationConstraint: distance: 6`, que
+também resolve "clico e já muda" — só ativa depois de mover de verdade).
+Recolher/expandir a bandeja ganhou transição suave via CSS
+(`grid-template-rows: 0fr ⇄ 1fr`, sem JS medindo altura). Os ícones de
+mostrar/ocultar voltaram a ter posição `fixed` própria e independente da
+bandeja — não se movem mais quando ela cresce, encolhe ou recolhe. `npx tsc
+--noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Ajuste fino: ícones para o lado direito de verdade, bandeja recuada
+
+Os ícones fixos da correção anterior tinham ficado do lado esquerdo da
+bandeja; Alex pediu para trocar de lado — ícones na extremidade direita de
+verdade (`right-8`, a borda que a bandeja usava antes), bandeja recuada
+(`right-[76px]`) para abrir espaço sem os dois se tocarem em nenhuma altura.
+`npx tsc --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+### 2026-09-18 — Correção de bug: "widescreen" não funcionava em monitores largos
+
+Alex pediu para alinhar as margens esquerda/direita e o cabeçalho aos ícones
+flutuantes. Ao investigar, achei que `AppShell.tsx` (usado por TODAS as
+páginas) tinha um limite global `max-w-[1320px]` em volta de `{children}` que
+eu nunca tinha removido depois da rodada "widescreen" de sessões atrás — o
+Workspace só parecia ocupar a tela inteira porque toda verificação até agora
+usou uma janela de exatamente 1320px (a largura que nunca aciona o limite);
+num monitor de verdade mais largo (testado em 1600px), o limite prendia o
+Workspace de volta a 1320px, cancelando o "widescreen".
+
+Corrigido estruturalmente: o limite saiu do `AppShell` e entrou em cada página
+que precisa dele (Funil, Tarefas, Agenda, Métricas, Configurações, Entrada
+SDR, card do cliente) com seu próprio `<div className="mx-auto w-full
+max-w-[1320px]">`, preservando a largura que já tinham. O Workspace ficou sem
+nenhum limite — inclusive a agenda e o cabeçalho, que tinham um `max-w-1320`
+próprio de uma rodada anterior (cobrindo só Novos Leads/Minhas Tarefas antes);
+agora os controles de tema/notificações/perfil terminam na mesma borda dos
+ícones flutuantes e do resto do conteúdo. `AppShell.tsx` também trocou o
+padding simétrico por assimétrico a partir de `md` (`pl-5`/20px + `pr-8`/32px)
+para o respiro esquerdo (rail → conteúdo) ficar perto do direito
+(conteúdo → ícones), não maior como antes.
+
+Verificado num viewport de 1600px (de propósito diferente de 1320px, para não
+mascarar o bug de novo): fileira de leads, ícones flutuantes e controles da
+agenda terminam todos na mesma borda (1552.8px); Funil e Tarefas continuam
+com 1320px de largura, inalterados. Testado nos dois temas. `npx tsc
+--noEmit` (0 erros) e `npm test` (41 testes) depois da correção.

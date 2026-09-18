@@ -21,7 +21,7 @@ const WorkspacePanelsCtx = createContext<{
   open: Record<WorkspacePanelId, boolean>;
   toggle: (id: WorkspacePanelId) => void;
   order: WorkspacePanelId[];
-  swapOrder: () => void;
+  setOrder: (order: WorkspacePanelId[]) => void;
 } | null>(null);
 
 /**
@@ -36,7 +36,7 @@ const WorkspacePanelsCtx = createContext<{
  */
 export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState<Record<WorkspacePanelId, boolean>>(DEFAULTS);
-  const [order, setOrder] = useState<WorkspacePanelId[]>(DEFAULT_ORDER);
+  const [order, setOrderState] = useState<WorkspacePanelId[]>(DEFAULT_ORDER);
 
   useEffect(() => {
     try {
@@ -49,7 +49,7 @@ export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(ORDER_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length === DEFAULT_ORDER.length) setOrder(parsed);
+        if (Array.isArray(parsed) && parsed.length === DEFAULT_ORDER.length) setOrderState(parsed);
       }
     } catch {
       // ver comentário acima.
@@ -68,20 +68,16 @@ export function WorkspacePanelsProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  /** Só existem 2 painéis hoje, então "reorganizar" é sempre trocar os dois de lugar. */
-  function swapOrder() {
-    setOrder((current) => {
-      const next = [...current].reverse();
-      try {
-        localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        // ver comentário acima.
-      }
-      return next;
-    });
+  function setOrder(next: WorkspacePanelId[]) {
+    setOrderState(next);
+    try {
+      localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // ver comentário acima.
+    }
   }
 
-  return <WorkspacePanelsCtx.Provider value={{ open, toggle, order, swapOrder }}>{children}</WorkspacePanelsCtx.Provider>;
+  return <WorkspacePanelsCtx.Provider value={{ open, toggle, order, setOrder }}>{children}</WorkspacePanelsCtx.Provider>;
 }
 
 export function useWorkspacePanels() {

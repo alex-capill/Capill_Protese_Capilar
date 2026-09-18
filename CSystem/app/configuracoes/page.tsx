@@ -16,7 +16,7 @@ export default function ConfiguracoesPage() {
   const publicUrl = process.env.CSYSTEM_PUBLIC_URL ?? "http://localhost:3000";
 
   return (
-    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       <PageHeader title="Configurações" />
 
       <div className="space-y-5">
@@ -72,6 +72,6 @@ export default function ConfiguracoesPage() {
           </p>
         </section>
       </div>
-    </>
+    </div>
   );
 }
