@@ -64,7 +64,7 @@ export function ClientDetails({
       <div className="card p-5">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-lg font-bold tracking-tight">Cadastro</h2>
+            <h2 className="text-xl font-bold tracking-tight">Cadastro</h2>
             {currentList && (
               <p className="mt-0.5 text-xs text-muted">Etapa atual: {currentList.name}</p>
             )}
@@ -129,7 +129,7 @@ export function ClientDetails({
       </div>
 
       <div className="card p-5">
-        <h2 className="mb-1 text-lg font-bold tracking-tight">Etiquetas</h2>
+        <h2 className="mb-1 text-xl font-bold tracking-tight">Etiquetas</h2>
         <p className="mb-4 text-xs text-muted">
           Os grupos são independentes — o card pode ter etiqueta de vários ao mesmo tempo.
         </p>
@@ -166,7 +166,7 @@ export function ClientDetails({
       </div>
 
       <div className="card p-5">
-        <h2 className="mb-3 text-lg font-bold tracking-tight">Situação</h2>
+        <h2 className="mb-3 text-xl font-bold tracking-tight">Situação</h2>
         {client.status === "lost" ? (
           <div>
             <p className="mb-3 text-sm">

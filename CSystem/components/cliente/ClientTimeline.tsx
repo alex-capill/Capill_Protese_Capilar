@@ -63,7 +63,7 @@ export function ClientTimeline({
       <details open className="group card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 marker:hidden">
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Eventos</h2>
+            <h2 className="text-xl font-bold tracking-tight">Eventos</h2>
             <p className="text-xs text-muted">
               {comments.length === 1 ? "1 evento registrado" : `${comments.length} eventos registrados`}
             </p>
@@ -94,7 +94,7 @@ export function ClientTimeline({
       <details open className="group card overflow-hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 marker:hidden">
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Registros do sistema</h2>
+            <h2 className="text-xl font-bold tracking-tight">Registros do sistema</h2>
             <p className="text-xs text-muted">
               Movimentações, entradas do SDR e informações automáticas.
             </p>

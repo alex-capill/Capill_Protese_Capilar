@@ -16,7 +16,7 @@ export function AttendancePanel({
 }) {
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Comparecimento</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Comparecimento</h2>
       <p className="mb-5 text-sm text-muted">
         Quantas avaliações marcadas viraram avaliação feita.
       </p>
@@ -70,7 +70,7 @@ export function DurationsPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Tempo médio entre etapas</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Tempo médio entre etapas</h2>
       <p className="mb-5 text-sm text-muted">
         Em dias. Sai das próprias transições — você não precisou anotar nada para isto
         existir.
@@ -130,7 +130,7 @@ export function ReasonsPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Motivos registrados</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Motivos registrados</h2>
       <p className="mb-5 text-sm text-muted">
         Só aparece aqui o motivo que você registrou com evidência. O sistema nunca
         adivinha motivo.
@@ -196,7 +196,7 @@ export function OriginPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Origem dos leads</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Origem dos leads</h2>
       <p className="mb-5 text-sm text-muted">
         Clientes criados no período, pelas etiquetas do grupo Origem.
       </p>
@@ -246,7 +246,7 @@ export function DistributionPanel({
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Onde os cards estão agora</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Onde os cards estão agora</h2>
       <p className="mb-5 text-sm text-muted">
         Foto do presente — {totalCards} card{totalCards === 1 ? "" : "s"} ativo
         {totalCards === 1 ? "" : "s"}. Não depende do período selecionado.

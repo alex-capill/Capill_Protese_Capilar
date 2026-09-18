@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { createTaskColumnAction, moveTaskAction } from "@/app/actions/tasks";
 import { IconPlus } from "@/components/ui/icons";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 import { ViewToggle, useViewMode } from "@/components/ui/ViewToggle";
 import { cx } from "@/lib/utils";
 import type { ClientView, LabelView, TaskColumnView, TaskView } from "@/lib/view-types";
@@ -90,7 +91,7 @@ export function TasksView({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="scroll-row flex-1 items-center">
+        <FadeScroller className="min-w-0 flex-1 items-center" fadeWidth={48}>
           {FILTERS.map((item) => (
             <button
               key={item.id}
@@ -101,7 +102,7 @@ export function TasksView({
               {item.label}
             </button>
           ))}
-        </div>
+        </FadeScroller>
         <ViewToggle mode={mode} onChange={setMode} />
       </div>
 

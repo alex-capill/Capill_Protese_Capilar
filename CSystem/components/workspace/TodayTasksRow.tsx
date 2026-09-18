@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SectionHeader, EmptyState } from "@/components/ui/primitives";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 import { TaskCard, dueState } from "@/components/tarefas/TaskCard";
 import { TaskDialog } from "@/components/tarefas/TaskDialog";
 import { cx } from "@/lib/utils";
@@ -53,7 +54,7 @@ export function TodayTasksRow({
   return (
     <section className="mb-8">
       <SectionHeader title="Minhas Tarefas" count={openCount} countLabel="abertas">
-        <div className="scroll-row">
+        <FadeScroller fadeWidth={48}>
           {FILTERS.map((item) => (
             <button
               key={item.id}
@@ -64,7 +65,7 @@ export function TodayTasksRow({
               {item.label}
             </button>
           ))}
-        </div>
+        </FadeScroller>
       </SectionHeader>
 
       {filtered.length === 0 ? (
@@ -77,13 +78,13 @@ export function TodayTasksRow({
           }
         />
       ) : (
-        <div className="scroll-row">
+        <FadeScroller>
           {filtered.slice(0, 20).map((task) => (
             <div key={task.id} className="w-[320px] shrink-0 snap-start">
               <TaskCard task={task} onEdit={setEditing} />
             </div>
           ))}
-        </div>
+        </FadeScroller>
       )}
 
       {editing && (

@@ -48,7 +48,7 @@ export function PaymentsPanel({
     <div className="card p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold tracking-tight">Pagamentos</h2>
+          <h2 className="text-xl font-bold tracking-tight">Pagamentos</h2>
           {payments.length > 0 && (
             <p className="mt-0.5 text-xs text-muted">
               {formatBRL(paid)} de {formatBRL(total)}

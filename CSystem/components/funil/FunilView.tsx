@@ -1,8 +1,9 @@
 "use client";
 
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { IconSearch } from "@/components/ui/icons";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 import { Avatar, LabelChip } from "@/components/ui/primitives";
 import { ViewToggle, useViewMode } from "@/components/ui/ViewToggle";
 import { formatPhone } from "@/lib/phone";
@@ -97,49 +98,9 @@ function LabelFilterScroller({
   selectedId: string | null;
   onSelect: (id: string | null) => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [hasLeft, setHasLeft] = useState(false);
-  const [hasRight, setHasRight] = useState(false);
-
-  function updateEdges() {
-    const node = ref.current;
-    if (!node) return;
-    const tolerance = 2;
-    setHasLeft(node.scrollLeft > tolerance);
-    setHasRight(node.scrollLeft + node.clientWidth < node.scrollWidth - tolerance);
-  }
-
-  useEffect(() => {
-    updateEdges();
-    const node = ref.current;
-    if (!node) return;
-    const observer = new ResizeObserver(updateEdges);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [labels]);
-
-  // A máscara apaga o próprio conteúdo — não é uma faixa aplicada por cima,
-  // portanto não deixa uma linha de transição sobre os chips.
-  const fadeWidth = "88px";
-  const maskImage = hasLeft
-    ? hasRight
-      ? `linear-gradient(to right, transparent, black ${fadeWidth}, black calc(100% - ${fadeWidth}), transparent)`
-      : `linear-gradient(to right, transparent, black ${fadeWidth})`
-    : hasRight
-      ? `linear-gradient(to right, black calc(100% - ${fadeWidth}), transparent)`
-      : undefined;
-  const fadeStyle: CSSProperties | undefined = maskImage
-    ? { maskImage, WebkitMaskImage: maskImage }
-    : undefined;
-
   return (
     <div className="relative min-w-0 flex-1">
-      <div
-        ref={ref}
-        onScroll={updateEdges}
-        className="scroll-row items-center"
-        style={fadeStyle}
-      >
+      <FadeScroller className="items-center">
         <button
           type="button"
           onClick={() => onSelect(null)}
@@ -158,8 +119,7 @@ function LabelFilterScroller({
             {label.name}
           </button>
         ))}
-      </div>
-
+      </FadeScroller>
     </div>
   );
 }

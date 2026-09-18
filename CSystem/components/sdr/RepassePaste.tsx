@@ -46,7 +46,7 @@ export function RepassePaste() {
 
   return (
     <div className="card p-5">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Colar repasse</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Colar repasse</h2>
       <p className="mb-4 text-sm text-muted">
         Cole o bloco <code className="font-mono text-xs">===REPASSE===</code> que o SDR
         mandou no WhatsApp. Serve enquanto o webhook não está ligado, e para testar.

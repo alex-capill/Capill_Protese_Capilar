@@ -34,16 +34,16 @@ export function Rail() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="sticky top-0 z-30 flex h-dvh w-[76px] shrink-0 flex-col items-center px-3 py-6 max-md:hidden"
+      className="sticky top-0 z-30 flex h-dvh w-[84px] shrink-0 flex-col items-center px-3 py-7 max-md:hidden"
     >
       <Link
         href="/"
         aria-label="Capill Workspace"
-        className="flex size-11 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-ink-invert shadow-[var(--shadow-raised)]"
+        className="flex size-12 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-ink-invert shadow-[var(--shadow-raised)]"
       >
         C
       </Link>
-      <div className="mt-16 flex flex-col items-center gap-2">
+      <div className="mt-16 flex flex-col items-center gap-2.5">
         {ITEMS.map(({ href, label, Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
@@ -54,7 +54,7 @@ export function Rail() {
               aria-label={label}
               aria-current={active ? "page" : undefined}
               className={cx(
-                "flex size-11 items-center justify-center rounded-full transition",
+                "flex size-12 items-center justify-center rounded-full transition",
                 active
                   ? "bg-ink text-ink-invert shadow-[var(--shadow-raised)]"
                   : "text-muted hover:bg-surface hover:text-text",

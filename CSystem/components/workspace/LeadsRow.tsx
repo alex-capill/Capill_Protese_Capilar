@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ClientMiniCard } from "@/components/funil/ClientMiniCard";
+import { FadeScroller } from "@/components/ui/FadeScroller";
 import { EmptyState, SectionHeader } from "@/components/ui/primitives";
 import { cx } from "@/lib/utils";
 import type { ClientView, ListView } from "@/lib/view-types";
@@ -58,7 +59,7 @@ export function LeadsRow({
   return (
     <section className="mb-12">
       <SectionHeader title="Novos Leads" count={clients.length} countLabel="no funil">
-        <div className="scroll-row">
+        <FadeScroller fadeWidth={48}>
           {FILTERS.map((item) => (
             <button
               key={item.id}
@@ -69,7 +70,7 @@ export function LeadsRow({
               {item.label}
             </button>
           ))}
-        </div>
+        </FadeScroller>
       </SectionHeader>
 
       {filtered.length === 0 ? (
@@ -93,13 +94,13 @@ export function LeadsRow({
           }
         />
       ) : (
-        <div className="scroll-row">
+        <FadeScroller>
           {filtered.slice(0, 20).map((client) => (
             <div key={client.id} className="w-[270px] shrink-0 snap-start">
               <ClientMiniCard client={client} />
             </div>
           ))}
-        </div>
+        </FadeScroller>
       )}
     </section>
   );

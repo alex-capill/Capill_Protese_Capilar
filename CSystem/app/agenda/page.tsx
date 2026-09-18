@@ -55,7 +55,7 @@ export default function AgendaPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section>
-          <h2 className="mb-3 text-lg font-bold tracking-tight">Próximos 30 dias</h2>
+          <h2 className="mb-3 text-xl font-bold tracking-tight">Próximos 30 dias</h2>
 
           {appointments.length === 0 ? (
             <EmptyState
@@ -121,7 +121,7 @@ export default function AgendaPage() {
         </section>
 
         <section>
-          <h2 className="mb-1 text-lg font-bold tracking-tight">Fila de follow-up</h2>
+          <h2 className="mb-1 text-xl font-bold tracking-tight">Fila de follow-up</h2>
           <p className="mb-3 text-xs text-muted">
             Quem tem data de retorno registrada.
             {overdue.length > 0 && (

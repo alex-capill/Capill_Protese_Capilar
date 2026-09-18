@@ -152,8 +152,8 @@ export function SectionHeader({
   children?: ReactNode;
 }) {
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-      <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+    <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+      <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
       {count != null && (
         <span className="border-b border-current pb-0.5 text-sm font-semibold text-text-soft">
           {count} {countLabel}

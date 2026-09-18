@@ -29,7 +29,7 @@ export default function EntradaSdrPage() {
         </section>
 
         <section className="lg:order-1">
-          <h2 className="mb-1 text-lg font-bold tracking-tight">Repasses recebidos</h2>
+          <h2 className="mb-1 text-xl font-bold tracking-tight">Repasses recebidos</h2>
           <p className="mb-3 text-sm text-muted">
             Tudo que o SDR mandou, qualificado ou não. Nada aqui exige uma ação sua.
           </p>

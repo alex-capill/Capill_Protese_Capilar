@@ -32,7 +32,7 @@ export function LabelsManager({ labels }: { labels: LabelView[] }) {
     <section className="card p-7">
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <div>
-          <h2 className="text-lg font-bold tracking-tight">Etiquetas</h2>
+          <h2 className="text-xl font-bold tracking-tight">Etiquetas</h2>
           <p className="text-sm text-muted">
             {labels.length} etiquetas em {groups.filter((g) => labels.some((l) => l.group === g)).length} grupos.
           </p>

@@ -19,7 +19,7 @@ export function FunnelChart({ steps }: { steps: FunnelStep[] }) {
   if (!hasAnyData) {
     return (
       <div className="card p-6">
-        <h2 className="mb-1 text-lg font-bold tracking-tight">Funil do período</h2>
+        <h2 className="mb-1 text-xl font-bold tracking-tight">Funil do período</h2>
         <p className="mb-6 text-sm text-muted">
           Cada etapa conta clientes distintos que entraram nela no período.
         </p>
@@ -36,7 +36,7 @@ export function FunnelChart({ steps }: { steps: FunnelStep[] }) {
 
   return (
     <div className="card p-6">
-      <h2 className="mb-1 text-lg font-bold tracking-tight">Funil do período</h2>
+      <h2 className="mb-1 text-xl font-bold tracking-tight">Funil do período</h2>
       <p className="mb-6 text-sm text-muted">
         Clientes distintos que entraram em cada etapa. A porcentagem é a conversão a
         partir da etapa anterior com base.

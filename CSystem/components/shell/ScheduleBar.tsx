@@ -69,7 +69,7 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-1.5 text-white shadow-[var(--shadow-card)]">
+      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-[#111111] p-2 text-white shadow-[var(--shadow-card)]">
       <div className="flex shrink-0 items-center gap-3 pl-3 pr-1">
         <span className="text-sm font-semibold max-sm:hidden">Sua agenda</span>
         <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
@@ -78,7 +78,7 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
         </span>
       </div>
 
-      <div className="relative h-10 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
+      <div className="relative h-11 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.09]">
         {items.length === 0 ? (
           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/55">
             Nenhum compromisso hoje
@@ -98,7 +98,7 @@ export function ScheduleBar({ items }: { items: ScheduleItem[] }) {
                 key={item.id}
                 href="/agenda"
                 title={`${formatTime(item.startsAt)} — ${item.title}`}
-                className="absolute top-1 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
+                className="absolute top-1.5 flex h-8 items-center gap-2 overflow-hidden rounded-full bg-accent px-3 text-accent-ink transition hover:brightness-105"
                 style={{ left: `${left}%`, width: `${width}%` }}
               >
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-black/15 text-[10px] font-bold">
