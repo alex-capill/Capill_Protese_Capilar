@@ -952,3 +952,19 @@ Lições aprendidas:
   de setup.
 - **Efeito colateral esperado (não verificado):** o conector MCP do n8n desta
   máquina estava ligado ao usuário antigo e deve precisar de token novo.
+
+### 2026-09-30 — Correção da entrada anterior: publicação e conector MCP
+
+Verificado pelo conector MCP do n8n depois do reset:
+
+- **O conector continua funcionando.** A previsão da entrada anterior ("deve
+  precisar de token novo") estava errada: ele listou e leu o fluxo normalmente.
+- **Salvar não coloca no ar.** Depois de colar o prompt e salvar, o rascunho
+  do fluxo tinha o prompt novo, mas a versão publicada (a que atende o
+  WhatsApp) continuava a anterior. Só depois de clicar em **Publish** a versão
+  ativa passou a ser a nova (`7205d522…`), com o System Message idêntico a
+  `SDR/PROMPT_N8N.md` e os 38 nós preservados.
+
+Lição: toda troca de prompt no n8n termina em **Save + Publish**, e vale
+conferir a versão ativa pelo conector (comparar `activeVersionId` com
+`versionId`).
