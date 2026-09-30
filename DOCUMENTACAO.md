@@ -927,3 +927,28 @@ Cuidado: a mudança só vale no atendimento real depois que o conteúdo de
 `SDR/PROMPT_N8N.md` for recolado no nó do agente no n8n (não há sincronização
 automática). Consequência do "não informado": o card do Trello criado pela
 automação sai com o título `QUALIFICADO - não informado` nesse caso.
+
+### 2026-09-30 — Prompt do SDR recolado no n8n; acesso ao n8n recuperado por reset
+
+O conteúdo novo de `SDR/PROMPT_N8N.md` (com a captura do nome) foi colado por
+Alex no System Message do nó "AI Agent" do fluxo AGENTE SDR CAPILL e o fluxo
+foi salvo. Antes da troca, confirmado que o prompt que estava rodando era
+idêntico à versão anterior do arquivo, então a substituição foi integral.
+
+Lições aprendidas:
+
+- **O conector MCP do n8n não serve para trocar só o prompt.** Ele atualiza
+  reenviando o fluxo inteiro como código, e o detalhe do fluxo que ele devolve
+  vem sem as credenciais dos nós (Anthropic, Redis, Evolution API, Trello,
+  Gemini). Reenviar arriscaria derrubar o SDR. Troca de prompt é manual.
+- **A senha do n8n não fica no Easypanel.** Ela é criada dentro do próprio
+  n8n e guardada criptografada no banco dele.
+- **O Chrome tinha salvo o token do Trello (`ATTA...`) como senha do n8n**,
+  provavelmente quando o token foi colado na credencial do Trello dentro do
+  n8n. Por isso o login dava "Wrong username or password".
+- **Recuperação:** Easypanel → serviço n8n → Console → `sh` →
+  `n8n user-management:reset`. Apaga só os usuários; fluxos e credenciais
+  continuam e o SDR segue rodando. Depois, criar a conta dona de novo na tela
+  de setup.
+- **Efeito colateral esperado (não verificado):** o conector MCP do n8n desta
+  máquina estava ligado ao usuário antigo e deve precisar de token novo.
