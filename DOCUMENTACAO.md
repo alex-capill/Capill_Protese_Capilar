@@ -903,3 +903,27 @@ não existe mais nenhum `max-w` no app inteiro. Verificado num viewport de
 1600px que todas as páginas usam a mesma margem e largura disponível, sem
 quebrar nenhum layout (Kanban, colunas de tarefas, grades, tabelas). `npx tsc
 --noEmit` (0 erros) e `npm test` (41 testes) depois da mudança.
+
+## Agentes
+
+### 2026-09-30 — SDR: captura do nome do cliente no início da conversa
+
+Alex pediu que o SDR capte o nome do cliente logo no começo. Antes, "Nome"
+era só o item 1 de uma lista de passos marcada como "ordem de referência, não
+sequência obrigatória", então o agente podia seguir a qualificação sem nunca
+perguntar. Criada a seção "CAPTURA DO NOME — INÍCIO DA CONVERSA" em
+`SDR/AGENTS.md` e `SDR/PROMPT_N8N.md` (logo após IDENTIDADE DO SDR), com sete
+regras: a primeira resposta se apresenta como Assistente Capill e termina
+pedindo o nome; se o cliente abriu com pergunta, a Regra de Ouro vale (responde
+primeiro, pede o nome no fim da mesma mensagem, nunca condiciona a resposta ao
+nome); não pergunta se o cliente já disse; nome do perfil do WhatsApp não conta
+como nome confirmado; no máximo duas tentativas, a segunda mais adiante e
+nunca na mensagem seguinte; só o primeiro nome; no repasse, `LEAD: não
+informado` quando o cliente não disse. Também ajustados o passo 1 de "PASSOS
+COM O LEAD", o item "nome" de "Informações a coletar" e o campo LEAD do
+formato de repasse.
+
+Cuidado: a mudança só vale no atendimento real depois que o conteúdo de
+`SDR/PROMPT_N8N.md` for recolado no nó do agente no n8n (não há sincronização
+automática). Consequência do "não informado": o card do Trello criado pela
+automação sai com o título `QUALIFICADO - não informado` nesse caso.
