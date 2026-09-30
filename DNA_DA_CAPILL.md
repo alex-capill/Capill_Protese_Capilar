@@ -340,6 +340,19 @@ Principais objeções:
 \- Tenho medo de ficar artificial.  
 \- Tenho medo de a prótese se soltar.
 
+\#\# Respostas confirmadas pelo fundador (30/09/2026)
+
+Respostas dadas diretamente pelo fundador para as dúvidas acima que ainda não tinham resposta documentada. Podem ser usadas com clientes.
+
+\- **Pele oleosa:** funciona. A fixação é escolhida de acordo com o tipo de pele, e a pele se adapta a ela; segundo o fundador, a oleosidade diminui consideravelmente com o uso. É observação do fundador na prática, não resultado de estudo; não apresentar como garantia.  
+\- **Dá trabalho?:** não. Os cuidados e as manutenções viram rotina, como escovar os dentes.  
+\- **Grisalho:** sim. A peça replica o mesmo percentual de grisalho que o cabelo do cliente tem; isso é analisado na avaliação.  
+\- **Cabelo cacheado e crespo:** sim, a Capill atende todos os tipos de cabelo.  
+\- **Corte discreto:** sim. A Capill sempre opta por um corte mais discreto: quanto menos contraste, melhor.  
+\- **Corte sem topete:** sim. É questão de preferência de penteado: o mesmo corte pode ser penteado de várias formas, com ou sem topete.  
+\- **Pode sair durante a relação sexual? (medo da seção 11):** pode acontecer se o cliente não fizer as manutenções no período correto e a fixação estiver frouxa.  
+\- **É cabelo natural?:** sim. Todas as peças, inclusive as de micropele, são de cabelo 100% humano; os fios são os mesmos em todos os tipos de peça.
+
 \---
 
 \# 13\. SERVIÇOS
@@ -431,6 +444,7 @@ Essa informação representa uma média observada e não uma garantia de durabil
 Características informadas:
 
 \- micropele de aproximadamente 0,04 mm;  
+\- fios 100% humanos (os mesmos das demais peças; confirmado pelo fundador em 30/09/2026);  
 \- fios injetados em V-loop;  
 \- baixa densidade;  
 \- aparência extremamente natural;  
@@ -460,6 +474,8 @@ A fixação é feita com materiais hipoalergênicos, próprios para o couro cabe
 A Capill orienta o cliente sobre o uso adequado no dia a dia. Essa orientação torna o uso mais confortável e seguro, e pode contribuir para aumentar em até 80% a durabilidade da peça.
 
 Essa cifra (até 80%) é a informação fornecida pelo fundador; ainda não há registro de como ela foi mensurada, então deve ser tratada como dado fornecido pela empresa, não como resultado de estudo independente.
+
+Retirar a prótese no dia a dia é possível e opcional: o cliente pode tirar, por exemplo, para dormir ou tomar banho, e também pode não tirar. As orientações de como retirar, recolocar e cuidar da peça são passadas pelo Alex na avaliação e depois da aplicação, junto com o suporte pós-aplicação. Informação confirmada pelo fundador em 30/09/2026.
 
 Fala do fundador, usada diretamente com clientes: "não tem risco de cair, não tem risco de soltar". Essa é uma afirmação mais forte do que a linguagem de segurança documentada acima ("seguro", não "risco zero"). É uma informação confirmada pelo fundador, mas está em tensão com a regra de não fazer promessas absolutas (seção 33) — vale usar com o mesmo cuidado que o fundador já aplica na fala direta, sem transformar isso em garantia formal por escrito ou em outros canais de comunicação.
 

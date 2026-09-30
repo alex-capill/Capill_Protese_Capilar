@@ -1020,3 +1020,76 @@ Lições aprendidas:
 - **Pendência aberta:** o SDR não sabe quando o Alex assume a conversa na mão
   (mensagens manuais não entram na memória dele) e continua respondendo em
   paralelo.
+
+### 2026-09-30 — SDR pausa quando o Alex assume a conversa
+
+Problema: o SDR não sabia quando o Alex respondia um cliente na mão (as
+mensagens manuais chegavam no fluxo e eram descartadas pelo Filtro) e
+continuava conversando em paralelo, como no caso do Maxwell.
+
+Verificado nas execuções antes de implementar: mensagem manual do Alex chega
+como `messages.upsert` com `fromMe: true` (execução 11564, "Entendi, como vc
+se chama?"), enquanto as mensagens que o SDR envia pela API não geram
+execução. Isso permite distinguir as duas sem heurística.
+
+Implementado na versão `9f3cd9fa` do fluxo AGENTE SDR CAPILL: ramo novo saindo
+de Dados, "Mensagem Manual do Alex?" (fromMe, messages.upsert, conversa
+individual) → "Pausa SDR" (Redis set `<telefone>_pausado`, TTL 15 dias,
+renovado a cada mensagem manual). Antes do agente: Mensagem Final → "Busca
+Pausa" → "SDR Ativo?" → AI Agent. O campo de entrada do AI Agent passou a ler
+`$('Mensagem Final').item.json.Mensagem`, porque agora recebe a saída do IF.
+Prazo de 15 dias decidido pelo Alex. Comparação nó a nó: mudaram só esses nós
+e conexões; prompt, credenciais, modelo e settings preservados. Documentado em
+`SDR/AGENTS.md` ("SUPORTE TÉCNICO — PAUSA QUANDO O ALEX ASSUME").
+
+Também em 30/09: cards duplicados do Maxwell (#900 e #901) arquivados no
+Trello; o #899 segue ativo.
+
+### 2026-09-30 — SDR: retirada da prótese e manutenção só quando perguntada
+
+Duas correções de conteúdo apontadas pelo Alex na conversa do Maxwell,
+publicadas na versão `d93978cd` do fluxo (só o System Message mudou).
+
+- **Resposta inventada sobre retirar a prótese.** O cliente perguntou se
+  precisava tirar durante o dia e o SDR respondeu que ela "fica fixa 24 horas"
+  e "só é removida na manutenção". O prompt não tinha nenhum fato sobre isso;
+  o modelo inventou, contradizendo até o trecho de durabilidade que fala de
+  quem retira para dormir e tomar banho. Fato correto, confirmado pelo Alex e
+  registrado no `DNA_DA_CAPILL.md` (seção 14A) e nos FATOS OPERACIONAIS do SDR:
+  retirar é possível e opcional (para dormir, tomar banho); as orientações vêm
+  do Alex na avaliação e após a aplicação, com suporte pós-aplicação. O SDR não
+  detalha o procedimento e está proibido de dizer que a prótese não sai.
+- **Manutenção só quando o cliente perguntar.** O prompt permitia mencionar
+  manutenção "a qualquer momento" e a incluía na nutrição obrigatória; o SDR
+  soltou "exige manutenção a cada 15 dias" quando o Maxwell já estava pronto
+  para avaliação. Agora o SDR não fala de manutenção por iniciativa própria;
+  só se o cliente perguntar ou levantar custo ao longo do tempo.
+
+Lição: pergunta frequente do DNA sem resposta registrada ("Pode dormir com a
+prótese?" está na seção 12 sem resposta) vira convite para o modelo inventar.
+Vale revisar as outras perguntas da seção 12 que ainda não têm resposta
+documentada.
+
+### 2026-09-30 — Respostas do fundador para as dúvidas sem resposta do DNA
+
+Revisão da seção 12 do DNA (dúvidas frequentes) cruzada com o resto do DNA e
+com o prompt do SDR: das 22 perguntas, 14 já tinham resposta documentada e 8
+não tinham (ou tinham pela metade), o mesmo tipo de buraco que levou o SDR a
+inventar "fica fixa 24 horas". O Alex respondeu todas, liberadas para o SDR
+responder direto:
+
+pele oleosa (funciona; fixação conforme o tipo de pele, a pele se adapta e a
+oleosidade diminui, registrada como observação do fundador, não garantia),
+dá trabalho (não, vira rotina como escovar os dentes), grisalho (replica o
+mesmo percentual do cliente, definido na avaliação), cacheado e crespo
+(atende todos os tipos), corte discreto (sempre, quanto menos contraste
+melhor), corte sem topete (é penteado, o mesmo corte serve com ou sem),
+sair durante a relação sexual (pode acontecer se a manutenção atrasar e a
+fixação ficar frouxa) e cabelo natural (todas as peças, inclusive micropele,
+são 100% cabelo humano).
+
+Registrado em `DNA_DA_CAPILL.md` (nova subseção "Respostas confirmadas pelo
+fundador (30/09/2026)" na seção 12; item de fios na micropele, seção 14) e nos
+FATOS OPERACIONAIS de `SDR/AGENTS.md` e `SDR/PROMPT_N8N.md`. Publicado no
+n8n na versão `c1839f96` (só o System Message mudou; conferido idêntico ao
+arquivo).
