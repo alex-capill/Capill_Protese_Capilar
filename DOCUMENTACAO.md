@@ -968,3 +968,55 @@ Verificado pelo conector MCP do n8n depois do reset:
 Lição: toda troca de prompt no n8n termina em **Save + Publish**, e vale
 conferir a versão ativa pelo conector (comparar `activeVersionId` com
 `versionId`).
+
+### 2026-09-30 — SDR: silêncio com foto, repasse triplicado e buffer que nunca limpava
+
+Três falhas achadas na conversa real do lead Maxwell, investigadas pelas
+execuções do n8n (11537, 11573, 11576, 11578) e corrigidas no fluxo AGENTE SDR
+CAPILL.
+
+**1. Foto sem resposta (execução 11537).** O Switch só tinha saída para
+`conversation` e `audioMessage`; uma `imageMessage` não casava com nada e a
+execução morria em 29 ms. Correção (versão `e12d9dd3`): a regra Texto do Switch
+também aceita `extendedTextMessage` (resposta citada e link, que tinham o mesmo
+buraco), o Msg Texto lê `extendedTextMessage.text`, e uma saída nova **Midia**
+(foto, vídeo, documento) passa pelo nó Code **Msg Midia**, que entrega ao
+agente `[O cliente enviou uma foto com a legenda: "..."]`. Decisão do Alex: o
+SDR **não** vê nem avalia a foto; agradece, diz que o Alex vai olhar
+pessoalmente e pede a situação em palavras (seção "FOTO, VÍDEO OU DOCUMENTO
+ENVIADO PELO CLIENTE" no prompt). Figurinha e reação continuam ignoradas de
+propósito.
+
+**2. Três repasses e três cards (#899, #900, #901).** O SDR repetiu o bloco
+`===REPASSE===` em três mensagens seguidas, o primeiro ainda no meio de uma
+pergunta. O prompt não dizia que o repasse é único, e o fluxo cria card sempre:
+o `SDR/AGENTS.md` afirmava que a automação procurava o card pelo telefone antes
+de criar, mas o fluxo nunca fez isso (o "Get all cards in a list" roda depois
+do "Create a card" e não é usado). Correção (versão `c7ddb6ff`): seção
+"REPASSE ÚNICO" no prompt (um só, só no encerramento, depois só responde
+dúvidas) e trava no fluxo entre "Repasse não Vázio" e "É Qualificado?": Busca
+Repassado (Redis get `<sessão>_repassado`) → Ainda Não Repassado? (IF) → Marca
+Repassado (Redis set, TTL 4 h, igual à memória do SDR). "É Qualificado?" passou
+a ler o repasse de `$('Separar Repasse')`, porque agora recebe a saída do
+Redis. O trecho falso do AGENTS.md foi corrigido. Opção B (repasse de
+atualização como comentário no card) foi discutida e descartada por ora.
+
+**3. Buffer nunca era apagado.** A chave do nó Reset terminava com uma quebra
+de linha invisível (`..._buffer\n`), então o delete mirava uma chave
+inexistente e o agente recebia, a cada mensagem, a conversa inteira desde o
+primeiro "Bom dia" como se fosse nova. Corrigido na versão `c7ddb6ff`.
+
+Verificação: nas duas publicações, comparação nó a nó contra a versão anterior
+mostrou mudança só nos nós previstos; credenciais, modelo (Sonnet 5.5) e
+settings preservados; System Message idêntico a `SDR/PROMPT_N8N.md`.
+
+Lições aprendidas:
+
+- **Alteração no fluxo sem perder credencial:** o conector MCP não serve (o
+  update reescreve o fluxo e o detalhe vem sem credenciais). O que funcionou:
+  ler e gravar pela API interna do n8n (`/rest/workflows/<id>`, GET + PATCH com
+  `versionId`) na sessão logada do Chrome, e publicar pelo MCP.
+- **Salvar ≠ publicar:** conferir `activeVersionId` depois de cada mudança.
+- **Pendência aberta:** o SDR não sabe quando o Alex assume a conversa na mão
+  (mensagens manuais não entram na memória dele) e continua respondendo em
+  paralelo.
