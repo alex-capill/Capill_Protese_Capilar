@@ -1113,3 +1113,13 @@ apresentação, quem não perguntar pode achar que falou com o Alex; o que
 segura isso agora é a terceira pessoa e a resposta honesta quando perguntado.
 Vale conferir nas próximas conversas reais se algum cliente chega à avaliação
 achando que conversou com o Alex.
+
+### 2026-10-17 — Prompt publicado no n8n; remetente do WhatsApp virou "Capill"
+
+O Alex recolou o `PROMPT_N8N.md` no System Message do agente e publicou o
+fluxo com a regra da entrada anterior (informado pelo Alex; não conferido
+pelo Claude, que não tinha conector do n8n nesta sessão). O nome do perfil no
+WhatsApp mudou de "Alex Capill" para "Capill", o que reduz o risco de o
+cliente achar que falou com o Alex. A observação da seção IDENTIDADE DO SDR
+foi atualizada em `SDR/AGENTS.md` e `SDR/PROMPT_N8N.md`; só essa frase difere
+da versão publicada e não muda o comportamento do SDR.
