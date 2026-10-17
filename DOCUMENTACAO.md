@@ -1093,3 +1093,23 @@ fundador (30/09/2026)" na seção 12; item de fios na micropele, seção 14) e n
 FATOS OPERACIONAIS de `SDR/AGENTS.md` e `SDR/PROMPT_N8N.md`. Publicado no
 n8n na versão `c1839f96` (só o System Message mudou; conferido idêntico ao
 arquivo).
+
+### 2026-10-17 — SDR só diz que é assistente virtual quando perguntado
+
+Decisão do Alex: o SDR deixa de abrir a conversa com "Aqui é o Assistente
+Capill". A primeira mensagem só cumprimenta e pede o nome ("Oi, tudo bem? 😊
+Como posso te chamar?"). Se o cliente perguntar quem está falando, se é robô,
+IA ou atendente, ou se é o Alex, o SDR responde na hora que é o assistente
+virtual da Capill e que o Alex assume o atendimento na sequência. Continua
+proibido negar, desconversar ou deixar implícito que é o Alex, e o Alex segue
+em terceira pessoa.
+
+Alterado em `SDR/AGENTS.md` e `SDR/PROMPT_N8N.md` (seções IDENTIDADE DO SDR
+e CAPTURA DO NOME). Ainda falta recolar o `PROMPT_N8N.md` no System Message
+do nó do agente no n8n.
+
+Cuidado: o remetente no WhatsApp aparece como "Alex Capill". Sem a
+apresentação, quem não perguntar pode achar que falou com o Alex; o que
+segura isso agora é a terceira pessoa e a resposta honesta quando perguntado.
+Vale conferir nas próximas conversas reais se algum cliente chega à avaliação
+achando que conversou com o Alex.
